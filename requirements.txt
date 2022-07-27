@@ -1,0 +1,17 @@
+attrs==21.4.0
+certifi==2022.6.15
+charset-normalizer==2.1.0
+idna==3.3
+keyring==23.7.0
+packaging==21.3
+pip-system-certs==2.1
+pyparsing==3.0.9
+pywin32-ctypes==0.2.0
+PyYAML==6.0
+requests==2.28.1
+setuptools-scm==7.0.5
+todoist-api-python==1.1.1
+tomli==2.0.1
+typing_extensions==4.3.0
+urllib3==1.26.10
+wrapt==1.14.1
