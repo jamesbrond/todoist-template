@@ -1,0 +1,13 @@
+# simple_template_1.yml
+Personal:
+  Fitness:
+    tasks:
+      -
+        content: Tabata
+        due_string: Monday
+      -
+        content: Resistance
+        due_string: Wednesday
+      -
+        content: Treadmill
+        due_string: fri

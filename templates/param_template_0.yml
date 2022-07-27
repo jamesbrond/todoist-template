@@ -1,0 +1,13 @@
+# param_template_0.yml
+Personal:
+  Fitness:
+    tasks:
+      -
+        content: Tabata
+        due_string: {day1}
+      -
+        content: Resistance
+        due_string: {day2}
+      -
+        content: Treadmill
+        due_string: {day3}

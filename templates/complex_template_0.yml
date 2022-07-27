@@ -1,0 +1,32 @@
+# complex_template_0.yml
+- Personal:
+  tasks:
+      -
+        content: Stay focused and motivated
+        due_string: every day
+  Fitness:
+    tasks:
+      -
+        content: Tabata
+        due_string: mon
+      -
+        content: Resistance
+        due_string: wed
+      -
+        content: Treadmill
+        due_string: fri
+  Diet:
+    tasks:
+      -
+        content: Protein dinner
+        due_string: every two day at 19:30 from mon until fri
+        priority: 2
+
+- Home:
+    Shopping List:
+      tasks:
+        -
+          content: Buy meat for three dinners
+          due_string: mon morning
+          labels: [ "butcher shop"]
+          priority: 2

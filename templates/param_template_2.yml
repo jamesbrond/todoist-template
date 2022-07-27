@@ -1,0 +1,9 @@
+# param_template_2.yml
+Home:
+  Shopping List:
+    tasks:
+      -
+        content: Buy meat for three dinners
+        due_string: "{day1} morning"
+        labels: [ "butcher shop"]
+        priority: 2
