@@ -1,0 +1,16 @@
+# param_template_1.yml
+Personal:
+  Diet:
+    tasks:
+      -
+        content: Protein dinner
+        due_string: "{day1} 19:30"
+        priority: 2
+      -
+        content: Protein dinner
+        due_string: "{day2} 19:30"
+        priority: 2
+      -
+        content: Protein dinner
+        due_string: "{day3} 19:30"
+        priority: 2

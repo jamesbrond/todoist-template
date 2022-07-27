@@ -1,5 +1,0 @@
-- Another Project:
-  tasks:
-    - content: "another task"
-
-- !include template_sample.yml
