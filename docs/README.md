@@ -80,13 +80,19 @@ Where options are:
 
 | Option                   | Default   | Description                                    |
 |--------------------------|-----------|------------------------------------------------|
-| TEMPLATE                 |           | Mandatory path to the YAML template file       |
+| TEMPLATE                 | stdin     | Mandatory path to the YAML template file       |
 | -h, --help               |           | Show help message and exit                     |
 | -D KEY0=VAL0,KEY1=VAL1...|           | The placeholder values replaced in template    |
 | --id SERVICE_ID          | TODOIST-TEMPLATE | Keyring service name where store Todoist API Token |
 | --version                |           | Show program's version number and exit         |
 | -d, --debug              | False     | More verbose output. Default log level is INFO |
 | -q, --quiet              | False     | Suppress output                                |
+
+Example
+
+```shell
+python todoist-template.py -d templates/simple_template0.yml
+```
 
 Run todoist-template from different users specify differnet keyring service name:
 
@@ -98,6 +104,11 @@ python todoist-template.py [options] --id JHON-TOKENS
 python todoist-template.py [options] --id MARY-TOKENS
 ```
 
+You can use standar input to provide the template to todoist-template:
+
+```shell
+python todoist-template.py -d < templates/simple_template0.yml
+```
 
 ## Template
 
