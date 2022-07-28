@@ -13,7 +13,7 @@ class StoreDictKeyPair(argparse.Action):
 		setattr(namespace, self.dest, my_dict)
 
 def parse_cmd_line():
-	parser = argparse.ArgumentParser(prog="todoist-template.py", usage='%(prog)s [options]', description='Creates Todoist tasks from a YAML template')
+	parser = argparse.ArgumentParser(prog="todoist-template.py", usage='%(prog)s [options]', description='Easily add tasks to Todoist with customizable YAML templates')
 
 	# positional arguments:
 	parser.add_argument(
