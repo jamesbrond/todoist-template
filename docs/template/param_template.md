@@ -55,7 +55,7 @@ tasks:
     due_string: every {dayofweek}
 ```
 
-For more information on how to define a task read [Task](./template_yaml_syntax.md#task)
+Run with argument `-D dayofweek=Monday` to have a recursive task every Monday.
 
 Prev [Simple template](./simple_template.md)
 Next [Complex template](./complex_template.md)
