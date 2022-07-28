@@ -23,7 +23,12 @@ class TodoistTemplate:
 
 		if file is None:
 			return
-		template = yaml.load(file, Loader=CustomYamlLoader)
+
+		try:
+			template = json.loads(file)
+		except Exception:
+			template = yaml.load(file, Loader=CustomYamlLoader)
+
 		for t in template:
 			if isinstance(t, str):
 				# template with a single project root
