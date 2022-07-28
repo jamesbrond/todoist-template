@@ -3,6 +3,7 @@
 Divide et impera (divide and rule), or break up a complex template into pieces that are more easy to maintaine.
 
 In todoist-template you can include templates inside another with the custom `!include <filename>` handler.
+This feature **is not supported in JSON template** files.
 
 ```yaml
 # include_template_0.yml

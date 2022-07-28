@@ -48,6 +48,25 @@ Personal:
         due_string: fri
 ```
 
+## JSON Simple task
+
+Along YAML todoist-template support JSON template files:
+
+```json
+// simple_template_2.json
+{
+    "Inbox": {
+        "tasks": [
+            {
+                "content": "Simple inbox task",
+                "description": "A simple task in Todoist Inbox folder",
+                "priority": 3
+            }
+        ]
+    }
+}
+```
+
 For more information on how to define a task read [Task](./template_yaml_syntax.md#task)
 
 Next [Parameterized template](./param_template.md)

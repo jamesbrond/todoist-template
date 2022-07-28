@@ -4,7 +4,7 @@
 
 The aim of this project is to facilitate the creation of tasks on the Todoist platform thanks to simple templates.
 
-A template is nothing more than a file written in YAML whose structure reflects the hierarchy Project - Session (optional) - Task.
+A template is nothing more than a file written in YAML or JSON whose structure reflects the hierarchy Project - Session (optional) - Task.
 Projects, sessions and labels are automatically created if they do not already exist on your Todoist.
 
 Todoist templates always create a new project, while the big difference here is that with todoist-template you can add tasks to existing projects or to the Inbox.
@@ -80,7 +80,7 @@ Where options are:
 
 | Option                   | Default   | Description                                    |
 |--------------------------|-----------|------------------------------------------------|
-| TEMPLATE                 | stdin     | Mandatory path to the YAML template file       |
+| TEMPLATE                 | stdin     | Mandatory path to the YAML or JSON template file       |
 | -h, --help               |           | Show help message and exit                     |
 | -D KEY0=VAL0,KEY1=VAL1...|           | The placeholder values replaced in template    |
 | --id SERVICE_ID          | TODOIST-TEMPLATE | Keyring service name where store Todoist API Token |
