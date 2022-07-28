@@ -58,8 +58,9 @@ class TodoistTemplate:
 			project = self.api.add_project(**prj)
 			self.projects.append(project)
 			project_id = project.id
+			is_new = True
 
-		logging.info(f"Project: {name} ({project_id})")
+		logging.info(f"Project: {self._isnew(is_new)}{name} ({project_id})")
 
 		sections = list(inner)
 		for section in sections:
@@ -81,8 +82,9 @@ class TodoistTemplate:
 			section_object = self.api.add_section(**sec)
 			self.sections.append(section_object)
 			section_id = section_object.id
+			is_new = True
 
-		logging.info(f"Section: {name} ({section_id})")
+		logging.info(f"Section: {self._isnew(is_new)}{name} ({section_id})")
 
 		if "tasks" in content:
 			for task in content["tasks"]:
@@ -117,10 +119,13 @@ class TodoistTemplate:
 		n = self._replace(name, placeholders)
 		label_id = utils.find_needle_in_haystack([n], self.labels)
 		if label_id is None:
-			logging.debug(f"create label {n}")
 			label = self.api.add_label(name=n)
 			label_id = label.id
+			logging.debug(f"Label: {self._isnew(True)}{n} ({label_id})")
 			self.labels.append(label)
 		return label_id
+
+	def _isnew(self, b):
+		return '[NEW] ' if b else ''
 
 # ~@:-]
