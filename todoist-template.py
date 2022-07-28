@@ -18,7 +18,9 @@ def parse_cmd_line():
 	# positional arguments:
 	parser.add_argument(
 		'template',
-		type=argparse.FileType('r', encoding="utf8"))
+		nargs='?',
+		type=argparse.FileType('r', encoding="utf8"),
+		default=sys.stdin)
 
 	# options
 	parser.add_argument("-D",
