@@ -51,6 +51,7 @@ class TodoistTemplate:
 				self._task(project_id=None, section_id=None, parent_id=None, task=task, placeholders=placeholders)
 			return
 		project_id = utils.find_needle_in_haystack([name], self.projects)
+		is_new = False
 		if project_id is None:
 			prj = self._parse_items(inner, ["color", "favorite"])
 			prj["name"] = self._replace(name, placeholders)
@@ -73,6 +74,7 @@ class TodoistTemplate:
 
 	def _section(self, project_id, name, content, placeholders):
 		section_id = utils.find_needle_in_haystack([name, project_id], self.sections, ["name", "project_id"])
+		is_new = False
 		if section_id is None:
 			sec = {
 				"name": self._replace(name, placeholders),
