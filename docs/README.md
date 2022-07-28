@@ -56,6 +56,20 @@ There are multiple reasons why virtual environments are a good idea and these ar
   pip install -r requirements.txt
   ```
 
+### Authorization token
+
+todoist-template uses Todoist REST API, in order to make authorized calls, you must provide the [Todoist authorization token](https://developer.todoist.com/rest/v1/?python#next-steps).
+
+When you run todoist-template for the first time, the application will ask you for the Todoist authorization token and it will be stored in the system keyring service.
+These keyring backends are supported:
+
+- macOS Keychain
+- Freedesktop Secret Service supports many IDE including GNOME (requires secretstorage)
+- KDE4 & KDE5 KWallet (requires dbus)
+- Windows Credential Locker
+
+To use todoist-template with different authorization tokens use the `--id` arguments (see [Run todoist-template](./README.md#run-todoist-template)).
+
 ### Run todoist-template
 
 ```shell
@@ -69,9 +83,21 @@ Where options are:
 | TEMPLATE                 |           | Mandatory path to the YAML template file       |
 | -h, --help               |           | Show help message and exit                     |
 | -D KEY0=VAL0,KEY1=VAL1...|           | The placeholder values replaced in template    |
+| --id SERVICE_ID          | TODOIST-TEMPLATE | Keyring service name where store Todoist API Token |
 | --version                |           | Show program's version number and exit         |
 | -d, --debug              | False     | More verbose output. Default log level is INFO |
 | -q, --quiet              | False     | Suppress output                                |
+
+Run todoist-template from different users specify differnet keyring service name:
+
+```shell
+python todoist-template.py [options] --id JHON-TOKENS
+```
+
+```shell
+python todoist-template.py [options] --id MARY-TOKENS
+```
+
 
 ## Template
 
@@ -99,9 +125,9 @@ See [our contributing guide](./CONTRIBUTING.md).
 
 ## Links
 
-- Project homepage: https://jamesbrond.github.com/todoist-template/
-- Repository: https://github.com/jamesbrond/todoist-template/
-- Issue tracker: https://github.com/jamesbrond/todoist-template/issues
+- Project homepage: <https://jamesbrond.github.com/todoist-template/>
+- Repository: <https://github.com/jamesbrond/todoist-template/>
+- Issue tracker: <https://github.com/jamesbrond/todoist-template/issues>
 
 ## Licensing
 
