@@ -122,7 +122,7 @@ To learn how to write and use templates please read the template examples:
 > Template with placeholder replaced runtime
 
 [Complex template](./template/complex_template.md)
-> Templete with multiple projects and sections
+> Templete with multiple projects and sections and sub-tasks
 
 [Inlcude templates](./template/include_template.md)
 > Include templates to create a more complex template
