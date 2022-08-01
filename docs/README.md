@@ -87,6 +87,7 @@ Where options are:
 | --version                |           | Show program's version number and exit         |
 | -d, --debug              | False     | More verbose output. Default log level is INFO |
 | -q, --quiet              | False     | Suppress output                                |
+| -t, --test               | False     | Do not perform any actions on Todoist.com, just log them |
 
 Example
 
