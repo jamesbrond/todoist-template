@@ -1,3 +1,4 @@
+import re
 import json
 import yaml
 import logging
@@ -40,7 +41,7 @@ class TodoistTemplate:
 				p = list(t)[0]
 				self._project(p, t[p], placelholders)
 
-	def _parse_items(self, obj, list_keys, placeholders=None):
+	def _parse_items(self, obj, list_keys, placeholders={}):
 		item = {}
 		for k in list_keys:
 			if k in obj:
@@ -48,20 +49,26 @@ class TodoistTemplate:
 		return item
 
 	def _replace(self, value, placeholders):
-		if value is not None and isinstance(value, str) and placeholders is not None:
-			return value.format(**placeholders)
-		return value
+		result = re.search(r"\{([^|]+)\s*[|]?\s*(.*)\}", value)
+		if not result:
+			return value
+
+		var = result.group(1)
+		default = result.group(2)
+		replace = placeholders.get(var)
+		return str(replace) if replace else str(default)
 
 	def _project(self, name, inner, placeholders):
 		if name == "tasks":
 			for task in inner:
 				self._task(project_id=None, section_id=None, parent_id=None, task=task, placeholders=placeholders)
 			return
-		project_id = utils.find_needle_in_haystack([name], self.projects)
+		rep_name = self._replace(name, placeholders)
+		project_id = utils.find_needle_in_haystack([rep_name], self.projects)
 		if project_id is None:
-			project_id = self._create_project(name, inner, placeholders)
+			project_id = self._create_project(rep_name, inner, placeholders)
 		else:
-			logging.info(f"Project: {name} ({project_id})")
+			logging.info(f"Project: {rep_name} ({project_id})")
 
 		sections = list(inner)
 		for section in sections:
@@ -118,19 +125,19 @@ class TodoistTemplate:
 			if not self.is_test:
 				label = self.api.add_label(name=n)
 				label_id = label.id
-				logging.debug(f"Label: {self._isnew()}{n} ({label_id})")
+				logging.debug(f"Label: {self._isnew()} {n} ({label_id})")
 				self.labels.append(label)
 			else:
 				label_id = None
-			logging.debug(f"Label: {self._isnew()}{n} ({label_id})")
+			logging.debug(f"Label: {self._isnew()} {n} ({label_id})")
 		return label_id
 
 	def _isnew(self):
-		return '[NEW] '
+		return '[NEW]'
 
 	def _create_project(self, name, inner, placeholders):
-		prj = self._parse_items(inner, ["color", "favorite"])
-		prj["name"] = self._replace(name, placeholders)
+		prj = self._parse_items(inner, ["color", "favorite"], placeholders)
+		prj["name"] = name
 		logging.debug(f"create project {prj}")
 		if not self.is_test:
 			project = self.api.add_project(**prj)
@@ -138,7 +145,7 @@ class TodoistTemplate:
 			project_id = project.id
 		else:
 			project_id = None
-		logging.info(f"Project: {self._isnew()}{name} ({project_id})")
+		logging.info(f"Project: {self._isnew()} {prj['name']} ({project_id})")
 		return project_id
 
 	def _create_session(self, project_id, name, placeholders):
@@ -153,7 +160,7 @@ class TodoistTemplate:
 			section_id = section_object.id
 		else:
 			section_id = None
-		logging.info(f"Section: {self._isnew()}{name} ({section_id})")
+		logging.info(f"Section: {self._isnew()} {sec['name']} ({section_id})")
 		return section_id
 
 # ~@:-]

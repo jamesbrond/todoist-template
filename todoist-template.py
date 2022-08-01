@@ -33,6 +33,7 @@ def parse_cmd_line():
 		dest='placeholders',
 		action=StoreDictKeyPair,
 		metavar="KEY0=VAL0,KEY1=VAL1...",
+		default={},
 		help='the placeholder values replaced in template')
 
 	parser.add_argument('--version',
@@ -58,7 +59,7 @@ def parse_cmd_line():
 		dest='is_test',
 		default=False,
 		action='store_true',
-		help='do not perform any actions on Todoist.com, just log them')
+		help='do not perform any actions on Todoist.com, just logs them')
 
 	return parser.parse_args()
 
