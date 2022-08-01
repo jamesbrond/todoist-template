@@ -30,7 +30,7 @@ def parse_cmd_line():
 
 	# options
 	parser.add_argument("-D",
-		dest="placeholders",
+		dest='placeholders',
 		action=StoreDictKeyPair,
 		metavar="KEY0=VAL0,KEY1=VAL1...",
 		help='the placeholder values replaced in template')
@@ -54,6 +54,12 @@ def parse_cmd_line():
 		default=logging.INFO, action='store_const', const=logging.NOTSET,
 		help='suppress output')
 
+	parser.add_argument('-t', '--test',
+		dest='is_test',
+		default=False,
+		action='store_true',
+		help='do not perform any actions on Todoist.com, just log them')
+
 	return parser.parse_args()
 
 
@@ -70,7 +76,7 @@ def main():
 			keyring.setup(args.service_id)
 			api_token = keyring.get_api_token(args.service_id)
 
-		tmpl = TodoistTemplate(api_token)
+		tmpl = TodoistTemplate(api_token, args.is_test)
 		with args.template as file:
 			logging.debug(f"open file {file}")
 			tmpl.parse(file, args.placeholders)

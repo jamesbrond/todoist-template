@@ -2,6 +2,7 @@ import json
 import yaml
 import logging
 import lib.utils as utils
+from types import SimpleNamespace
 from todoist_api_python.api import TodoistAPI
 from lib.CustomYamlLoader import CustomYamlLoader
 
@@ -10,11 +11,12 @@ class TodoistTemplate:
 	Import YAML template file into Todoist application
 	"""
 
-	def __init__(self, api_token):
+	def __init__(self, api_token, is_test=False):
 		self.api = TodoistAPI(api_token)
 		self.projects = self.api.get_projects()
 		self.sections = self.api.get_sections()
 		self.labels = self.api.get_labels()
+		self.is_test = is_test
 
 	def parse(self, file, placelholders):
 		"""
@@ -56,17 +58,10 @@ class TodoistTemplate:
 				self._task(project_id=None, section_id=None, parent_id=None, task=task, placeholders=placeholders)
 			return
 		project_id = utils.find_needle_in_haystack([name], self.projects)
-		is_new = False
 		if project_id is None:
-			prj = self._parse_items(inner, ["color", "favorite"])
-			prj["name"] = self._replace(name, placeholders)
-			logging.debug(f"create project {prj}")
-			project = self.api.add_project(**prj)
-			self.projects.append(project)
-			project_id = project.id
-			is_new = True
-
-		logging.info(f"Project: {self._isnew(is_new)}{name} ({project_id})")
+			project_id = self._create_project(name, inner, placeholders)
+		else:
+			logging.info(f"Project: {name} ({project_id})")
 
 		sections = list(inner)
 		for section in sections:
@@ -79,19 +74,10 @@ class TodoistTemplate:
 
 	def _section(self, project_id, name, content, placeholders):
 		section_id = utils.find_needle_in_haystack([name, project_id], self.sections, ["name", "project_id"])
-		is_new = False
 		if section_id is None:
-			sec = {
-				"name": self._replace(name, placeholders),
-				"project_id": project_id
-			}
-			logging.debug(f"create section {sec}")
-			section_object = self.api.add_section(**sec)
-			self.sections.append(section_object)
-			section_id = section_object.id
-			is_new = True
-
-		logging.info(f"Section: {self._isnew(is_new)}{name} ({section_id})")
+			section_id = self._create_session(project_id, name, placeholders)
+		else:
+			logging.info(f"Section: {name} ({section_id})")
 
 		if "tasks" in content:
 			for task in content["tasks"]:
@@ -114,9 +100,12 @@ class TodoistTemplate:
 			tsk["label_ids"] = label_ids
 
 		logging.debug(f"create task {tsk}")
-		t = self.api.add_task(**tsk)
-		logging.info(f"Task: {t.content} ({t.id})")
-
+		if not self.is_test:
+			t = self.api.add_task(**tsk)
+			logging.info(f"Task: {t.content} ({t.id})")
+		else:
+			t = SimpleNamespace(**{'id': None})
+			logging.info(f"Task: {tsk.get('content')} (None)")
 		if "tasks" in task:
 			for subtask in task["tasks"]:
 				self._task(project_id=None, section_id=None, parent_id=t.id, task=subtask, placeholders=placeholders)
@@ -126,13 +115,45 @@ class TodoistTemplate:
 		n = self._replace(name, placeholders)
 		label_id = utils.find_needle_in_haystack([n], self.labels)
 		if label_id is None:
-			label = self.api.add_label(name=n)
-			label_id = label.id
-			logging.debug(f"Label: {self._isnew(True)}{n} ({label_id})")
-			self.labels.append(label)
+			if not self.is_test:
+				label = self.api.add_label(name=n)
+				label_id = label.id
+				logging.debug(f"Label: {self._isnew()}{n} ({label_id})")
+				self.labels.append(label)
+			else:
+				label_id = None
+			logging.debug(f"Label: {self._isnew()}{n} ({label_id})")
 		return label_id
 
-	def _isnew(self, b):
-		return '[NEW] ' if b else ''
+	def _isnew(self):
+		return '[NEW] '
+
+	def _create_project(self, name, inner, placeholders):
+		prj = self._parse_items(inner, ["color", "favorite"])
+		prj["name"] = self._replace(name, placeholders)
+		logging.debug(f"create project {prj}")
+		if not self.is_test:
+			project = self.api.add_project(**prj)
+			self.projects.append(project)
+			project_id = project.id
+		else:
+			project_id = None
+		logging.info(f"Project: {self._isnew()}{name} ({project_id})")
+		return project_id
+
+	def _create_session(self, project_id, name, placeholders):
+		sec = {
+			"name": self._replace(name, placeholders),
+			"project_id": project_id
+		}
+		logging.debug(f"create section {sec}")
+		if not self.is_test:
+			section_object = self.api.add_section(**sec)
+			self.sections.append(section_object)
+			section_id = section_object.id
+		else:
+			section_id = None
+		logging.info(f"Section: {self._isnew()}{name} ({section_id})")
+		return section_id
 
 # ~@:-]
