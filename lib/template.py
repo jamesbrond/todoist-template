@@ -100,19 +100,30 @@ class TodoistTemplate:
 		elif parent_id is not None:
 			tsk["parent_id"] = parent_id
 
+
 		if "labels" in task:
 			label_ids = []
 			for label in task["labels"]:
 				label_ids.append(self._label(label, placeholders))
 			tsk["label_ids"] = label_ids
 
-		logging.debug(f"create task {tsk}")
-		if not self.is_test:
-			t = self.api.add_task(**tsk)
-			logging.info(f"Task: {t.content} ({t.id})")
+		task_id = self._get_tasks(tsk)
+
+		if task_id is None:
+			logging.debug(f"create task {tsk}")
+			if not self.is_test:
+				t = self.api.add_task(**tsk)
+			else:
+				t = SimpleNamespace(**{'id': None})
+			logging.info(f"Task: {self._isnew()} {tsk['content']} ({t.id})")
+
 		else:
-			t = SimpleNamespace(**{'id': None})
-			logging.info(f"Task: {tsk.get('content')} (None)")
+			# update task
+			logging.info(f"Task: {tsk['content']} ({task_id})")
+			tsk['task_id'] = task_id
+			self.api.update_task(**tsk)
+			t = SimpleNamespace(**{'id': task_id})
+
 		if "tasks" in task:
 			for subtask in task["tasks"]:
 				self._task(project_id=None, section_id=None, parent_id=t.id, task=subtask, placeholders=placeholders)
@@ -162,5 +173,17 @@ class TodoistTemplate:
 			section_id = None
 		logging.info(f"Section: {self._isnew()} {sec['name']} ({section_id})")
 		return section_id
+
+	def _get_tasks(self, tsk):
+		project_id = tsk.get('project_id')
+		section_id = tsk.get('section_id')
+		if not project_id and not section_id:
+			return None
+		query = {
+			'project_id': project_id,
+			'section_id': section_id
+		}
+		tasks = self.api.get_tasks(**query)
+		return utils.find_needle_in_haystack([tsk.get('content')], tasks, ["content"])
 
 # ~@:-]
