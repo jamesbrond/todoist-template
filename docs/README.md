@@ -19,7 +19,7 @@ Ensure that the following prerequisites are met:
 - You have installed Python. If you're using macOS or Linux, your computer already has Python installed. You can get Python from [python.org](http://python.org/download/).
 
 - Next step is to install and activate a Python virtual environments. It allow you to install Python packages in an isolated location from the rest of your system instead of installing them system-wide.
-There are multiple reasons why virtual environments are a good idea and these are also the reason why I’m telling you about them before we continue to the part where we start installing 3rd party packages.
+There are multiple reasons why virtual environments are a good idea and these are also the reason why I’m telling you about them before we continue to the part where we start installing third-party packages.
 
   - Preventing version conflicts
   - Easy to reproduce and install
