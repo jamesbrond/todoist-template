@@ -1,9 +1,10 @@
+import logging
 import re
 import json
 import yaml
-import logging
 from lib.todoist import Todoist
 from lib.CustomYamlLoader import CustomYamlLoader
+
 
 class TodoistTemplate:
     """
@@ -35,7 +36,7 @@ class TodoistTemplate:
                 p = list(t)[0]
                 self._project(p, t[p], placelholders)
 
-    def _parse_items(self, obj, list_keys, placeholders={}):
+    def _parse_items(self, obj, list_keys, placeholders=None):
         item = {}
         for k in list_keys:
             if k in obj:
@@ -44,7 +45,7 @@ class TodoistTemplate:
 
     def _replace(self, value, placeholders):
         result = re.search(r"\{([^|]+)\s*[|]?\s*(.*)\}", value)
-        if not result:
+        if not result or not placeholders:
             return value
 
         var = result.group(1)
@@ -55,21 +56,36 @@ class TodoistTemplate:
     def _project(self, name, inner, placeholders):
         if name == "tasks":
             for task in inner:
-                self._task(project_id=None, section_id=None, parent_id=None, task=task, placeholders=placeholders)
+                self._task(
+                    project_id=None,
+                    section_id=None,
+                    parent_id=None,
+                    task=task,
+                    placeholders=placeholders
+                )
             return
         replaced_name = self._replace(name, placeholders)
         project_id = self.api.exists_project(replaced_name)
         is_new = False
         if not project_id:
             is_new = True
-            project_id = self.api.add_project(replaced_name, self._parse_items(inner, ["color", "favorite"], placeholders))
+            project_id = self.api.add_project(
+                replaced_name,
+                **self._parse_items(inner, ["color", "favorite"], placeholders)
+            )
         logging.info(f"Project: {self._isnew(is_new)}{replaced_name} ({project_id})")
 
         sections = list(inner)
         for section in sections:
             if section == "tasks":
                 for task in inner[section]:
-                    self._task(project_id=project_id, section_id=None, parent_id=None, task=task, placeholders=placeholders)
+                    self._task(
+                        project_id=project_id,
+                        section_id=None,
+                        parent_id=None,
+                        task=task,
+                        placeholders=placeholders
+                    )
             else:
                 logging.debug(f"{section}: {inner[section]}")
                 self._section(project_id, section, inner[section], placeholders)
@@ -86,10 +102,20 @@ class TodoistTemplate:
 
         if "tasks" in content:
             for task in content["tasks"]:
-                self._task(project_id=None, section_id=section_id, parent_id=None, task=task, placeholders=placeholders)
+                self._task(
+                    project_id=None,
+                    section_id=section_id,
+                    parent_id=None,
+                    task=task,
+                    placeholders=placeholders
+                )
 
     def _task(self, project_id, section_id, parent_id, task, placeholders):
-        replaced_task = self._parse_items(task, ["content", "description", "completed", "priority", "due_string"], placeholders)
+        replaced_task = self._parse_items(
+            task,
+            ["content", "description", "completed", "priority", "due_string"],
+            placeholders
+        )
 
         if section_id is not None:
             replaced_task["section_id"] = section_id
@@ -104,7 +130,7 @@ class TodoistTemplate:
                 label_ids.append(self._label(label, placeholders))
             replaced_task["label_ids"] = label_ids
 
-        task_id = self.api.exists_task(project_id, section_id, replaced_task['content'])
+        task_id = self.api.exists_task(project_id, section_id, replaced_task["content"])
         if task_id:
             is_new = False
             self.api.update_task(task_id, **replaced_task)
@@ -116,7 +142,13 @@ class TodoistTemplate:
 
         if "tasks" in task:
             for subtask in task["tasks"]:
-                self._task(project_id=None, section_id=None, parent_id=task_id, task=subtask, placeholders=placeholders)
+                self._task(
+                    project_id=None,
+                    section_id=None,
+                    parent_id=task_id,
+                    task=subtask,
+                    placeholders=placeholders
+                )
         return task_id
 
     def _label(self, name, placeholders):
@@ -130,6 +162,6 @@ class TodoistTemplate:
         return label_id
 
     def _isnew(self, b):
-        return '[NEW] ' if b else ''
+        return "[NEW] " if b else ""
 
 # ~@:-]

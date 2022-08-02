@@ -59,7 +59,7 @@ Run with argument `-D dayofweek=Monday` to have a recursive task every Monday.
 
 ## Default values
 
-You can specify a default value that will be used when the command line value is not provided.
+You can specify a default value that will be used when the command-line value is not provided.
 
 In order to set a default value use the pipe (`|`) characther after variable name:
 
