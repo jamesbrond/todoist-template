@@ -24,17 +24,6 @@ jobs:
         uses: github/super-linter@v4
         env:
           VALIDATE_ALL_CODEBASE: false
-          # Flag to enable or disable the linting process of the Python language. (Utilizing: pylint) (keep for backward compatibility)
-          VALIDATE_PYTHON: false
-          # Flag to enable or disable the linting process of the Python language. (Utilizing: black)
-          VALIDATE_PYTHON_BLACK: false
-          # Flag to enable or disable the linting process of the Python language. (Utilizing: flake8)
-          VALIDATE_PYTHON_FLAKE8: false
-          # Flag to enable or disable the linting process of the Python language. (Utilizing: isort)
-          VALIDATE_PYTHON_ISORT: false
-          # Flag to enable or disable the linting process of the Python language. (Utilizing: mypy)
-          VALIDATE_PYTHON_MYPY: false
-          # Flag to enable or disable the linting process of the Python language. (Utilizing: pylint)
           VALIDATE_PYTHON_PYLINT: true
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
