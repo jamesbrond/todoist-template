@@ -112,7 +112,6 @@ class TodoistTemplate:
                 )
 
     def _task(self, project_id, section_id, parent_id, task, placeholders):
-        print(task)
         replaced_task = self._parse_items(
             task,
             ["content", "description", "completed", "priority", "due_string"],
