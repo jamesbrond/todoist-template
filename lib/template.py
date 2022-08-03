@@ -1,10 +1,9 @@
+"""Tansform a template into Todoist tasks"""
+
 import logging
 import re
-import json
-import yaml
 from lib.todoist import Todoist
-from lib.CustomYamlLoader import CustomYamlLoader
-
+from lib.loader.loaderfactory import TemplateLoaderFactory
 
 class TodoistTemplate:
     """
@@ -22,19 +21,19 @@ class TodoistTemplate:
         if file is None:
             return
 
-        try:
-            template = json.loads(file)
-        except Exception:
-            template = yaml.load(file, Loader=CustomYamlLoader)
+        template_loader = TemplateLoaderFactory().get_loader(file.name)
+        logging.debug("use %s to load '%s' file", template_loader.__class__.__name__, file.name)
 
-        for t in template:
-            if isinstance(t, str):
+        template = template_loader.load(file)
+
+        for templ in template:
+            if isinstance(templ, str):
                 # template with a single project root
-                self._project(t, template[t], placelholders)
+                self._project(templ, template[templ], placelholders)
             else:
                 # template with multiple projects
-                p = list(t)[0]
-                self._project(p, t[p], placelholders)
+                prj = list(templ)[0]
+                self._project(prj, templ[prj], placelholders)
 
     def _parse_items(self, obj, list_keys, placeholders=None):
         item = {}
@@ -44,6 +43,9 @@ class TodoistTemplate:
         return item
 
     def _replace(self, value, placeholders):
+        if not isinstance(value, str):
+            # {placholder} are always strings
+            return value
         result = re.search(r"\{([^|]+)\s*[|]?\s*(.*)\}", value)
         if not result or not placeholders:
             return value
@@ -73,7 +75,7 @@ class TodoistTemplate:
                 replaced_name,
                 **self._parse_items(inner, ["color", "favorite"], placeholders)
             )
-        logging.info(f"Project: {self._isnew(is_new)}{replaced_name} ({project_id})")
+        logging.info("Project: %s%s (%d)", self._isnew(is_new), replaced_name, project_id)
 
         sections = list(inner)
         for section in sections:
@@ -87,7 +89,6 @@ class TodoistTemplate:
                         placeholders=placeholders
                     )
             else:
-                logging.debug(f"{section}: {inner[section]}")
                 self._section(project_id, section, inner[section], placeholders)
 
     def _section(self, project_id, name, content, placeholders):
@@ -98,7 +99,7 @@ class TodoistTemplate:
         if not section_id:
             is_new = True
             section_id = self.api.add_section(replaced_name)
-        logging.info(f"Section: {self._isnew(is_new)}{replaced_name} ({section_id})")
+        logging.info("Section: %s%s (%d)", self._isnew(is_new), replaced_name, section_id)
 
         if "tasks" in content:
             for task in content["tasks"]:
@@ -111,6 +112,7 @@ class TodoistTemplate:
                 )
 
     def _task(self, project_id, section_id, parent_id, task, placeholders):
+        print(task)
         replaced_task = self._parse_items(
             task,
             ["content", "description", "completed", "priority", "due_string"],
@@ -137,7 +139,7 @@ class TodoistTemplate:
         else:
             is_new = True
             task_id = self.api.add_task(**replaced_task)
-        logging.info(f"Task: {self._isnew(is_new)}{replaced_task['content']} ({task_id})")
+        logging.info("Task: %s%s (%d)", self._isnew(is_new), replaced_task['content'], task_id)
 
 
         if "tasks" in task:
@@ -158,10 +160,11 @@ class TodoistTemplate:
         if not label_id:
             label_id = self.api.add_label(replaced_label)
             is_new = True
-        logging.debug(f"Label: {self._isnew(is_new)} {replaced_label} ({label_id})")
+        logging.debug("Label: %s%s (%d)", self._isnew(is_new), replaced_label, label_id)
         return label_id
 
-    def _isnew(self, b):
-        return "[NEW] " if b else ""
+    def _isnew(self, is_new):
+        return "[NEW] " if is_new else ""
+
 
 # ~@:-]

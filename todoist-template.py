@@ -5,21 +5,22 @@ import lib.key_ring as keyring
 from lib.template import TodoistTemplate
 
 
-def check_python_version():
+def _check_python_version():
     if sys.version_info < (3, 8) or sys.version_info >= (4, 0):
         raise SystemError("This script requires Python >= 3.8 and < 4")
     return 1
 
 
 class StoreDictKeyPair(argparse.Action):
+    """Argparse Action"""
     def __call__(self, parser, namespace, values, option_string=None):
         my_dict = {}
-        for kv in values.split(","):
-            k, v = kv.split("=")
-            my_dict[k] = v
+        for keyval in values.split(","):
+            key, val = keyval.split("=")
+            my_dict[key] = val
         setattr(namespace, self.dest, my_dict)
 
-def parse_cmd_line():
+def _parse_cmd_line():
     parser = argparse.ArgumentParser(
         prog="todoist-template.py",
         usage='%(prog)s [options]',
@@ -85,29 +86,30 @@ def parse_cmd_line():
 
 
 def main():
-    args = parse_cmd_line()
-    logging.basicConfig(level=args.loglevel, format="[%(levelname)s] %(message)s")
+    """Main function"""
+    args = _parse_cmd_line()
+    logging.basicConfig(level=args.loglevel, format="%(message)s")
 
     try:
-        check_python_version()
+        _check_python_version()
 
         api_token = keyring.get_api_token(args.service_id)
         while not api_token:
-            logging.warning(f"Todoist API token not found for {args.service_id} application.")
+            logging.warning("Todoist API token not found for %s application.", args.service_id)
             keyring.setup(args.service_id)
             api_token = keyring.get_api_token(args.service_id)
 
         tmpl = TodoistTemplate(api_token, args.is_test)
         with args.template as file:
-            logging.debug(f"open file {file}")
+            logging.debug("open file %s", file)
             tmpl.parse(file, args.placeholders)
 
         return 0
-    except Exception as e:
+    except Exception as exc:
         if logging.getLogger().isEnabledFor(logging.DEBUG):
-            logging.error(e, exc_info=True)
+            logging.error(exc, exc_info=True)
         else:
-            logging.error(e)
+            logging.error(exc)
         return 1
 
 

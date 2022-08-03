@@ -1,3 +1,5 @@
+"""Layer module to handle Todoist API"""
+
 import logging
 from todoist_api_python.api import TodoistAPI
 import lib.utils as utils
@@ -42,7 +44,8 @@ class Todoist:
         return self._exists(name, self.labels, ["name"])
 
     def exists_task(self, project_id, section_id, content):
-        """Returns the Todoist task ID if task exists in the given project or section; False otherwise"""
+        """Returns the Todoist task ID if task exists
+        in the given project or section; False otherwise"""
         if not project_id and not section_id:
             return False
         query = {"project_id": project_id, "section_id": section_id}
@@ -55,7 +58,7 @@ class Todoist:
             return None
         project = self.api.add_project(name=name, **kwargs)
         self.projects.append(project)
-        logging.debug(f"created new project: {str(project)}")
+        logging.debug("created new project: %s", project)
         return project.id
 
     def add_section(self, name, **kwargs):
@@ -64,7 +67,7 @@ class Todoist:
             return None
         section = self.api.add_section(name=name, **kwargs)
         self.sections.append(section)
-        logging.debug(f"created new section: {str(section)}")
+        logging.debug("created new section: %s", section)
         return section.id
 
     def add_label(self, name, **kwargs):
@@ -73,7 +76,7 @@ class Todoist:
             return None
         label = self.api.add_label(name=name, **kwargs)
         self.labels.append(label)
-        logging.debug(f"created new label: {str(label)}")
+        logging.debug("created new label: %s", label)
         return label.id
 
     def add_task(self, content: str, **kwargs):
@@ -81,14 +84,14 @@ class Todoist:
         if self.is_test:
             return None
         task = self.api.add_task(content, **kwargs)
-        logging.debug(f"created new task: {str(task)}")
+        logging.debug("created new task: %s", task)
         return task.id
 
     def update_task(self, task_id: int, **kwargs):
         """Modifies existing task"""
         if not self.is_test:
             self.api.update_task(task_id=task_id, **kwargs)
-            logging.debug(f"update task: {task_id}")
+            logging.debug("update task: %d", task_id)
         return True
 
     def _exists(self, needle, haystack, params):

@@ -1,3 +1,5 @@
+"""Utilities"""
+
 def find_needle_in_haystack(needles, haystack, params):
     """Find all needles in the array haystack filtering by params"""
     if len(needles) != len(params):
