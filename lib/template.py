@@ -25,23 +25,24 @@ class TodoistTemplate:
         logging.debug("use %s to load '%s' file", template_loader.__class__.__name__, file.name)
 
         template = template_loader.load(file)
-        try:
-            for templ in template:
-                if isinstance(templ, str):
-                    # template with a single project root
-                    self._project(templ, template[templ], placelholders)
-                else:
-                    # template with multiple projects
-                    prj = list(templ)[0]
-                    self._project(prj, templ[prj], placelholders)
-        except:
-            logging.error("Something went wrong: undo all changes")
-            self.api.rollback()
-            # re-throw exception to main
-            raise
+        if template:
+            try:
+                for templ in template:
+                    if isinstance(templ, str):
+                        # template with a single project root
+                        self._project(templ, template[templ], placelholders)
+                    else:
+                        # template with multiple projects
+                        prj = list(templ)[0]
+                        self._project(prj, templ[prj], placelholders)
+            except:
+                logging.error("Something went wrong: undo all changes")
+                self.api.rollback()
+                # re-throw exception to main
+                raise
 
-        if undofile:
-            self.api.store_rollback(undofile)
+            if undofile:
+                self.api.store_rollback(undofile)
 
     def rollback(self, file):
         """Applies rollback actions in file"""

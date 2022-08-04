@@ -1,18 +1,23 @@
+"""Implements Factroy Design Pattern to get different template loader according to file type"""
+
 import os
 import logging
 import mimetypes
+from lib.loader.csvloader import CsvTemplateLoader
 from lib.loader.jsonloader import JsonTemplateLoader
 from lib.loader.yamlloader import YamlTemplateLoader
 
 TEMPLATE_YAML = 1
 TEMPLATE_JSON = 2
+TEMPLATE_CSV  = 3
 
 MIMETYPES_MAP = {
     "application/json": TEMPLATE_JSON,
     "text/vnd.yaml": TEMPLATE_YAML,
     "text/yaml": TEMPLATE_YAML,
     "text/x-yaml": TEMPLATE_YAML,
-    "application/x-yaml": TEMPLATE_YAML
+    "application/x-yaml": TEMPLATE_YAML,
+    "text/csv": TEMPLATE_CSV
 }
 
 class TemplateLoaderFactory:
@@ -37,6 +42,8 @@ class TemplateLoaderFactory:
             return YamlTemplateLoader()
         if template_type == TEMPLATE_JSON:
             return JsonTemplateLoader()
+        if template_type == TEMPLATE_CSV:
+            return CsvTemplateLoader()
 
     def _guess_by_mimetypes(self, filepath):
         file_mimetype = mimetypes.MimeTypes().guess_type(filepath)[0]
