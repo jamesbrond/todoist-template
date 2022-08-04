@@ -114,15 +114,14 @@ class Todoist:
 
     def store_rollback(self, filepath):
         """Save rollback instructions to filepath"""
-        logging.debug("Save rollback commands to %s", filepath)
-        with open(filepath, "wb", encoding="utf8") as file:
+        logging.info("Save rollback commands to %s", filepath)
+        with open(filepath, "wb") as file:
             pickle.dump(self.undo_commands, file)
 
-    def load_rollback(self, filepath):
-        """Load rollback instructions from filepath"""
-        logging.debug("Load rollback commands from %s", filepath)
-        with open(filepath, "rb") as file:
-            self.undo_commands = pickle.load(file)
+    def load_rollback(self, file):
+        """Load rollback instructions from file"""
+        logging.info("Load rollback commands from %s", file.name)
+        self.undo_commands = pickle.load(file)
 
     def rollback(self, undo_commands=None):
         """Rollback todoist-template actions"""
@@ -166,7 +165,7 @@ class Todoist:
     def _new_undo_command(self, cmd_type, obj_id, args=None):
         cmd = {
             "type": cmd_type,
-            "uuid": str(uuid.uuid4()),
+            "uuid": utils.uid(),
             "args": {
                 "id": obj_id
             }

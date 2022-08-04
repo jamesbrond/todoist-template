@@ -1,6 +1,8 @@
 """Easily add tasks to Todoist with customizable YAML templates"""
 
+import os
 import sys
+import datetime
 import logging
 import argparse
 import lib.key_ring as keyring
@@ -83,6 +85,13 @@ def _parse_cmd_line():
         help="allows the %(prog)s command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object ids.",
     )
 
+    parser.add_argument(
+        "--undo",
+        dest="undo",
+        type=argparse.FileType("rb"),
+        help="loads undo file and rollbacks all operations in it"
+    )
+
     return parser.parse_args()
 
 
@@ -101,9 +110,17 @@ def main():
             api_token = keyring.get_api_token(args.service_id)
 
         tmpl = TodoistTemplate(api_token, args.is_test)
-        with args.template as file:
-            logging.debug("open file %s", file)
-            tmpl.parse(file, args.placeholders)
+        if args.undo:
+            if tmpl.rollback(args.undo):
+                args.undo.close()
+                logging.debug("remove file %s", args.undo.names)
+                os.remove(args.undo.name)
+        else:
+            script_folder = os.path.dirname(os.path.realpath(sys.argv[0]))
+            with args.template as file:
+                logging.debug("open file %s", file)
+                undofile = os.path.join(script_folder, f"{os.path.basename(file.name)}-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.undo")
+                tmpl.parse(file, args.placeholders, undofile)
 
         return 0
     except Exception as exc:

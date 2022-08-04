@@ -13,7 +13,7 @@ class TodoistTemplate:
     def __init__(self, api_token, is_test=False):
         self.api = Todoist(api_token, is_test)
 
-    def parse(self, file, placelholders):
+    def parse(self, file, placelholders, undofile=None):
         """
         Parse the template YAML file using placeholdes dictionary
         """
@@ -39,6 +39,14 @@ class TodoistTemplate:
             self.api.rollback()
             # re-throw exception to main
             raise
+
+        if undofile:
+            self.api.store_rollback(undofile)
+
+    def rollback(self, file):
+        """Applies rollback actions in file"""
+        self.api.load_rollback(file)
+        return self.api.rollback()
 
     def _parse_items(self, obj, list_keys, placeholders=None):
         item = {}
