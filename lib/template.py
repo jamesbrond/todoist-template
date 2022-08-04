@@ -25,15 +25,20 @@ class TodoistTemplate:
         logging.debug("use %s to load '%s' file", template_loader.__class__.__name__, file.name)
 
         template = template_loader.load(file)
-
-        for templ in template:
-            if isinstance(templ, str):
-                # template with a single project root
-                self._project(templ, template[templ], placelholders)
-            else:
-                # template with multiple projects
-                prj = list(templ)[0]
-                self._project(prj, templ[prj], placelholders)
+        try:
+            for templ in template:
+                if isinstance(templ, str):
+                    # template with a single project root
+                    self._project(templ, template[templ], placelholders)
+                else:
+                    # template with multiple projects
+                    prj = list(templ)[0]
+                    self._project(prj, templ[prj], placelholders)
+        except:
+            logging.error("Something went wrong: undo all changes")
+            self.api.rollback()
+            # re-throw exception to main
+            raise
 
     def _parse_items(self, obj, list_keys, placeholders=None):
         item = {}
@@ -139,7 +144,6 @@ class TodoistTemplate:
             is_new = True
             task_id = self.api.add_task(**replaced_task)
         logging.info("Task: %s%s (%d)", self._isnew(is_new), replaced_task['content'], task_id)
-
 
         if "tasks" in task:
             for subtask in task["tasks"]:
