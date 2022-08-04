@@ -1,3 +1,5 @@
+"""Easily add tasks to Todoist with customizable YAML templates"""
+
 import sys
 import logging
 import argparse
@@ -74,12 +76,11 @@ def _parse_cmd_line():
     )
 
     parser.add_argument(
-        "-t",
-        "--test",
+        "--dry-run",
         dest="is_test",
         default=False,
         action="store_true",
-        help="do not perform any actions on Todoist.com, just logs them",
+        help="allows the %(prog)s command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object ids.",
     )
 
     return parser.parse_args()
@@ -106,10 +107,7 @@ def main():
 
         return 0
     except Exception as exc:
-        if logging.getLogger().isEnabledFor(logging.DEBUG):
-            logging.error(exc, exc_info=True)
-        else:
-            logging.error(exc)
+        logging.error(exc, exc_info=logging.getLogger().isEnabledFor(logging.DEBUG))
         return 1
 
 
