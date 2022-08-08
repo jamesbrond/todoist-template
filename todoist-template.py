@@ -92,6 +92,12 @@ def _parse_cmd_line():
         help="loads undo file and rollbacks all operations in it"
     )
 
+    parser.add_argument(
+        "--token",
+        dest="token",
+        help="the Todoist authorization token"
+    )
+
     return parser.parse_args()
 
 
@@ -103,7 +109,8 @@ def main():
     try:
         _check_python_version()
 
-        api_token = keyring.get_api_token(args.service_id)
+        api_token = args.token if args.token else keyring.get_api_token(args.service_id)
+
         while not api_token:
             logging.warning("Todoist API token not found for %s application.", args.service_id)
             keyring.setup(args.service_id)
