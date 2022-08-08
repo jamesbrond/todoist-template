@@ -46,7 +46,7 @@ Where options are:
 | --version                |           | Show program's version number and exit         |
 | -d, --debug              | False     | More verbose output. Default log level is INFO |
 | -q, --quiet              | False     | Suppress output                                |
-| --dry-run                | False     | Allows the `todoist-template` command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object ids. |
+| --dry-run                | False     | Allows the `todoist-template` command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object IDs. |
 | --undo UNDOFILE          |           | Loads undo file and rollbacks all operations in it |
 
 Example
