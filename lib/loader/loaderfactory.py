@@ -7,9 +7,9 @@ from lib.loader.csvloader import CsvTemplateLoader
 from lib.loader.jsonloader import JsonTemplateLoader
 from lib.loader.yamlloader import YamlTemplateLoader
 
-TEMPLATE_YAML = 1
-TEMPLATE_JSON = 2
-TEMPLATE_CSV  = 3
+TEMPLATE_YAML = "YamlTemplateLoader"
+TEMPLATE_JSON = "JsonTemplateLoader"
+TEMPLATE_CSV  = "CsvTemplateLoader"
 
 MIMETYPES_MAP = {
     "application/json": TEMPLATE_JSON,
@@ -38,12 +38,8 @@ class TemplateLoaderFactory:
                 # if template_type is still None raise exception
                 raise ValueError(f"Cannot find template loader for {filepath}")
 
-        if template_type == TEMPLATE_YAML:
-            return YamlTemplateLoader()
-        if template_type == TEMPLATE_JSON:
-            return JsonTemplateLoader()
-        if template_type == TEMPLATE_CSV:
-            return CsvTemplateLoader()
+        loader = globals()[template_type]
+        return loader()
 
     def _guess_by_mimetypes(self, filepath):
         file_mimetype = mimetypes.MimeTypes().guess_type(filepath)[0]
@@ -60,6 +56,9 @@ class TemplateLoaderFactory:
         if ext in (".json"):
             logging.debug("JSON extension %s", ext)
             return TEMPLATE_JSON
+        if ext in (".csv"):
+            logging.debug("CSV extension %s", ext)
+            return TEMPLATE_CSV
         return None
 
 # ~@:-]
