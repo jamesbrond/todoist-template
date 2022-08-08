@@ -122,7 +122,7 @@ def main():
                 undofile = os.path.join(
                     script_folder,
                     f"{os.path.basename(file.name)}-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.undo"
-                )
+                ) if args.is_test is False else None
                 tmpl.parse(file, args.placeholders, undofile)
 
         return 0
