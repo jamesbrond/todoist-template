@@ -89,7 +89,7 @@ class TodoistTemplate:
                 replaced_name,
                 **self._parse_items(inner, ["color", "favorite"], placeholders)
             )
-        logging.info("Project: %s%s (%d)", self._isnew(is_new), replaced_name, project_id)
+        logging.info("Project: %s%s (%s)", self._isnew(is_new), replaced_name, project_id)
 
         sections = list(inner)
         for section in sections:
@@ -113,7 +113,7 @@ class TodoistTemplate:
         if not section_id:
             is_new = True
             section_id = self.api.add_section(replaced_name)
-        logging.info("Section: %s%s (%d)", self._isnew(is_new), replaced_name, section_id)
+        logging.info("Section: %s%s (%s)", self._isnew(is_new), replaced_name, section_id)
 
         if "tasks" in content:
             for task in content["tasks"]:
@@ -152,7 +152,7 @@ class TodoistTemplate:
         else:
             is_new = True
             task_id = self.api.add_task(**replaced_task)
-        logging.info("Task: %s%s (%d)", self._isnew(is_new), replaced_task['content'], task_id)
+        logging.info("Task: %s%s (%s)", self._isnew(is_new), replaced_task['content'], task_id)
 
         if "tasks" in task:
             for subtask in task["tasks"]:
@@ -172,7 +172,7 @@ class TodoistTemplate:
         if not label_id:
             label_id = self.api.add_label(replaced_label)
             is_new = True
-        logging.debug("Label: %s%s (%d)", self._isnew(is_new), replaced_label, label_id)
+        logging.debug("Label: %s%s (%s)", self._isnew(is_new), replaced_label, label_id)
         return label_id
 
     def _isnew(self, is_new):
