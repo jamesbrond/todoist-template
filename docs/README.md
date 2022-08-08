@@ -27,7 +27,7 @@ These keyring backends are supported:
 - KDE4 & KDE5 KWallet (requires dbus)
 - Windows Credential Locker
 
-To use todoist-template with different authorization tokens use the `--id` arguments (see [Run todoist-template](./README.md#run-todoist-template)).
+To use todoist-template with different authorization tokens use the `--id` arguments (see [Run todoist-template](./README.md#run-todoist-template)) or specify `--token` argument.
 
 ### Run todoist-template
 
@@ -37,17 +37,18 @@ python todoist-template.py [options]
 
 Where options are:
 
-| Option                   | Default   | Description                                    |
-|--------------------------|-----------|------------------------------------------------|
-| TEMPLATE                 | stdin     | Mandatory path to the YAML or JSON template file       |
-| -h, --help               |           | Show help message and exit                     |
-| -D KEY0=VAL0,KEY1=VAL1...|           | The placeholder values replaced in template    |
+| Option                   | Default   | Description                                               |
+|--------------------------|-----------|-----------------------------------------------------------|
+| TEMPLATE                 | stdin     | Mandatory path to the YAML or JSON template file          |
+| -h, --help               |           | Show help message and exit                                |
+| -D KEY0=VAL0,KEY1=VAL1...|           | The placeholder values replaced in template               |
 | --id SERVICE_ID          | TODOIST-TEMPLATE | Keyring service name where store Todoist API Token |
-| --version                |           | Show program's version number and exit         |
-| -d, --debug              | False     | More verbose output. Default log level is INFO |
-| -q, --quiet              | False     | Suppress output                                |
+| --version                |           | Show program's version number and exit                    |
+| -d, --debug              | False     | More verbose output. Default log level is INFO            |
+| -q, --quiet              | False     | Suppress output                                           |
 | --dry-run                | False     | Allows the `todoist-template` command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object IDs. |
-| --undo UNDOFILE          |           | Loads undo file and rollbacks all operations in it |
+| --undo UNDOFILE          |           | Loads undo file and rollbacks all operations in it        |
+| --token API_TOKEN        |           | The Todoist authorization token                           |
 
 Example
 
