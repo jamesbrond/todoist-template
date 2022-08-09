@@ -2,34 +2,23 @@
 
 import logging
 import pickle
-import uuid
 import json
 import requests
 from todoist_api_python.api import TodoistAPI
 import lib.utils as utils
 
 
-class Todoist:
+SYNC_API = "https://api.todoist.com/sync/v9/sync"
+
+class Todoist(TodoistAPI):
     """Layer class to handle Todoist API"""
-    def __init__(self, api_token, is_test=False):
-        self.api = TodoistAPI(api_token)
+    def __init__(self, api_token: str, dry_run=False, session=None):
+        super().__init__(api_token, session)
         self.projects = self.get_projects()
         self.sections = self.get_sections()
         self.labels = self.get_labels()
-        self.is_test = is_test
+        self.dry_run = dry_run
         self.undo_commands = []
-
-    def get_labels(self):
-        """Returns all labels"""
-        return self.api.get_labels()
-
-    def get_projects(self):
-        """Returns all projects"""
-        return self.api.get_projects()
-
-    def get_sections(self):
-        """Returns all sections"""
-        return self.api.get_sections()
 
     def exists_project(self, name):
         """Returns the Todoist project ID if project exists; False otherwise"""
@@ -49,67 +38,67 @@ class Todoist:
         if not project_id and not section_id:
             return False
         query = {"project_id": project_id, "section_id": section_id}
-        tasks = self.api.get_tasks(**query)
+        tasks = self.get_tasks(**query)
         return self._exists([content], tasks, ["content"])
 
-    def add_project(self, name, **kwargs):
+    def new_project(self, name, **kwargs):
         """Creates a new project and returns its ID"""
-        if self.is_test:
+        if self.dry_run:
             return None
-        project = self.api.add_project(name=name, **kwargs)
+        project = self.add_project(name=name, **kwargs)
         self.projects.append(project)
         logging.debug("created new project: %s", project)
-        self.undo_commands.append(self._new_undo_command("project_delete", project.id))
+        self.undo_commands.append(self._add_undo_command("project_delete", project.id))
         return project.id
 
-    def add_section(self, name, **kwargs):
+    def new_section(self, name, **kwargs):
         """Creates a new section and returns its ID"""
-        if self.is_test:
+        if self.dry_run:
             return None
-        section = self.api.add_section(name=name, **kwargs)
+        section = self.add_section(name=name, **kwargs)
         self.sections.append(section)
         logging.debug("created new section: %s", section)
-        self.undo_commands.append(self._new_undo_command("section_delete", section.id))
+        self.undo_commands.append(self._add_undo_command("section_delete", section.id))
         return section.id
 
-    def add_label(self, name, **kwargs):
+    def new_label(self, name, **kwargs):
         """Adds new label"""
-        if self.is_test:
+        if self.dry_run:
             return None
-        label = self.api.add_label(name=name, **kwargs)
+        label = self.add_label(name=name, **kwargs)
         self.labels.append(label)
         logging.debug("created new label: %s", label)
-        self.undo_commands.append(self._new_undo_command("label_delete", label.id))
+        self.undo_commands.append(self._add_undo_command("label_delete", label.id))
         return label.id
 
-    def add_task(self, content: str, **kwargs):
+    def new_task(self, content: str, **kwargs):
         """Adds new task"""
-        if self.is_test:
+        if self.dry_run:
             return None
-        task = self.api.add_task(content, **kwargs)
+        task = self.add_task(content, **kwargs)
         logging.debug("created new task: %s", task)
-        self.undo_commands.append(self._new_undo_command("item_delete", task.id))
+        self.undo_commands.append(self._add_undo_command("item_delete", task.id))
         return task.id
 
-    def update_task(self, task_id: int, **kwargs):
+    def modify_task(self, task_id: int, **kwargs):
         """Modifies existing task"""
-        if not self.is_test:
-            original_task =  self.api.get_task(task_id=task_id).to_dict()
-            self.api.update_task(task_id=task_id, **kwargs)
-            logging.debug("update task: %d", task_id)
-            self.undo_commands.append(
-                self._new_undo_command("item_update", task_id, {
-                    "id": task_id,
-                    "content": original_task["content"],
-                    "description": original_task["description"],
-                    "due": original_task["due"],
-                    "priority": original_task["priority"],
-                    "labels": original_task["label_ids"],
-                    "assigned_by_uid": original_task["assigner"],
-                    "responsible_uid": original_task["assignee"],
-                    "day_order": original_task["order"]
-                })
-            )
+        if not self.dry_run:
+            original_task =  self.get_task(task_id=task_id).to_dict()
+            if self.update_task(task_id=task_id, **kwargs):
+                logging.debug("update task: %d", task_id)
+                self.undo_commands.append(
+                    self._add_undo_command("item_update", task_id, {
+                        "id": task_id,
+                        "content": original_task["content"],
+                        "description": original_task["description"],
+                        "due": original_task["due"],
+                        "priority": original_task["priority"],
+                        "labels": original_task["label_ids"],
+                        "assigned_by_uid": original_task["assigner"],
+                        "responsible_uid": original_task["assignee"],
+                        "day_order": original_task["order"]
+                    })
+                )
         return True
 
     def store_rollback(self, filepath):
@@ -126,11 +115,11 @@ class Todoist:
     def rollback(self, undo_commands=None):
         """Rollback todoist-template actions"""
         cmds = undo_commands if undo_commands else self.undo_commands
-        status = self._rollback(cmds)
+        status = self._do_rollback(cmds)
         logging.info("Rollback status: %s", ("Success" if status else "Failure"))
         return status
 
-    def _rollback(self, commands):
+    def _do_rollback(self, commands):
         logging.debug("undo commands: %s", commands)
         response = self._sync(commands)
         logging.debug("undo response %s", response)
@@ -150,9 +139,9 @@ class Todoist:
         else:
             params = {"commands": json.dumps(commands, skipkeys=True, allow_nan=False)}
 
-        response = requests.get("https://api.todoist.com/sync/v9/sync",
-            params=params,
-            headers={"Authorization": f"Bearer {self.api._token}"}
+        response = requests.get(SYNC_API,
+            headers={"Authorization": f"Bearer {self._token}"},
+            params=params
         )
         return response.json() if response.status_code == 200 else response.content
 
@@ -162,7 +151,7 @@ class Todoist:
             return getattr(_item, "id")
         return False
 
-    def _new_undo_command(self, cmd_type, obj_id, args=None):
+    def _add_undo_command(self, cmd_type, obj_id, args=None):
         cmd = {
             "type": cmd_type,
             "uuid": utils.uid(),
@@ -176,6 +165,5 @@ class Todoist:
                 cmd["args"][key] = args[key]
 
         return cmd
-
 
 # ~@:-]

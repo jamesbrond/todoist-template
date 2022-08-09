@@ -79,7 +79,7 @@ def _parse_cmd_line():
 
     parser.add_argument(
         "--dry-run",
-        dest="is_test",
+        dest="dry_run",
         default=False,
         action="store_true",
         help="allows the %(prog)s command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object ids.",
@@ -116,7 +116,7 @@ def main():
             keyring.setup(args.service_id)
             api_token = keyring.get_api_token(args.service_id)
 
-        tmpl = TodoistTemplate(api_token, args.is_test)
+        tmpl = TodoistTemplate(api_token, args.dry_run)
         if args.undo:
             if tmpl.rollback(args.undo):
                 args.undo.close()
@@ -126,10 +126,13 @@ def main():
             script_folder = os.path.dirname(os.path.realpath(sys.argv[0]))
             with args.template as file:
                 logging.debug("open file %s", file)
-                undofile = os.path.join(
-                    script_folder,
-                    f"{os.path.basename(file.name)}-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.undo"
-                ) if args.is_test is False else None
+                if args.dry_run:
+                    undofile = os.path.join(
+                        script_folder,
+                        f"{os.path.basename(file.name)}-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.undo"
+                    )
+                else:
+                    undofile = None
                 tmpl.parse(file, args.placeholders, undofile)
 
         return 0
