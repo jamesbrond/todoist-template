@@ -1,126 +1,176 @@
-import json
-import yaml
+"""Tansform a template into Todoist tasks"""
+
 import logging
-import lib.utils as utils
-from todoist_api_python.api import TodoistAPI
-from lib.CustomYamlLoader import CustomYamlLoader
+import re
+from lib.todoist import Todoist
+from lib.loader.loaderfactory import TemplateLoaderFactory
+
+
+PLACEHOLDER_REGEXP = re.compile(r"{(\w+)\s*\|?\s*([^}]+)?}")
+
 
 class TodoistTemplate:
-	"""
-	Import YAML template file into Todoist application
-	"""
+    """
+    Import YAML template file into Todoist application
+    """
 
-	def __init__(self, api_token):
-		self.api = TodoistAPI(api_token)
-		self.projects = self.api.get_projects()
-		self.sections = self.api.get_sections()
-		self.labels = self.api.get_labels()
+    def __init__(self, api_token, dry_run=False):
+        self.todoist = Todoist(api_token, dry_run)
+        self.placeholders = {}
 
-	def parse(self, file, placelholders):
-		"""
-		Parse the template YAML file using placeholdes dictionary
-		"""
+    def parse(self, file, placeholders, undofile=None):
+        """
+        Parse the template YAML file using placeholdes dictionary
+        """
 
-		if file is None:
-			return
-		template = yaml.load(file, Loader=CustomYamlLoader)
-		for t in template:
-			if isinstance(t, str):
-				# template with a single project root
-				self._project(t, template[t], placelholders)
-			else:
-				# template with multiple projects
-				p = list(t)[0]
-				self._project(p, t[p], placelholders)
+        self.placeholders = placeholders or {}
 
-	def _parse_items(self, obj, list_keys, placeholders=None):
-		item = {}
-		for k in list_keys:
-			if k in obj:
-				item[k] = self._replace(obj[k], placeholders)
-		return item
+        if file is None:
+            return
 
-	def _replace(self, value, placeholders):
-		if value is not None and isinstance(value, str) and placeholders is not None:
-			return value.format(**placeholders)
-		return value
+        template_loader = TemplateLoaderFactory().get_loader(file.name)
+        logging.debug("use %s to load '%s' file", template_loader.__class__.__name__, file.name)
 
-	def _project(self, name, inner, placeholders):
-		if name == "tasks":
-			for task in inner:
-				self._task(project_id=None, section_id=None, parent_id=None, task=task, placeholders=placeholders)
-			return
-		project_id = utils.find_needle_in_haystack([name], self.projects)
-		if project_id is None:
-			prj = self._parse_items(inner, ["color", "favorite"])
-			prj["name"] = self._replace(name, placeholders)
-			logging.debug(f"create project {prj}")
-			project = self.api.add_project(**prj)
-			self.projects.append(project)
-			project_id = project.id
+        template = template_loader.load(file)
+        if template:
+            try:
+                for templ in template:
+                    if isinstance(templ, str):
+                        # template with a single project root
+                        self._project(templ, template[templ])
+                    else:
+                        # template with multiple projects
+                        prj = list(templ)[0]
+                        self._project(prj, templ[prj])
+            except:
+                logging.error("Something went wrong: undo all changes")
+                self.todoist.rollback()
+                # re-throw exception to main
+                raise
 
-		logging.info(f"Project: {name} ({project_id})")
+            if undofile:
+                self.todoist.store_rollback(undofile)
 
-		sections = list(inner)
-		for section in sections:
-			if section == "tasks":
-				for task in inner[section]:
-					self._task(project_id=project_id, section_id=None, parent_id=None, task=task, placeholders=placeholders)
-			else:
-				logging.debug(f"{section}: {inner[section]}")
-				self._section(project_id, section, inner[section], placeholders)
+    def rollback(self, file):
+        """Applies rollback actions in file"""
+        self.todoist.load_rollback(file)
+        return self.todoist.rollback()
 
-	def _section(self, project_id, name, content, placeholders):
-		section_id = utils.find_needle_in_haystack([name, project_id], self.sections, ["name", "project_id"])
-		if section_id is None:
-			sec = {
-				"name": self._replace(name, placeholders),
-				"project_id": project_id
-			}
-			logging.debug(f"create section {sec}")
-			section_object = self.api.add_section(**sec)
-			self.sections.append(section_object)
-			section_id = section_object.id
+    def _filter_and_replace(self, obj, list_keys):
+        return dict([ (k, self._replace(obj[k])) for k in list_keys if k in obj ])
 
-		logging.info(f"Section: {name} ({section_id})")
+    def _replace(self, value):
+        if not isinstance(value, str):
+            # {placholder} are always strings
+            return value
+        return PLACEHOLDER_REGEXP.sub(
+            lambda x: self.placeholders.get(x.group(1)) or x.group(2),
+            value
+        )
 
-		if "tasks" in content:
-			for task in content["tasks"]:
-				self._task(project_id=None, section_id=section_id, parent_id=None, task=task, placeholders=placeholders)
+    def _project(self, name, inner):
+        if name == "tasks":
+            for task in inner:
+                self._task(
+                    project_id=None,
+                    section_id=None,
+                    parent_id=None,
+                    task=task
+                )
+            return
+        replaced_name = self._replace(name)
+        project_id = self.todoist.exists_project(replaced_name)
+        is_new = False
+        if not project_id:
+            is_new = True
+            project_id = self.todoist.new_project(
+                replaced_name,
+                **self._filter_and_replace(inner, ["color", "favorite"])
+            )
+        logging.info("Project: %s%s (%s)", self._isnew(is_new), replaced_name, project_id)
 
-	def _task(self, project_id, section_id, parent_id, task, placeholders):
-		tsk = self._parse_items(task, ["content", "description", "completed", "priority", "due_string"], placeholders)
+        sections = list(inner)
+        for section in sections:
+            if section == "tasks":
+                for task in inner[section]:
+                    self._task(
+                        project_id=project_id,
+                        section_id=None,
+                        parent_id=None,
+                        task=task
+                    )
+            else:
+                self._section(project_id, section, inner[section])
 
-		if section_id is not None:
-			tsk["section_id"] = section_id
-		elif project_id is not None:
-			tsk["project_id"] = project_id
-		elif parent_id is not None:
-			tsk["parent_id"] = parent_id
+    def _section(self, project_id, name, content):
+        replaced_name = self._replace(name)
+        section_id = self.todoist.exists_section(replaced_name, project_id)
 
-		if "labels" in task:
-			label_ids = []
-			for label in task["labels"]:
-				label_ids.append(self._label(label, placeholders))
-			tsk["label_ids"] = label_ids
+        is_new = False
+        if not section_id:
+            is_new = True
+            section_id = self.todoist.new_section(replaced_name)
+        logging.info("Section: %s%s (%s)", self._isnew(is_new), replaced_name, section_id)
 
-		logging.debug(f"create task {tsk}")
-		t = self.api.add_task(**tsk)
-		logging.info(f"Task: {t.content} ({t.id})")
+        if "tasks" in content:
+            for task in content["tasks"]:
+                self._task(
+                    project_id=None,
+                    section_id=section_id,
+                    parent_id=None,
+                    task=task
+                )
 
-		if "tasks" in task:
-			for subtask in task["tasks"]:
-				self._task(project_id=None, section_id=None, parent_id=t.id, task=subtask, placeholders=placeholders)
-		return t
+    def _task(self, project_id, section_id, parent_id, task):
+        replaced_task = self._filter_and_replace(
+            task,
+            ["content", "description", "completed", "priority", "due_string"]
+        )
 
-	def _label(self, name, placeholders):
-		n = self._replace(name, placeholders)
-		label_id = utils.find_needle_in_haystack([n], self.labels)
-		if label_id is None:
-			logging.debug(f"create label {n}")
-			label = self.api.add_label(name=n)
-			label_id = label.id
-			self.labels.append(label)
-		return label_id
+        if section_id is not None:
+            replaced_task["section_id"] = section_id
+        elif project_id is not None:
+            replaced_task["project_id"] = project_id
+        elif parent_id is not None:
+            replaced_task["parent_id"] = parent_id
+
+        if "labels" in task:
+            label_ids = []
+            for label in task["labels"]:
+                label_ids.append(self._label(label))
+            replaced_task["label_ids"] = label_ids
+
+        task_id = self.todoist.exists_task(project_id, section_id, replaced_task["content"])
+        if task_id:
+            is_new = False
+            self.todoist.modify_task(task_id, **replaced_task)
+        else:
+            is_new = True
+            task_id = self.todoist.new_task(**replaced_task)
+        logging.info("Task: %s%s (%s)", self._isnew(is_new), replaced_task['content'], task_id)
+
+        if "tasks" in task:
+            for subtask in task["tasks"]:
+                self._task(
+                    project_id=None,
+                    section_id=None,
+                    parent_id=task_id,
+                    task=subtask
+                )
+        return task_id
+
+    def _label(self, name):
+        replaced_name = self._replace(name)
+        label_id = self.todoist.exists_label(replaced_name)
+        is_new = False
+        if not label_id:
+            label_id = self.todoist.new_label(replaced_name)
+            is_new = True
+        logging.debug("Label: %s%s (%s)", self._isnew(is_new), replaced_name, label_id)
+        return label_id
+
+    def _isnew(self, is_new):
+        return "[NEW] " if is_new else ""
+
 
 # ~@:-]

@@ -1,0 +1,8 @@
+# param_template_3.yml
+
+"{prj|Inbox}":
+    tasks:
+      - content: Task1
+        due_string: "{day | tod}"
+      - content: Task2
+        due_string: "{day|tomorrow}"

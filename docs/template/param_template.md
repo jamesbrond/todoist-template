@@ -57,5 +57,29 @@ tasks:
 
 Run with argument `-D dayofweek=Monday` to have a recursive task every Monday.
 
+## Default values
+
+You can specify a default value that will be used when the command-line value is not provided.
+
+In order to set a default value use the pipe (`|`) characther after variable name:
+
+```yaml
+{variable|default value}
+```
+
+For example:
+
+```yaml
+# param_template_3.yml
+"{prj|Inbox}":
+    tasks:
+      - content: Task1
+        due_string: "{day | tod}"
+      - content: Task2
+        due_string: "{day|tomorrow}"
+```
+
+In this example if you do not use `-D prj=<some project name>` the default `Inbox` will be used. The same for due date of `Task1` and `Task2` it will be set to today and tomorrow, respectively if `-D day=<some day>` it's not used.
+
 Prev [Simple template](./simple_template.md)
 Next [Complex template](./complex_template.md)

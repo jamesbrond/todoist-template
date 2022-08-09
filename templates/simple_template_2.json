@@ -1,0 +1,11 @@
+{
+    "Inbox": {
+        "tasks": [
+            {
+                "content": "Simple inbox task",
+                "description": "A simple task in Todoist Inbox folder",
+                "priority": 3
+            }
+        ]
+    }
+}
