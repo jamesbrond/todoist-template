@@ -126,7 +126,7 @@ def main():
             script_folder = os.path.dirname(os.path.realpath(sys.argv[0]))
             with args.template as file:
                 logging.debug("open file %s", file)
-                if args.dry_run:
+                if not args.dry_run:
                     undofile = os.path.join(
                         script_folder,
                         f"{os.path.basename(file.name)}-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.undo"
