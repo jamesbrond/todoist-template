@@ -1,0 +1,4 @@
+include docs/README.md
+include LICENSE
+recursive-exclude .github *
+recursive-exclude templates *
