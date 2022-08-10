@@ -13,3 +13,11 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+# Distutils
+build/
+dist/
+todoist_template.egg-info/
+MANIFEST
+
+.vscode/
