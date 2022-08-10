@@ -1,9 +1,10 @@
-PROJECT       := todoist-template
+PACKAGE       := todoist-template
 
 BUILD_DIR     := build
 DIST_DIR      := dist
-EGG_INFO_DIR  := $(subst -,_,$(PROJECT)).egg-info
-LIB_DIR       := lib
+EGG_INFO_DIR  := $(subst -,_,$(PACKAGE)).egg-info
+LIB_DIR       := $(SRCS_DIR)/lib
+SRCS_DIR      := $(PACKAGE)
 VENV_DIR      := venv
 
 ACTIVATE      := $(VENV_DIR)/Scripts/activate
@@ -11,7 +12,7 @@ REQUIREMENTS  := requirements.txt
 SETUP         := setup.py
 
 
-.PHONY: clean clean-release deps help release
+.PHONY: build clean clean-release deps help release
 .DEFAULT_GOAL := help
 
 
@@ -26,7 +27,7 @@ $(ACTIVATE): ## Create python virtual environment
 	@python -m venv $(VENV_DIR)
 # convert CRLF to LF in activate bash script
 	@sed -i $$'s/\\r$$//' $(ACTIVATE)
-	@echo Created virtual environment
+	@echo Created virtual environmenset
 
 clean: clean-release
 	@echo Remove virtual environments
@@ -48,6 +49,6 @@ help: ## Show Makefile help
 # http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 	@grep -E '^[a-zA-Z_\.-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-release:
-	@echo Release
-	$(call pyenv,python setup.py sdist)
+build:
+	@echo Build Distribution
+	$(call pyenv,python -m build)
