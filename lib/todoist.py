@@ -44,6 +44,7 @@ class Todoist(TodoistAPI):
     def new_project(self, name, **kwargs):
         """Creates a new project and returns its ID"""
         if self.dry_run:
+            logging.debug("created new project: %s", kwargs)
             return None
         project = self.add_project(name=name, **kwargs)
         self.projects.append(project)
@@ -131,7 +132,7 @@ class Todoist(TodoistAPI):
         return False
 
     def _sync(self, commands=None):
-        if not commands:
+        if commands is None:
             params = {
                 "sync_token": "*",
                 "resource_types": '["all"]'
