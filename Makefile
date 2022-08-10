@@ -1,22 +1,18 @@
 PACKAGE       := todoist-template
 
-BUILD_DIR     := build
-DIST_DIR      := dist
-EGG_INFO_DIR  := $(subst -,_,$(PACKAGE)).egg-info
-LIB_DIR       := $(SRCS_DIR)/lib
-SRCS_DIR      := $(PACKAGE)
+LIB_DIR       := lib
+SRCS_DIR      := .
 VENV_DIR      := venv
 
 ACTIVATE      := $(VENV_DIR)/Scripts/activate
 REQUIREMENTS  := requirements.txt
-SETUP         := setup.py
 
 
-.PHONY: build clean clean-release deps help release
+.PHONY: clean deps help
 .DEFAULT_GOAL := help
 
 
-do_activate   = @[[ $$(python .make/testenv.py) == *0* ]] && . $(ACTIVATE) || true
+do_activate   = @[[ $$(python makeutils/makeutils.py) == *0* ]] && . $(ACTIVATE) || true
 pyenv         = $(do_activate) && $(1)
 
 
@@ -29,17 +25,11 @@ $(ACTIVATE): ## Create python virtual environment
 	@sed -i $$'s/\\r$$//' $(ACTIVATE)
 	@echo Created virtual environmenset
 
-clean: clean-release
+clean: ## Clean-up the solution
 	@echo Remove virtual environments
 	@rm -rf $(VENV_DIR)
 	@echo Remove bytecode-compiled python files
 	@/usr/bin/find $(LIB_DIR) -name __pycache__ -type d  -print0 | xargs -0 -r rm -rf
-
-clean-release:
-	@echo Remove output folders
-	@rm -rf $(BUILD_DIR)
-	@rm -rf $(DIST_DIR)
-	@rm -rf $(EGG_INFO_DIR)
 
 deps: $(ACTIVATE) $(REQUIREMENTS) ## Activate venv and install requirements
 	$(call pyenv,pip install -Ur $(REQUIREMENTS))
@@ -48,7 +38,3 @@ deps: $(ACTIVATE) $(REQUIREMENTS) ## Activate venv and install requirements
 help: ## Show Makefile help
 # http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 	@grep -E '^[a-zA-Z_\.-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
-
-build:
-	@echo Build Distribution
-	$(call pyenv,python -m build)
