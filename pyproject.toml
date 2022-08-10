@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "todoist-template"
+name = "todoist_template"
 description = "Easily add tasks to Todoist with custom templates."
 readme = "docs/README.md"
 requires-python = ">=3.8"
@@ -29,9 +29,9 @@ dynamic = ["version", "dependencies"]
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["todoist-template*"]
+include = ["todoist_template*"]
 namespaces = false
 
 [tool.setuptools.dynamic]
-version = {attr = "todoist-template.VERSION"}
+version = {attr = "todoist_template.VERSION"}
 dependencies = {file = "requirements.txt"}
