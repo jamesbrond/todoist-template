@@ -12,7 +12,7 @@ REQUIREMENTS  := requirements.txt
 .DEFAULT_GOAL := help
 
 
-do_activate   = @[[ $$(python makeutils/makeutils.py) == *0* ]] && . $(ACTIVATE) || true
+do_activate   = @[[ $$(python makeutils/makeutils.py --venv) == *0* ]] && . $(ACTIVATE) || true
 pyenv         = $(do_activate) && $(1)
 
 
@@ -38,3 +38,5 @@ deps: $(ACTIVATE) $(REQUIREMENTS) ## Activate venv and install requirements
 help: ## Show Makefile help
 # http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 	@grep -E '^[a-zA-Z_\.-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+# ~@:-]
