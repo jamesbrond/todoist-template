@@ -7,6 +7,7 @@ import logging
 import argparse
 import lib.key_ring as keyring
 from lib.template import TodoistTemplate
+import lib.__version__ as version
 
 
 def _check_python_version():
@@ -48,7 +49,7 @@ def _parse_cmd_line():
         help="the placeholder values replaced in template"
     )
 
-    parser.add_argument("--version", action="version", version="%(prog)s 1.0.0")
+    parser.add_argument("--version", action="version", version="%(prog)s " + version.__version__)
 
     parser.add_argument(
         "--id",

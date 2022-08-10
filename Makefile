@@ -6,15 +6,16 @@ VENV_DIR      := venv
 
 ACTIVATE      := $(VENV_DIR)/Scripts/activate
 REQUIREMENTS  := requirements.txt
+MAKE_PY_SCRIPT:= makeutils.py
 
 
 .PHONY: clean deps help
 .DEFAULT_GOAL := help
 
 
-do_activate   = @[[ $$(python makeutils/makeutils.py --venv) == *0* ]] && . $(ACTIVATE) || true
+do_activate   = @[[ $$(python $(MAKE_PY_SCRIPT) --venv) == *0* ]] && . $(ACTIVATE) || true
 pyenv         = $(do_activate) && $(1)
-
+version       = $$(python $(MAKE_PY_SCRIPT) --version)
 
 $(ACTIVATE): ## Create python virtual environment
 # The venv module provides support for creating lightweight "virtual environments" with
