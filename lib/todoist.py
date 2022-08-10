@@ -41,22 +41,23 @@ class Todoist(TodoistAPI):
         tasks = self.get_tasks(**query)
         return self._exists([content], tasks, ["content"])
 
-    def new_project(self, name, **kwargs):
+    def new_project(self, name, args):
         """Creates a new project and returns its ID"""
         if self.dry_run:
-            logging.debug("created new project: %s", kwargs)
+            logging.debug("created new project: %s: %s", name, args)
             return None
-        project = self.add_project(name=name, **kwargs)
+        project = self.add_project(name=name, **args)
         self.projects.append(project)
         logging.debug("created new project: %s", project)
         self.undo_commands.append(self._add_undo_command("project_delete", project.id))
         return project.id
 
-    def new_section(self, name, **kwargs):
+    def new_section(self, name, args):
         """Creates a new section and returns its ID"""
         if self.dry_run:
+            logging.debug("created new section: %s: %s", name, args)
             return None
-        section = self.add_section(name=name, **kwargs)
+        section = self.add_section(name=name, **args)
         self.sections.append(section)
         logging.debug("created new section: %s", section)
         self.undo_commands.append(self._add_undo_command("section_delete", section.id))

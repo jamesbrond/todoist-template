@@ -85,7 +85,7 @@ class TodoistTemplate:
             is_new = True
             project_id = self.todoist.new_project(
                 replaced_name,
-                **self._filter_and_replace(inner, ["color", "favorite"])
+                args=self._filter_and_replace(inner, ["color", "favorite"])
             )
         logging.info("Project: %s%s (%s)", self._isnew(is_new), replaced_name, project_id)
 
@@ -99,7 +99,8 @@ class TodoistTemplate:
                         parent_id=None,
                         task=task
                     )
-            else:
+            elif isinstance(inner[section], dict):
+                # if it'a a dict it'a section becouse we exclude tasks in the previous if
                 self._section(project_id, section, inner[section])
 
     def _section(self, project_id, name, content):
@@ -109,7 +110,8 @@ class TodoistTemplate:
         is_new = False
         if not section_id:
             is_new = True
-            section_id = self.todoist.new_section(replaced_name)
+            section_id = self.todoist.new_section(replaced_name,
+                args=self._filter_and_replace(content, ["order"]))
         logging.info("Section: %s%s (%s)", self._isnew(is_new), replaced_name, section_id)
 
         if "tasks" in content:
@@ -124,7 +126,8 @@ class TodoistTemplate:
     def _task(self, project_id, section_id, parent_id, task):
         replaced_task = self._filter_and_replace(
             task,
-            ["content", "description", "completed", "priority", "due_string"]
+            ["content", "description", "completed", "priority",
+             "due_string", "due_date", "due_datetime", "due_lang", "order"]
         )
 
         if section_id is not None:
