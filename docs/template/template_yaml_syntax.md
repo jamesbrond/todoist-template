@@ -8,7 +8,7 @@ Name of the project.
 
 **color** [Integer]
 
-Optional. A numeric ID representing the color of the project icon. Refer to the id column in the [Colors](https://developer.todoist.com/guides/#colors) guide for more info.
+Optional. A numeric ID representing the color of the project icon. Refer to the ID column in the [Colors](https://developer.todoist.com/guides/#colors) guide for more info.
 
 **favorite** [Boolean]
 
@@ -48,11 +48,11 @@ New Project:
 
 **content** [String]
 
-Task content. This value may contain markdown-formatted text and hyperlinks. Details on markdown support can be found in the [Text Formatting article](https://todoist.com/help/articles/text-formatting) in the Todoist Help Center.
+Task content. This value may contain markdown-formatted text and hyperlinks. Details on Markdown support can be found in the [Text Formatting article](https://todoist.com/help/articles/text-formatting) in the Todoist Help Center.
 
 **description** [String]
 
-A description for the task. This value may contain markdown-formatted text and hyperlinks. Details on markdown support can be found in the [Text Formatting article](https://todoist.com/help/articles/text-formatting) in the Todoist Help Center.
+A description for the task. This value may contain markdown-formatted text and hyperlinks. Details on Markdown support can be found in the [Text Formatting article](https://todoist.com/help/articles/text-formatting) in the Todoist Help Center.
 
 **labels** [Array of String]
 
