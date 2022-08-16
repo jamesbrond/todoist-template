@@ -1,3 +1,5 @@
+"""Keyring functions"""
+
 import keyring
 
 

@@ -1,8 +1,10 @@
+"""YAML CustomYamlLoader with `!include` constructor."""
+
 import logging
 import os
 import json
-import yaml
 from typing import Any, IO
+import yaml
 
 
 class CustomYamlLoader(yaml.SafeLoader):
@@ -25,14 +27,14 @@ def construct_include(loader: CustomYamlLoader, node: yaml.Node) -> Any:
         os.path.join(loader._root, loader.construct_scalar(node))
     )
     extension = os.path.splitext(filename)[1].lstrip(".")
-    logging.debug(f"include {filename}")
-    with open(filename, "r", encoding="utf8") as f:
+    logging.debug("include %s", filename)
+    with open(filename, "r", encoding="utf8") as file:
         if extension in ("yaml", "yml"):
-            return yaml.load(f, CustomYamlLoader)
+            return yaml.load(file, CustomYamlLoader)
         elif extension in ("json",):
-            return json.load(f)
+            return json.load(file)
         else:
-            return "".join(f.readlines())
+            return "".join(file.readlines())
 
 yaml.add_constructor("!include", construct_include, CustomYamlLoader)
 

@@ -1,25 +1,31 @@
+"""Easily add tasks to Todoist with customizable YAML templates"""
+
+import os
 import sys
+import datetime
 import logging
 import argparse
 import lib.key_ring as keyring
 from lib.template import TodoistTemplate
+import lib.__version__ as version
 
 
-def check_python_version():
+def _check_python_version():
     if sys.version_info < (3, 8) or sys.version_info >= (4, 0):
         raise SystemError("This script requires Python >= 3.8 and < 4")
     return 1
 
 
 class StoreDictKeyPair(argparse.Action):
+    """Argparse Action"""
     def __call__(self, parser, namespace, values, option_string=None):
         my_dict = {}
-        for kv in values.split(","):
-            k, v = kv.split("=")
-            my_dict[k] = v
+        for keyval in values.split(","):
+            key, val = keyval.split("=")
+            my_dict[key] = val
         setattr(namespace, self.dest, my_dict)
 
-def parse_cmd_line():
+def _parse_cmd_line():
     parser = argparse.ArgumentParser(
         prog="todoist-template.py",
         usage='%(prog)s [options]',
@@ -43,7 +49,7 @@ def parse_cmd_line():
         help="the placeholder values replaced in template"
     )
 
-    parser.add_argument("--version", action="version", version="%(prog)s 1.0.0")
+    parser.add_argument("--version", action="version", version="%(prog)s " + version.__version__)
 
     parser.add_argument(
         "--id",
@@ -73,41 +79,66 @@ def parse_cmd_line():
     )
 
     parser.add_argument(
-        "-t",
-        "--test",
-        dest="is_test",
+        "--dry-run",
+        dest="dry_run",
         default=False,
         action="store_true",
-        help="do not perform any actions on Todoist.com, just logs them",
+        help="allows the %(prog)s command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object ids.",
+    )
+
+    parser.add_argument(
+        "--undo",
+        dest="undo",
+        type=argparse.FileType("rb"),
+        help="loads undo file and rollbacks all operations in it"
+    )
+
+    parser.add_argument(
+        "--token",
+        dest="token",
+        help="the Todoist authorization token"
     )
 
     return parser.parse_args()
 
 
 def main():
-    args = parse_cmd_line()
-    logging.basicConfig(level=args.loglevel, format="[%(levelname)s] %(message)s")
+    """Main function"""
+    args = _parse_cmd_line()
+    logging.basicConfig(level=args.loglevel, format="%(message)s")
 
     try:
-        check_python_version()
+        _check_python_version()
 
-        api_token = keyring.get_api_token(args.service_id)
+        api_token = args.token if args.token else keyring.get_api_token(args.service_id)
+
         while not api_token:
-            logging.warning(f"Todoist API token not found for {args.service_id} application.")
+            logging.warning("Todoist API token not found for %s application.", args.service_id)
             keyring.setup(args.service_id)
             api_token = keyring.get_api_token(args.service_id)
 
-        tmpl = TodoistTemplate(api_token, args.is_test)
-        with args.template as file:
-            logging.debug(f"open file {file}")
-            tmpl.parse(file, args.placeholders)
+        tmpl = TodoistTemplate(api_token, args.dry_run)
+        if args.undo:
+            if tmpl.rollback(args.undo):
+                args.undo.close()
+                logging.debug("remove file %s", args.undo.name)
+                os.remove(args.undo.name)
+        else:
+            script_folder = os.path.dirname(os.path.realpath(sys.argv[0]))
+            with args.template as file:
+                logging.debug("open file %s", file)
+                if not args.dry_run:
+                    undofile = os.path.join(
+                        script_folder,
+                        f"{os.path.basename(file.name)}-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.undo"
+                    )
+                else:
+                    undofile = None
+                tmpl.parse(file, args.placeholders, undofile)
 
         return 0
-    except Exception as e:
-        if logging.getLogger().isEnabledFor(logging.DEBUG):
-            logging.error(e, exc_info=True)
-        else:
-            logging.error(e)
+    except Exception as exc:
+        logging.error(exc, exc_info=logging.getLogger().isEnabledFor(logging.DEBUG))
         return 1
 
 
