@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """Easily add tasks to Todoist with customizable YAML templates"""
 
 import os
@@ -106,6 +108,8 @@ def main():
     """Main function"""
     args = _parse_cmd_line()
     logging.basicConfig(level=args.loglevel, format="%(message)s")
+
+    logging.info(version.LOGO)
 
     try:
         _check_python_version()

@@ -17,7 +17,7 @@ VERSION_PY    := $(LIB_DIR)/__version__.py
 
 do_activate   = @[[ -z "$$VIRTUAL_ENV" ]] && . $(ACTIVATE) || true
 pyenv         = $(do_activate) && $(1)
-version       = $$(python $(VERSION_PY))
+version       = $$($(VERSION_PY))
 
 define logo
 	@echo " ╔╗       ╔╗           ╔╗       ╔╗             ╔╗       ╔╗"
@@ -61,5 +61,8 @@ install: $(ACTIVATE) $(REQUIREMENTS) ## Activate venv and install requirements
 	$(call echoclr,$(BWHITE),Installing requirements)
 	$(call pyenv,pip install -Ur $(REQUIREMENTS))
 	$(call echoclr,$(GREEN),Done)
+
+test:
+	@echo $(version)
 
 # ~@:-]
