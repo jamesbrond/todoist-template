@@ -8,16 +8,27 @@ VENV_DIR      := venv
 
 ACTIVATE      := $(VENV_DIR)/Scripts/activate
 REQUIREMENTS  := requirements.txt
-MAKE_PY_SCRIPT:= makeutils.py
+VERSION_PY    := $(LIB_DIR)/__version__.py
 
 
 .PHONY: clean help install
 .DEFAULT_GOAL := help
 
 
-do_activate   = @[[ $$(python $(MAKE_PY_SCRIPT) --venv) == *0* ]] && . $(ACTIVATE) || true
+do_activate   = @[[ -z "$$VIRTUAL_ENV" ]] && . $(ACTIVATE) || true
 pyenv         = $(do_activate) && $(1)
-version       = $$(python $(MAKE_PY_SCRIPT) --version)
+version       = $$(python $(VERSION_PY))
+
+define logo
+	@echo " ╔╗       ╔╗           ╔╗       ╔╗             ╔╗       ╔╗"
+	@echo "╔╝╚╗      ║║          ╔╝╚╗     ╔╝╚╗            ║║      ╔╝╚╗"
+	@echo "╚╗╔╝╔══╗╔═╝║╔══╗╔╗╔══╗╚╗╔╝     ╚╗╔╝╔══╗╔╗╔╗╔══╗║║ ╔══╗ ╚╗╔╝╔══╗"
+	@echo " ║║ ║╔╗║║╔╗║║╔╗║╠╣║══╣ ║║ ╔═══╗ ║║ ║╔╗║║╚╝║║╔╗║║║ ╚ ╗║  ║║ ║╔╗║"
+	@echo " ║╚╗║╚╝║║╚╝║║╚╝║║║╠══║ ║╚╗╚═══╝ ║╚╗║║═╣║║║║║╚╝║║╚╗║╚╝╚╗ ║╚╗║║═╣"
+	@echo " ╚═╝╚══╝╚══╝╚══╝╚╝╚══╝ ╚═╝      ╚═╝╚══╝╚╩╩╝║╔═╝╚═╝╚═══╝ ╚═╝╚══╝"
+	@echo "                                           ║║"
+	@echo "                                           ╚╝"
+endef
 
 $(ACTIVATE): ## Create python virtual environment
 # The venv module provides support for creating lightweight "virtual environments" with
@@ -38,10 +49,12 @@ clean: ## Clean-up the solution
 	$(call echoclr,$(GREEN),Done)
 
 help: ## Show Makefile help
+	$(call logo)
 # http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
-	@grep -E '^[a-zA-Z_\.-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":[^:]*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_\.-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":[^:]*?## "}; {printf "$(IBLUE)%-30s$(COLOR_OFF) %s\n", $$1, $$2}'
 
 install: $(ACTIVATE) $(REQUIREMENTS) ## Activate venv and install requirements
+	$(call logo)
 	$(call echoclr,$(BWHITE),Upgrading pip)
 	$(call pyenv,python -m pip install --upgrade pip)
 	$(call echoclr,$(GREEN),Done)
