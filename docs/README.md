@@ -48,7 +48,7 @@ Where options are:
 | -q, --quiet              | False     | Suppress output                                           |
 | --dry-run                | False     | Allows the `todoist-template` command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object IDs. |
 | --undo UNDOFILE          |           | Loads undo file and rollbacks all operations in it        |
-| --token API_TOKEN        |           | The Todoist authorization token                           |
+| --token API_TOKEN        |           | The Todoist authorization token. It will use this token instead of reading it from Keyring service |
 
 Example
 
