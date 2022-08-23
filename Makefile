@@ -1,34 +1,24 @@
 include .make/colors.mk
 
-PACKAGE       := todoist-template
+PACKAGE       := todoist_template
 
 LIB_DIR       := lib
 SRCS_DIR      := .
 VENV_DIR      := venv
 
 ACTIVATE      := $(VENV_DIR)/Scripts/activate
-REQUIREMENTS  := requirements.txt
+REQ           := requirements.txt
+DEVREQ        := devrequirements.txt
 VERSION_PY    := $(LIB_DIR)/__version__.py
 
 
-.PHONY: clean help install
+.PHONY: clean deps devdeps help lint
 .DEFAULT_GOAL := help
 
 
 do_activate   = @[[ -z "$$VIRTUAL_ENV" ]] && . $(ACTIVATE) || true
 pyenv         = $(do_activate) && $(1)
 version       = $$($(VERSION_PY))
-
-define logo
-	@echo " ╔╗       ╔╗           ╔╗       ╔╗             ╔╗       ╔╗"
-	@echo "╔╝╚╗      ║║          ╔╝╚╗     ╔╝╚╗            ║║      ╔╝╚╗"
-	@echo "╚╗╔╝╔══╗╔═╝║╔══╗╔╗╔══╗╚╗╔╝     ╚╗╔╝╔══╗╔╗╔╗╔══╗║║ ╔══╗ ╚╗╔╝╔══╗"
-	@echo " ║║ ║╔╗║║╔╗║║╔╗║╠╣║══╣ ║║ ╔═══╗ ║║ ║╔╗║║╚╝║║╔╗║║║ ╚ ╗║  ║║ ║╔╗║"
-	@echo " ║╚╗║╚╝║║╚╝║║╚╝║║║╠══║ ║╚╗╚═══╝ ║╚╗║║═╣║║║║║╚╝║║╚╗║╚╝╚╗ ║╚╗║║═╣"
-	@echo " ╚═╝╚══╝╚══╝╚══╝╚╝╚══╝ ╚═╝      ╚═╝╚══╝╚╩╩╝║╔═╝╚═╝╚═══╝ ╚═╝╚══╝"
-	@echo "                                           ║║"
-	@echo "                                           ╚╝"
-endef
 
 $(ACTIVATE): ## Create python virtual environment
 # The venv module provides support for creating lightweight "virtual environments" with
@@ -48,21 +38,27 @@ clean: ## Clean-up the solution
 	@/usr/bin/find $(LIB_DIR) -name __pycache__ -type d  -print0 | xargs -0 -r rm -rf
 	$(call echoclr,$(GREEN),Done)
 
-help: ## Show Makefile help
-	$(call logo)
-# http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
-	@grep -E '^[a-zA-Z_\.-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":[^:]*?## "}; {printf "$(IBLUE)%-30s$(COLOR_OFF) %s\n", $$1, $$2}'
-
-install: $(ACTIVATE) $(REQUIREMENTS) ## Activate venv and install requirements
-	$(call logo)
+deps: $(ACTIVATE) $(REQ) ## Activate venv and install requirements
 	$(call echoclr,$(BWHITE),Upgrading pip)
 	$(call pyenv,python -m pip install --upgrade pip)
 	$(call echoclr,$(GREEN),Done)
 	$(call echoclr,$(BWHITE),Installing requirements)
-	$(call pyenv,pip install -Ur $(REQUIREMENTS))
+	$(call pyenv,pip install -Ur $(REQ))
 	$(call echoclr,$(GREEN),Done)
 
-test:
-	@echo $(version)
+devdeps: deps
+	$(call echoclr,$(BWHITE),Installing developement requirements)
+	$(call pyenv,pip install -Ur $(DEVREQ))
+	$(call echoclr,$(GREEN),Done)
+
+help: ## Show Makefile help
+# http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
+	@grep -E '^[a-zA-Z_\.-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":[^:]*?## "}; {printf "$(IBLUE)%-30s$(COLOR_OFF) %s\n", $$1, $$2}'
+
+lint:  ## Lint and static-check
+	$(call echoclr,$(BWHITE),Running flake8)
+	$(call pyenv,python -m flake8 $(PACKAGE).py $(LIB_DIR) && echo Done || echo Failed)
+	$(call echoclr,$(BWHITE),Running pylint)
+	$(call pyenv,python -m pylint --recursive=y $(PACKAGE) $(LIB_DIR) && echo Done || echo Failed)
 
 # ~@:-]

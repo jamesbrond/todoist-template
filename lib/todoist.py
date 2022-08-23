@@ -5,10 +5,11 @@ import pickle
 import json
 import requests
 from todoist_api_python.api import TodoistAPI
-import lib.utils as utils
+from lib.utils import find_needle_in_haystack, uid
 
 
 SYNC_API = "https://api.todoist.com/sync/v9/sync"
+
 
 class Todoist(TodoistAPI):
     """Layer class to handle Todoist API"""
@@ -85,7 +86,7 @@ class Todoist(TodoistAPI):
     def modify_task(self, task_id: int, **kwargs):
         """Modifies existing task"""
         if not self.dry_run:
-            original_task =  self.get_task(task_id=task_id).to_dict()
+            original_task = self.get_task(task_id=task_id).to_dict()
             if self.update_task(task_id=task_id, **kwargs):
                 logging.debug("update task: %d", task_id)
                 self.undo_commands.append(
@@ -141,14 +142,15 @@ class Todoist(TodoistAPI):
         else:
             params = {"commands": json.dumps(commands, skipkeys=True, allow_nan=False)}
 
-        response = requests.get(SYNC_API,
+        response = requests.get(
+            SYNC_API,
             headers={"Authorization": f"Bearer {self._token}"},
             params=params
         )
         return response.json() if response.status_code == 200 else response.content
 
     def _exists(self, needle, haystack, params):
-        _item = utils.find_needle_in_haystack(needle, haystack, params)
+        _item = find_needle_in_haystack(needle, haystack, params)
         if _item:
             return getattr(_item, "id")
         return False
@@ -156,7 +158,7 @@ class Todoist(TodoistAPI):
     def _add_undo_command(self, cmd_type, obj_id, args=None):
         cmd = {
             "type": cmd_type,
-            "uuid": utils.uid(),
+            "uuid": uid(),
             "args": {
                 "id": obj_id
             }

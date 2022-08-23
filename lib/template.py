@@ -57,7 +57,7 @@ class TodoistTemplate:
         return self.todoist.rollback()
 
     def _filter_and_replace(self, obj, list_keys):
-        return dict([ (k, self._replace(obj[k])) for k in list_keys if k in obj ])
+        return {k: self._replace(obj[k]) for k in list_keys if k in obj}
 
     def _replace(self, value):
         if not isinstance(value, str):
@@ -110,8 +110,10 @@ class TodoistTemplate:
         is_new = False
         if not section_id:
             is_new = True
-            section_id = self.todoist.new_section(replaced_name,
-                args=self._filter_and_replace(content, ["order"]))
+            section_id = self.todoist.new_section(
+                replaced_name,
+                args=self._filter_and_replace(content, ["order"])
+            )
         logging.info("Section: %s%s (%s)", self._isnew(is_new), replaced_name, section_id)
 
         if "tasks" in content:

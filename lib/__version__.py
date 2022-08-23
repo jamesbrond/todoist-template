@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# version file
+"""version module"""
 
 LOGO = """
  ╔╗       ╔╗           ╔╗       ╔╗             ╔╗       ╔╗

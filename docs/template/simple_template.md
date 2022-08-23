@@ -15,10 +15,10 @@ Inbox:
       description: "A simple task in Todoist Inbox folder"
 ```
 
-Now run `todoist-template.py` from you python virtual environment:
+Now run `todoist_template.py` from you python virtual environment:
 
 ```shell
-$ python todoist-template.py simple_template_0.yml
+$ python todoist_template.py simple_template_0.yml
 [INFO] Project: Inbox (2276740970)
 [INFO] Task: Simple inbox task (6039034421)
 ```

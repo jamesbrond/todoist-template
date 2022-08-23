@@ -53,23 +53,23 @@ Where options are:
 Example
 
 ```shell
-python todoist-template.py -d templates/simple_template0.yml
+python todoist_template.py -d templates/simple_template0.yml
 ```
 
 Run todoist-template from different users specify differnet keyring service name:
 
 ```shell
-python todoist-template.py [options] --id JHON-TOKENS
+python todoist_template.py [options] --id JHON-TOKENS
 ```
 
 ```shell
-python todoist-template.py [options] --id MARY-TOKENS
+python todoist_template.py [options] --id MARY-TOKENS
 ```
 
 You can use standar input to provide the template to todoist-template:
 
 ```shell
-python todoist-template.py -d < templates/simple_template0.yml
+python todoist_template.py -d < templates/simple_template0.yml
 ```
 
 ### Undo
@@ -77,7 +77,7 @@ python todoist-template.py -d < templates/simple_template0.yml
 todoist-template produces a undo output file. You can use it to delete all created objects and revert all modified ones. For example:
 
 ```shell
-python todoist-template.py --undo simple_template0-20220808081215.undo
+python todoist_template.py --undo simple_template0-20220808081215.undo
 ```
 
 The undo file is named as `template_file_name-YYYYmmddHHMMSS.undo`.

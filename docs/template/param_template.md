@@ -22,7 +22,7 @@ We use the same [Three simple tasks](./simple_template.md#three-simple-tasks) ex
 When this template is rendered, using the `-D day1=sun, day2=tue, day3=fri` paramenters:
 
 ```shell
-python todoist-template.py param_template_0.yml -D day1=sun, day2=tue, day3=fri
+python todoist_template.py param_template_0.yml -D day1=sun, day2=tue, day3=fri
 ```
 
 the result is the same as running:
