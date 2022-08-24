@@ -42,7 +42,7 @@ devdeps: deps ## Install both application and developer requirements (pylint, fl
 
 lint:  ## Lint and static-check
 	@$(call prompt-info,Running flake8)
-	@$(call pyenv,python -m flake8 $(PY_SRCS)) && $(call prompt-success,Done) || $(call prompt-error,Failed)
+	@$(call pyenv,python -m flake8 --config .github/linters/.flake8 $(PY_SRCS)) && $(call prompt-success,Done) || $(call prompt-error,Failed)
 	@$(call prompt-info,Running pylint)
 	@$(call pyenv,python -m pylint $(PY_SRCS)) && $(call prompt-success,Done) || $(call prompt-error,Failed)
 
