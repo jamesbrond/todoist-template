@@ -7,9 +7,8 @@ PY_SRCS       := $(shell /usr/bin/find . -path ./$(VENV_DIR) -prune -o -name "*.
 REQUIREMENTS  := requirements.txt
 
 do_activate   = [[ -z "$$VIRTUAL_ENV" ]] && . $(ACTIVATE) || true
-pyenv         = $(do_activate) && $(1)
-
 install_deps  = $(do_activate) && pip install -Ur $(1)
+pyenv         = $(do_activate) && $(1)
 
 
 .PHONY: clean-pycache clean-venv deps devdeps lint
