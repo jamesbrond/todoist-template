@@ -73,6 +73,6 @@ ON_IWHITE=\033[0;107m
 
 # echoclr,COLOR,TEXT
 # example: $(call echoclr,$(WHITE),Hello world)
-echoclr = @echo -e "$(1)$(2)$(COLOR_OFF)"
+echoclr = echo -e "$(1)$(2)$(COLOR_OFF)"
 
 # ~@:-]
