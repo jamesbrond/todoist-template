@@ -77,10 +77,11 @@ ON_IWHITE=\033[0;107m
 # example: $(call echoclr,$(WHITE),Hello world)
 echoclr = echo -e "$(1)$(2)$(COLOR_OFF)"
 
+# prompt-%,TEXT
 prompt-success = $(call echoclr,$(GREEN),$(1))
 prompt-error   = $(call echoclr,$(RED),$(1))
 prompt-warn    = $(call echoclr,$(YELLOW),$(1))
-prompt-info    = $(call echoclr,$(BIWHITE),$(1))
+prompt-info    = $(call echoclr,$(BLUE),$(1))
 prompt-log     = $(call echoclr,$(BLACK),$(1))
 
 help: ## Show Makefile help
