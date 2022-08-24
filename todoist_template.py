@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """Easily add tasks to Todoist with customizable YAML templates"""
 
 import os
@@ -25,9 +27,10 @@ class StoreDictKeyPair(argparse.Action):
             my_dict[key] = val
         setattr(namespace, self.dest, my_dict)
 
+
 def _parse_cmd_line():
     parser = argparse.ArgumentParser(
-        prog="todoist-template.py",
+        prog="todoist_template.py",
         usage='%(prog)s [options]',
         description='Easily add tasks to Todoist with customizable YAML templates'
     )
@@ -83,7 +86,9 @@ def _parse_cmd_line():
         dest="dry_run",
         default=False,
         action="store_true",
-        help="allows the %(prog)s command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object ids.",
+        help="""allows the %(prog)s command to run a trial without making
+any changes on Todoist.com, this process has the same output as the real
+execution except for new object ids.""",
     )
 
     parser.add_argument(
@@ -107,6 +112,8 @@ def main():
     args = _parse_cmd_line()
     logging.basicConfig(level=args.loglevel, format="%(message)s")
 
+    logging.info(version.LOGO)
+
     try:
         _check_python_version()
 
@@ -128,16 +135,18 @@ def main():
             with args.template as file:
                 logging.debug("open file %s", file)
                 if not args.dry_run:
+                    now = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
                     undofile = os.path.join(
                         script_folder,
-                        f"{os.path.basename(file.name)}-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.undo"
+                        f"{os.path.basename(file.name)}-{now}.undo"
                     )
                 else:
                     undofile = None
                 tmpl.parse(file, args.placeholders, undofile)
 
         return 0
-    except Exception as exc:
+
+    except Exception as exc:  # pylint: disable=broad-except
         logging.error(exc, exc_info=logging.getLogger().isEnabledFor(logging.DEBUG))
         return 1
 

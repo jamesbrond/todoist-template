@@ -5,7 +5,8 @@ from lib.loader.abstractloader import AbstractTemplateLoader
 
 DEFAULT_PROJECT = "Inbox"
 
-class CsvTemplateLoader(AbstractTemplateLoader):
+
+class CsvTemplateLoader(AbstractTemplateLoader):  # pylint: disable=too-few-public-methods
     """CSV Template Loader (can load ufficial Todoist templates)"""
 
     def load(self, file):

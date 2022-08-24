@@ -3,13 +3,13 @@
 import os
 import logging
 import mimetypes
-from lib.loader.csvloader import CsvTemplateLoader
-from lib.loader.jsonloader import JsonTemplateLoader
-from lib.loader.yamlloader import YamlTemplateLoader
+from lib.loader.csvloader import CsvTemplateLoader  # pylint: disable=unused-import
+from lib.loader.jsonloader import JsonTemplateLoader  # pylint: disable=unused-import
+from lib.loader.yamlloader import YamlTemplateLoader  # pylint: disable=unused-import
 
 TEMPLATE_YAML = "YamlTemplateLoader"
 TEMPLATE_JSON = "JsonTemplateLoader"
-TEMPLATE_CSV  = "CsvTemplateLoader"
+TEMPLATE_CSV = "CsvTemplateLoader"
 
 MIMETYPES_MAP = {
     "application/json": TEMPLATE_JSON,
@@ -20,7 +20,8 @@ MIMETYPES_MAP = {
     "text/csv": TEMPLATE_CSV
 }
 
-class TemplateLoaderFactory:
+
+class TemplateLoaderFactory:  # pylint: disable=too-few-public-methods
     """
     Implements Factroy Design Pattern to get different
     template loader according to file type
