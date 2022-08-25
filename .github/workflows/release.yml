@@ -1,0 +1,53 @@
+name: Release
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+
+      - name: Get repository name
+        id: repo-name
+        run: echo "::set-output name=name::$(echo "${{ github.repository }}" | sed -e 's/${{ github.repository_owner }}\///')
+
+      - run: echo "✔️ Package name ${{ steps.repo-name.outputs.name }}."
+
+      - name: Get tag name
+        id: tag-name
+        uses: olegtarasov/get-tag@v2.1
+
+      - run: echo "✔️ Release version ${{ steps.tag-name.outputs.tag }}."
+
+      - name: Create archive release
+        uses: thedoctor0/zip-release@main
+        with:
+          type: 'zip'
+          filename: '${{ steps.repo-name.outputs.name }}-${{ steps.tag-name.outputs.tag }}.zip'
+          exclusions: '*.git* Makefile'
+
+      - run: echo "💡 The '${{ steps.repo-name.outputs.name }}-${{ steps.tag-name.outputs.tag }}.zip' artifact has been created."
+
+      - name: Upload Release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: "${{ steps.repo-name.outputs.name }}-${{ steps.tag-name.outputs.tag }}.zip"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: echo "💡 The '${{ steps.repo-name.outputs.name }}-${{ steps.tag-name.outputs.tag }}.zip' artifact has been uploaded."
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+
+# ~@:-]
