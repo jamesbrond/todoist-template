@@ -9,7 +9,7 @@ on:
     branches: [main]
 
 jobs:
-   call-lint:
+  call-lint:
     uses: jamesbrond/jamesbrond/.github/workflows/lint.yml@main
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
