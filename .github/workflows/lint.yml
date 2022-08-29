@@ -7,6 +7,10 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   build:
     # Name the Job
@@ -27,14 +31,19 @@ jobs:
       - name: Lint Code Base
         uses: github/super-linter@v4
         env:
+          VALIDATE_GITHUB_ACTIONS: true
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_PYTHON_FLAKE8: true
-          PYTHON_FLAKE8_CONFIG_FILE: .flake8
+          PYTHON_FLAKE8_CONFIG_FILE: flake8
           VALIDATE_PYTHON_PYLINT: true
-          VALIDATE_GITHUB_ACTIONS: true
+          PYTHON_PYLINT_CONFIG_FILE: pylint.toml
           VALIDATE_JSON: true
           VALIDATE_MARKDOWN: true
+          MARKDOWN_CONFIG_FILE: markdown-link-check.json
           VALIDATE_NATURAL_LANGUAGE: true
           VALIDATE_YAML: true
+          YAML_CONFIG_FILE: yaml-lint.yml
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+# ~@:-]
