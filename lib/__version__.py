@@ -12,7 +12,7 @@ LOGO = """
                                            ╚╝"""
 
 
-__version__ = "$gittag"
+__version__ = "1.0.3"
 
 VERSION = tuple((int(x)) for x in __version__.split('.'))
 

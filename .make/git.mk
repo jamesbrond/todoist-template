@@ -24,9 +24,7 @@ zip_create   = command -v $(ZIP_EXE) &>/dev/null && \
 		$(call prompt-error,Error: command not found '$(ZIP_EXE)')
 
 ifdef VERSION_FILE
-git_update_version = sed -i -r -e 's/__version__ = "[0-9\.]+"/__version__ = "$(1)"/' $(VERSION_FILE) && \
-	git add $(VERSION_FILE) && \
-	git commit -m "chore: release $(1)"
+git_update_version = sed -i -r -e "s/__version__ = \"[0-9\.]+\"/__version__ = \"$(1)\"/" $(VERSION_FILE) && git add $(VERSION_FILE) && git commit -m "chore: release $(1)"
 else
 git_update_version = $(call prompt-log,VERSION_FILE is not defined)
 endif
