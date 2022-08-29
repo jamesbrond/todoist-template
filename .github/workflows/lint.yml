@@ -12,6 +12,6 @@ jobs:
    call-lint:
     uses: jamesbrond/jamesbrond/.github/workflows/lint.yml@main
     secrets:
-      token: ${{ secrets.TOKEN }}
+      token: ${{ secrets.GITHUB_TOKEN }}
 
 # ~@:-]
