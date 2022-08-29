@@ -36,7 +36,7 @@ jobs:
         with:
           type: 'zip'
           filename: '${{ steps.repo-name.outputs.name }}-${{ steps.tag-name.outputs.tag }}.zip'
-          exclusions: '*.git* Makefile'
+          exclusions: '*.git* Makefile .make*'
 
       - run: echo "💡 The '${{ steps.repo-name.outputs.name }}-${{ steps.tag-name.outputs.tag }}.zip' artifact has been created."
 
