@@ -4,6 +4,7 @@ import logging
 import re
 from lib.todoist import Todoist
 from lib.loader.loaderfactory import TemplateLoaderFactory
+from lib.i18n import _
 
 
 PLACEHOLDER_REGEXP = re.compile(r"{(\w+)\s*\|?\s*([^}]+)?}")
@@ -29,7 +30,7 @@ class TodoistTemplate:
             return
 
         template_loader = TemplateLoaderFactory().get_loader(file.name)
-        logging.debug("use %s to load '%s' file", template_loader.__class__.__name__, file.name)
+        logging.debug(_("use %s to load '%s' file"), template_loader.__class__.__name__, file.name)
 
         template = template_loader.load(file)
         if template:
@@ -43,7 +44,7 @@ class TodoistTemplate:
                         prj = list(templ)[0]
                         self._project(prj, templ[prj])
             except:
-                logging.error("Something went wrong: undo all changes")
+                logging.error(_("Something went wrong: undo all changes"))
                 self.todoist.rollback()
                 # re-throw exception to main
                 raise
@@ -87,7 +88,7 @@ class TodoistTemplate:
                 replaced_name,
                 args=self._filter_and_replace(inner, ["color", "favorite"])
             )
-        logging.info("Project: %s%s (%s)", self._isnew(is_new), replaced_name, project_id)
+        logging.info(_("Project: %s%s (%s)"), self._isnew(is_new), replaced_name, project_id)
 
         sections = list(inner)
         for section in sections:
@@ -114,7 +115,7 @@ class TodoistTemplate:
                 replaced_name,
                 args=self._filter_and_replace(content, ["order"])
             )
-        logging.info("Section: %s%s (%s)", self._isnew(is_new), replaced_name, section_id)
+        logging.info(_("Section: %s%s (%s)"), self._isnew(is_new), replaced_name, section_id)
 
         if "tasks" in content:
             for task in content["tasks"]:
@@ -152,7 +153,7 @@ class TodoistTemplate:
         else:
             is_new = True
             task_id = self.todoist.new_task(**replaced_task)
-        logging.info("Task: %s%s (%s)", self._isnew(is_new), replaced_task['content'], task_id)
+        logging.info(_("Task: %s%s (%s)"), self._isnew(is_new), replaced_task['content'], task_id)
 
         if "tasks" in task:
             for subtask in task["tasks"]:
@@ -171,7 +172,7 @@ class TodoistTemplate:
         if not label_id:
             label_id = self.todoist.new_label(replaced_name)
             is_new = True
-        logging.debug("Label: %s%s (%s)", self._isnew(is_new), replaced_name, label_id)
+        logging.debug(_("Label: %s%s (%s)"), self._isnew(is_new), replaced_name, label_id)
         return label_id
 
     def _isnew(self, is_new):

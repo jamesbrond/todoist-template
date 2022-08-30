@@ -6,6 +6,8 @@ import mimetypes
 from lib.loader.csvloader import CsvTemplateLoader  # pylint: disable=unused-import
 from lib.loader.jsonloader import JsonTemplateLoader  # pylint: disable=unused-import
 from lib.loader.yamlloader import YamlTemplateLoader  # pylint: disable=unused-import
+from lib.i18n import _
+
 
 TEMPLATE_YAML = "YamlTemplateLoader"
 TEMPLATE_JSON = "JsonTemplateLoader"
@@ -45,20 +47,20 @@ class TemplateLoaderFactory:  # pylint: disable=too-few-public-methods
     def _guess_by_mimetypes(self, filepath):
         file_mimetype = mimetypes.MimeTypes().guess_type(filepath)[0]
         if file_mimetype:
-            logging.debug("File mimetype %s", file_mimetype)
+            logging.debug(_("File mimetype %s"), file_mimetype)
             return MIMETYPES_MAP.get(file_mimetype)
         return None
 
     def _guess_by_extension(self, filepath):
         _, ext = os.path.splitext(filepath)
         if ext in (".yaml", ".yml"):
-            logging.debug("YAML extension %s", ext)
+            logging.debug(_("YAML extension %s"), ext)
             return TEMPLATE_YAML
         if ext in (".json"):
-            logging.debug("JSON extension %s", ext)
+            logging.debug(_("JSON extension %s"), ext)
             return TEMPLATE_JSON
         if ext in (".csv"):
-            logging.debug("CSV extension %s", ext)
+            logging.debug(_("CSV extension %s"), ext)
             return TEMPLATE_CSV
         return None
 

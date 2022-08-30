@@ -21,3 +21,8 @@ todoist_template.egg-info/
 MANIFEST
 
 .vscode/
+
+.make/user.mk
+
+locales/*.pot
+locales/**/*.mo

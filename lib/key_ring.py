@@ -1,6 +1,7 @@
 """Keyring functions"""
 
 import keyring
+from lib.i18n import _
 
 
 def set_api_token(service_id, token):
@@ -15,7 +16,7 @@ def get_api_token(service_id):
 
 def setup(service_id):
     """Prompt user for token"""
-    token = input("Please enter your API token: ")
+    token = input(_("Please enter your API token: "))
     set_api_token(service_id, token)
 
 # ~@:-]
