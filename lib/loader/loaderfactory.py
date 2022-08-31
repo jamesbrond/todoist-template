@@ -52,7 +52,7 @@ class TemplateLoaderFactory:  # pylint: disable=too-few-public-methods
         return None
 
     def _guess_by_extension(self, filepath):
-        _, ext = os.path.splitext(filepath)
+        i, ext = os.path.splitext(filepath)  # pylint: disable=unused-variable
         if ext in (".yaml", ".yml"):
             logging.debug(_("YAML extension %s"), ext)
             return TEMPLATE_YAML
