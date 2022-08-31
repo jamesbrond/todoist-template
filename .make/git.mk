@@ -11,7 +11,11 @@ GIT_MAIN_BRANCH      := main
 GIT_LATEST_RELEASE   := $(shell git describe --tags --abbrev=0 2>/dev/null)
 
 ZIP_EXE              := 7z
+ifdef PACKAGE
+ZIP_BASENAME         := $(PACKAGE)
+else
 ZIP_BASENAME         := $(shell basename $$PWD)
+endif
 ZIP_MAKELIST_EXCLUDE := $(shell echo "$(MAKEFILE_LIST)" | sed -e 's/ /,/g')
 
 git_checkout = git checkout $(1) --quiet

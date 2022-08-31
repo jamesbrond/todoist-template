@@ -16,6 +16,8 @@ __version__ = "1.0.5"
 
 VERSION = tuple((int(x)) for x in __version__.split('.'))
 
+PACKAGE = "todoist_template"
+
 if __name__ == "__main__":
     print(__version__, end="")
 

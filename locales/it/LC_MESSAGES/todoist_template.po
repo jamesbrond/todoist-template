@@ -1,0 +1,256 @@
+# TODOIST-TEMPLATE LANGUAGE CATALOG.
+# Copyright (C) 2022
+# Diego Brondo <jamesbrond@gmail.com>, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: TODOIST-TEMPLATE\n"
+"POT-Creation-Date: 2022-08-30 14:57+0200\n"
+"PO-Revision-Date: 2022-08-30 14:57+0200\n"
+"Last-Translator: Diego Brondo <jamesbrond@gmail.com>\n"
+"Language-Team: ITALIAN <jamesbrond@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: ./lib/key_ring.py:19
+msgid "Please enter your API token: "
+msgstr "Immettere il token per le API di Todoist"
+
+#: ./lib/loader/loaderfactory.py:50
+msgid "File mimetype %s"
+msgstr "Tipo di file %s"
+
+#: ./lib/loader/loaderfactory.py:57
+msgid "YAML extension %s"
+msgstr "Estensione YAML %s"
+
+#: ./lib/loader/loaderfactory.py:60
+msgid "JSON extension %s"
+msgstr "Estensione JSON %s"
+
+#: ./lib/loader/loaderfactory.py:63
+msgid "CSV extension %s"
+msgstr "Estensione CSV %s"
+
+#: ./lib/template.py:33
+msgid "use %s to load '%s' file"
+msgstr "utilizzo %s per caricare il file '%s'"
+
+#: ./lib/template.py:47
+msgid "Something went wrong: undo all changes"
+msgstr "Qualcosa è andato storto: butto via tutto"
+
+#: ./lib/template.py:91
+msgid "Project: %s%s (%s)"
+msgstr "Progetto: %s%s (%s)"
+
+#: ./lib/template.py:118
+msgid "Section: %s%s (%s)"
+msgstr "Sessione: %s%s (%s)"
+
+#: ./lib/template.py:156
+msgid "Task: %s%s (%s)"
+msgstr "Attività: %s%s (%s)"
+
+#: ./lib/template.py:175
+msgid "Label: %s%s (%s)"
+msgstr "Etichetta: %s%s (%s)"
+
+#: ./lib/todoist.py:49
+msgid "created new project: %s: %s"
+msgstr "creato nuovo progetto: %s: %s"
+
+#: ./lib/todoist.py:53
+msgid "created new project: %s"
+msgstr "creato nuovo progetto: %s"
+
+#: ./lib/todoist.py:60
+msgid "created new section: %s: %s"
+msgstr "creata nuova sessione: %s: %s"
+
+#: ./lib/todoist.py:64
+msgid "created new section: %s"
+msgstr "creata nuova sessione: %s"
+
+#: ./lib/todoist.py:74
+msgid "created new label: %s"
+msgstr "creata nuova etichetta: %s"
+
+#: ./lib/todoist.py:83
+msgid "created new task: %s"
+msgstr "creata nuova attività: %s"
+
+#: ./lib/todoist.py:92
+msgid "update task: %d"
+msgstr "aggiornata attività: %d"
+
+#: ./lib/todoist.py:110
+msgid "Save rollback commands to %s"
+msgstr "Salvataggio dei comandi di ripristino su %s"
+
+#: ./lib/todoist.py:116
+msgid "Load rollback commands from %s"
+msgstr "Caricamento dei comandi di ripristino da %s"
+
+#: ./lib/todoist.py:123
+msgid "Failure"
+msgstr "fallito"
+
+#: ./lib/todoist.py:123
+msgid "Rollback status: %s"
+msgstr "Ripristino: %s"
+
+#: ./lib/todoist.py:123
+msgid "Success"
+msgstr "completato"
+
+#: ./lib/todoist.py:127
+msgid "undo commands: %s"
+msgstr "comandi di annullo: %s"
+
+#: ./lib/todoist.py:129
+msgid "undo response %s"
+msgstr "risposta all'annullo %s"
+
+#: ./test.py:4 ./todoist_template.py:18
+msgid "This script requires Python >= 3.8 and < 4"
+msgstr "Questo script richiede Python >= 3.8 e < 4"
+
+#: ./todoist_template.py:36
+msgid "Easily add tasks to Todoist with customizable YAML templates"
+msgstr "Aggiungi facilmente atività a Todoist usando template personalizzabili"
+
+#: ./todoist_template.py:53
+msgid "the placeholder values replaced in template"
+msgstr "il valori dei simboli rimpiazzati nel template"
+
+#: ./todoist_template.py:62
+msgid "keyring service name where store Todoist API Token"
+msgstr "nome del servizio keyring dove leggere e archiviare il token per le API di Todoist"
+
+#: ./todoist_template.py:73
+msgid "more verbose output"
+msgstr "messaggi più prolissi"
+
+#: ./todoist_template.py:82
+msgid "suppress output"
+msgstr "nessun messaggio in uscita"
+
+#: ./todoist_template.py:90
+msgid "allows the %(prog)s command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object IDs."
+msgstr "lancia %(prog)s in modalità di prova senza fare alcuna modifica su Todoist.com, il processo produce la stessa messaggistica di una vera esecuzione ad eccezione per gli ID dei nuovi oggetti"
+
+#: ./todoist_template.py:99
+msgid "loads undo file and rollbacks all operations in it"
+msgstr "carica il file di annullamento e ripristina tutte le operazioni in esso"
+
+#: ./todoist_template.py:105
+msgid "the Todoist authorization token"
+msgstr "il token di autorizzazione per le API di Todoist"
+
+#: ./todoist_template.py:124
+msgid "Todoist API token not found for %s application."
+msgstr "Il token per le API di Todoist non è stato trovato per l'applicazione %s"
+
+#: ./todoist_template.py:132
+msgid "remove file %s"
+msgstr "cancellazione del file %s"
+
+#: ./todoist_template.py:137
+msgid "open file %s"
+msgstr "apertura file %s"
+
+msgid "show program's version number and exit"
+msgstr "mostra la versione del programma ed esce"
+
+msgid "usage: "
+msgstr "utilizzo: "
+
+msgid ".__call__() not defined"
+msgstr ""
+
+msgid "unknown parser %(parser_name)r (choices: %(choices)s)"
+msgstr ""
+
+msgid "argument \"-\" with mode %r"
+msgstr ""
+
+msgid "can't open '%(filename)s': %(error)s"
+msgstr ""
+
+msgid "cannot merge actions - two groups are named %r"
+msgstr ""
+
+msgid "'required' is an invalid argument for positionals"
+msgstr ""
+
+msgid "invalid option string %(option)r: must start with a character %(prefix_chars)r"
+msgstr ""
+
+msgid "dest= is required for options like %r"
+msgstr ""
+
+msgid "invalid conflict_resolution value: %r"
+msgstr ""
+
+msgid "mutually exclusive arguments must be optional"
+msgstr ""
+
+msgid "positional arguments"
+msgstr "argomenti posizionali"
+
+msgid "options"
+msgstr "opzioni"
+
+msgid "show this help message and exit"
+msgstr "mostra questo messaggio di aiuto ed esce"
+
+msgid "cannot have multiple subparser arguments"
+msgstr ""
+
+msgid "unrecognized arguments: %s"
+msgstr ""
+
+msgid "not allowed with argument %s"
+msgstr ""
+
+msgid "ignored explicit argument %r"
+msgstr ""
+
+msgid "the following arguments are required: %s"
+msgstr ""
+
+msgid "one of the arguments %s is required"
+msgstr ""
+
+msgid "expected one argument"
+msgstr ""
+
+msgid "expected at most one argument"
+msgstr ""
+
+msgid "expected at least one argument"
+msgstr ""
+
+msgid "ambiguous option: %(option)s could match %(matches)s"
+msgstr ""
+
+msgid "unexpected option string: %s"
+msgstr ""
+
+msgid "%r is not callable"
+msgstr ""
+
+msgid "invalid %(type)s value: %(value)r"
+msgstr ""
+
+msgid "invalid choice: %(value)r (choose from %(choices)s)"
+msgstr ""
+
+msgid ""
+"%(prog)s: error: %(message)s\n"
+msgstr ""
+

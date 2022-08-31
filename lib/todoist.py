@@ -6,6 +6,7 @@ import json
 import requests
 from todoist_api_python.api import TodoistAPI
 from lib.utils import find_needle_in_haystack, uid
+from lib.i18n import _
 
 
 SYNC_API = "https://api.todoist.com/sync/v9/sync"
@@ -45,22 +46,22 @@ class Todoist(TodoistAPI):
     def new_project(self, name, args):
         """Creates a new project and returns its ID"""
         if self.dry_run:
-            logging.debug("created new project: %s: %s", name, args)
+            logging.debug(_("created new project: %s: %s"), name, args)
             return None
         project = self.add_project(name=name, **args)
         self.projects.append(project)
-        logging.debug("created new project: %s", project)
+        logging.debug(_("created new project: %s"), project)
         self.undo_commands.append(self._add_undo_command("project_delete", project.id))
         return project.id
 
     def new_section(self, name, args):
         """Creates a new section and returns its ID"""
         if self.dry_run:
-            logging.debug("created new section: %s: %s", name, args)
+            logging.debug(_("created new section: %s: %s"), name, args)
             return None
         section = self.add_section(name=name, **args)
         self.sections.append(section)
-        logging.debug("created new section: %s", section)
+        logging.debug(_("created new section: %s"), section)
         self.undo_commands.append(self._add_undo_command("section_delete", section.id))
         return section.id
 
@@ -70,7 +71,7 @@ class Todoist(TodoistAPI):
             return None
         label = self.add_label(name=name, **kwargs)
         self.labels.append(label)
-        logging.debug("created new label: %s", label)
+        logging.debug(_("created new label: %s"), label)
         self.undo_commands.append(self._add_undo_command("label_delete", label.id))
         return label.id
 
@@ -79,7 +80,7 @@ class Todoist(TodoistAPI):
         if self.dry_run:
             return None
         task = self.add_task(content, **kwargs)
-        logging.debug("created new task: %s", task)
+        logging.debug(_("created new task: %s"), task)
         self.undo_commands.append(self._add_undo_command("item_delete", task.id))
         return task.id
 
@@ -88,7 +89,7 @@ class Todoist(TodoistAPI):
         if not self.dry_run:
             original_task = self.get_task(task_id=task_id).to_dict()
             if self.update_task(task_id=task_id, **kwargs):
-                logging.debug("update task: %d", task_id)
+                logging.debug(_("update task: %d"), task_id)
                 self.undo_commands.append(
                     self._add_undo_command("item_update", task_id, {
                         "id": task_id,
@@ -106,28 +107,28 @@ class Todoist(TodoistAPI):
 
     def store_rollback(self, filepath):
         """Save rollback instructions to filepath"""
-        logging.info("Save rollback commands to %s", filepath)
+        logging.info(_("Save rollback commands to %s"), filepath)
         with open(filepath, "wb") as file:
             pickle.dump(self.undo_commands, file)
 
     def load_rollback(self, file):
         """Load rollback instructions from file"""
-        logging.info("Load rollback commands from %s", file.name)
+        logging.info(_("Load rollback commands from %s"), file.name)
         self.undo_commands = pickle.load(file)
 
     def rollback(self, undo_commands=None):
         """Rollback todoist-template actions"""
         cmds = undo_commands if undo_commands else self.undo_commands
         status = self._do_rollback(cmds)
-        logging.info("Rollback status: %s", ("Success" if status else "Failure"))
+        logging.info(_("Rollback status: %s"), (_("Success") if status else _("Failure")))
         return status
 
     def _do_rollback(self, commands):
-        logging.debug("undo commands: %s", commands)
+        logging.debug(_("undo commands: %s"), commands)
         response = self._sync(commands)
-        logging.debug("undo response %s", response)
+        logging.debug(_("undo response %s"), response)
         if response and response.get("sync_status"):
-            for _, sync_message in response.get("sync_status").items():
+            for k, sync_message in response.get("sync_status").items():  # pylint: disable=unused-variable
                 if sync_message != "ok":
                     return False
             return True
