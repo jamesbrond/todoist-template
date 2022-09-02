@@ -43,6 +43,6 @@ jobs:
           VALIDATE_YAML: true
           YAML_CONFIG_FILE: yaml-lint.yml
           DEFAULT_BRANCH: main
-          GITHUB_TOKEN: ${{ secrets.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 # ~@:-]
