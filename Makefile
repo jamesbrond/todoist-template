@@ -12,6 +12,6 @@ include .make/git.mk
 .PHONY: clean
 .DEFAULT_GOAL := help
 
-clean: clean-venv clean-pycache clean-pylang clean-dist ## Clean-up the solution
+clean: clean-venv clean-pycache clean-pygettext clean-dist ## Clean-up the solution
 
 # ~@:-]
