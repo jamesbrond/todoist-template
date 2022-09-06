@@ -1,7 +1,6 @@
 #!/bin/bash
 
-#INCLUDES=($(grep -E '^include .*\s$' Makefile | awk 'BEGIN {FS = "/"}; {print $2}'))
-INCLUDES=($(grep -E '^include .*\s$' Makefile | awk 'BEGIN {FS = " "}; {print $2}'))
+INCLUDES=($(grep -E '^-include .*\s$' Makefile | awk 'BEGIN {FS = " "}; {print $2}'))
 
 for I in "${INCLUDES[@]}"; do
     FILE=$(echo $I|tr -d '\r\n')
@@ -12,7 +11,7 @@ for I in "${INCLUDES[@]}"; do
         NAME=$(basename $FILE)
         URL=$(echo "https://raw.githubusercontent.com/jamesbrond/jamesbrond/main/Makefile/$NAME")
 
-        echo "~$URL~"
-        curl ${URL} -o $FILE
+        echo "get $URL"
+        curl -H 'Cache-Control: no-cache, no-store' ${URL} -o $FILE
     fi
 done
