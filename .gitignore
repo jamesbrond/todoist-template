@@ -20,6 +20,8 @@ dist/
 todoist_template.egg-info/
 MANIFEST
 
+.make/
+
 .vscode/
 
 .make/user.mk

@@ -146,7 +146,8 @@ class Todoist(TodoistAPI):
         response = requests.get(
             SYNC_API,
             headers={"Authorization": f"Bearer {self._token}"},
-            params=params
+            params=params,
+            timeout=60.0
         )
         return response.json() if response.status_code == 200 else response.content
 
