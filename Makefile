@@ -4,7 +4,9 @@ PACKAGE      := todoist_template
 VERSION_FILE := lib/__version__.py
 VERSION_EXP  := (__version__ = \")[0-9\.]+
 
--include .make/user.mk
+PY_HOME := C:\Users\320072283\bin\python
+
+
 -include .make/misc.mk
 -include .make/py.mk
 -include .make/git.mk
