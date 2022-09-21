@@ -40,7 +40,9 @@ class Todoist(TodoistAPI):
         if not project_id and not section_id:
             return False
         query = {"project_id": project_id, "section_id": section_id}
+        logging.debug(_("get tasks for %s"), query)
         tasks = self.get_tasks(**query)
+        logging.debug(_("found %d tasks"), len(tasks))
         return self._exists([content], tasks, ["content"])
 
     def new_project(self, name, args):
@@ -89,7 +91,7 @@ class Todoist(TodoistAPI):
         if not self.dry_run:
             original_task = self.get_task(task_id=task_id).to_dict()
             if self.update_task(task_id=task_id, **kwargs):
-                logging.debug(_("update task: %d"), task_id)
+                logging.debug(_("update task: %s"), str(task_id))
                 self.undo_commands.append(
                     self._add_undo_command("item_update", task_id, {
                         "id": task_id,
@@ -97,9 +99,9 @@ class Todoist(TodoistAPI):
                         "description": original_task["description"],
                         "due": original_task["due"],
                         "priority": original_task["priority"],
-                        "labels": original_task["label_ids"],
-                        "assigned_by_uid": original_task["assigner"],
-                        "responsible_uid": original_task["assignee"],
+                        "labels": original_task["labels"],
+                        "assigned_by_uid": original_task["assigner_id"],
+                        "responsible_uid": original_task["assignee_id"],
                         "day_order": original_task["order"]
                     })
                 )
@@ -108,7 +110,7 @@ class Todoist(TodoistAPI):
     def store_rollback(self, filepath):
         """Save rollback instructions to filepath"""
         logging.info(_("Save rollback commands to %s"), filepath)
-        with open(filepath, "wb") as file:
+        with open(filepath, "ab") as file:
             pickle.dump(self.undo_commands, file)
 
     def load_rollback(self, file):

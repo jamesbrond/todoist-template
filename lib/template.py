@@ -18,6 +18,7 @@ class TodoistTemplate:
     def __init__(self, api_token, dry_run=False):
         self.todoist = Todoist(api_token, dry_run)
         self.placeholders = {}
+        self.template = None
 
     def parse(self, file, placeholders, undofile=None):
         """
@@ -25,20 +26,23 @@ class TodoistTemplate:
         """
 
         self.placeholders = placeholders or {}
+        logging.debug(_("Placeholders: %s"), str(self.placeholders))
 
-        if file is None:
+        if file is None and self.template is None:
             return
 
-        template_loader = TemplateLoaderFactory().get_loader(file.name)
-        logging.debug(_("use %s to load '%s' file"), template_loader.__class__.__name__, file.name)
+        if self.template is None:
+            template_loader = TemplateLoaderFactory().get_loader(file.name)
+            logging.debug(_("use %s to load '%s' file"), template_loader.__class__.__name__, file.name)
 
-        template = template_loader.load(file)
-        if template:
+            self.template = template_loader.load(file)
+
+        if self.template:
             try:
-                for templ in template:
+                for templ in self.template:
                     if isinstance(templ, str):
                         # template with a single project root
-                        self._project(templ, template[templ])
+                        self._project(templ, self.template[templ])
                     else:
                         # template with multiple projects
                         prj = list(templ)[0]
@@ -51,6 +55,8 @@ class TodoistTemplate:
 
             if undofile:
                 self.todoist.store_rollback(undofile)
+        else:
+            logging.error(_("No template defined"))
 
     def rollback(self, file):
         """Applies rollback actions in file"""
@@ -148,9 +154,11 @@ class TodoistTemplate:
 
         task_id = self.todoist.exists_task(project_id, section_id, replaced_task["content"])
         if task_id:
+            logging.debug(_("task already exists"))
             is_new = False
             self.todoist.modify_task(task_id, **replaced_task)
         else:
+            logging.debug(_("task doesn't exist yet"))
             is_new = True
             task_id = self.todoist.new_task(**replaced_task)
         logging.info(_("Task: %s%s (%s)"), self._isnew(is_new), replaced_task['content'], task_id)
