@@ -104,16 +104,25 @@ execution except for new object IDs."),
     )
 
     parser.add_argument(
-        "--undo",
-        dest="undo",
-        type=argparse.FileType("rb"),
-        help=_("loads undo file and rollbacks all operations in it")
+        "-u",
+        "--update",
+        dest="is_update",
+        default=False,
+        action="store_true",
+        help=_("Update task with the same name instead of adding a new one")
     )
 
     parser.add_argument(
         "--token",
         dest="token",
         help=_("the Todoist authorization token")
+    )
+
+    parser.add_argument(
+        "--undo",
+        dest="undo",
+        type=argparse.FileType("rb"),
+        help=_("loads undo file and rollbacks all operations in it")
     )
 
     return parser.parse_args()
@@ -136,7 +145,11 @@ def main():
             keyring.setup(args.service_id)
             api_token = keyring.get_api_token(args.service_id)
 
-        tmpl = TodoistTemplate(api_token, args.dry_run)
+        tmpl = TodoistTemplate(
+            api_token=api_token,
+            dry_run=args.dry_run,
+            is_update=args.is_update
+        )
         if args.undo:
             if tmpl.rollback(args.undo):
                 args.undo.close()

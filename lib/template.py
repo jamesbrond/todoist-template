@@ -15,10 +15,11 @@ class TodoistTemplate:
     Import YAML template file into Todoist application
     """
 
-    def __init__(self, api_token, dry_run=False):
-        self.todoist = Todoist(api_token, dry_run)
+    def __init__(self, api_token, dry_run=False, is_update=False):
+        self.todoist = Todoist(api_token, dry_run, is_update)
         self.placeholders = {}
         self.template = None
+        self.is_update = is_update
 
     def parse(self, file, placeholders, undofile=None):
         """
@@ -152,7 +153,10 @@ class TodoistTemplate:
                 label_ids.append(self._label(label))
             replaced_task["label_ids"] = label_ids
 
-        task_id = self.todoist.exists_task(project_id, section_id, replaced_task["content"])
+        if self.is_update:
+            task_id = self.todoist.exists_task(project_id, section_id, replaced_task["content"])
+        else:
+            task_id = None
         if task_id:
             logging.debug(_("task already exists"))
             is_new = False
