@@ -1,6 +1,7 @@
 DIST_DIR     := dist
 LOCALES_DIR  := locales
 PACKAGE      := todoist_template
+PY_DIR       := c:\Users\320072283\bin\python
 VERSION_FILE := lib/__version__.py
 VERSION_EXP  := (__version__ = \")[0-9\.]+
 
@@ -16,10 +17,10 @@ $(MAKE_INCLUDES):
 	echo "get $$URL"; \
 	curl -s -H 'Cache-Control: no-cache, no-store' $${URL} -o $@
 
-.PHONY: clean distclean dist
+.PHONY: clean clean-dist deps devdeps lint
 .DEFAULT_GOAL := help
 
-clean-dist: clean clean-venv ## Clean-up solution
+clean-dist: clean clean-venv ## Clean-up the entire solution
 	@-rm -rf .make
 	@-rm -rf dist
 
@@ -29,8 +30,9 @@ deps: py-deps ## Install dependencies
 
 devdeps: py-devdeps ## Install dependencies for depveloper
 
-distclean: clean clean-venv clean-dist ## Clean-up the entire solution
-
 lint: py-lint ## Lint and static-check
+
+test:
+	@echo $(PATH)
 
 # ~@:-]
