@@ -46,7 +46,7 @@ def _parse_cmd_line():
     # positional arguments:
     parser.add_argument(
         "template",
-        nargs="?",
+        nargs="?", # a single value, which can be optional
         type=argparse.FileType("r", encoding="utf8"),
         default=sys.stdin)
 
@@ -54,17 +54,11 @@ def _parse_cmd_line():
     parser.add_argument(
         "-D",
         dest="placeholders",
-        type=val_placeholder,
+        type=val_placeholder, # can be a file or a comma separated list of key=value
         metavar="KEY0=VAL0,KEY1=VAL1...",
         default={},
         help=_("the placeholder values replaced in template")
     )
-
-    parser.add_argument(
-        "--version",
-        action="version",
-        version="%(prog)s " + version.__version__,
-        help=_("show program's version number and exit"))
 
     parser.add_argument(
         "--id",
@@ -109,7 +103,7 @@ execution except for new object IDs."),
         dest="is_update",
         default=False,
         action="store_true",
-        help=_("Update task with the same name instead of adding a new one")
+        help=_("update task with the same name instead of adding a new one")
     )
 
     parser.add_argument(
@@ -124,6 +118,12 @@ execution except for new object IDs."),
         type=argparse.FileType("rb"),
         help=_("loads undo file and rollbacks all operations in it")
     )
+
+    parser.add_argument(
+        "--version",
+        action="version",
+        version="%(prog)s " + version.__version__,
+        help=_("show program's version number and exit"))
 
     return parser.parse_args()
 
