@@ -15,242 +15,138 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: ./lib/key_ring.py:19
 msgid "Please enter your API token: "
 msgstr ""
 
-#: ./lib/loader/loaderfactory.py:50
 msgid "File mimetype %s"
 msgstr ""
 
-#: ./lib/loader/loaderfactory.py:57
 msgid "YAML extension %s"
 msgstr ""
 
-#: ./lib/loader/loaderfactory.py:60
 msgid "JSON extension %s"
 msgstr ""
 
-#: ./lib/loader/loaderfactory.py:63
 msgid "CSV extension %s"
 msgstr ""
 
-#: ./lib/template.py:33
+msgid "Placeholders: %s"
+msgstr ""
+
 msgid "use %s to load '%s' file"
 msgstr ""
 
-#: ./lib/template.py:47
 msgid "Something went wrong: undo all changes"
 msgstr ""
 
-#: ./lib/template.py:91
+msgid "No template defined"
+msgstr ""
+
 msgid "Project: %s%s (%s)"
 msgstr ""
 
-#: ./lib/template.py:118
 msgid "Section: %s%s (%s)"
 msgstr ""
 
-#: ./lib/template.py:156
+msgid "task already exists"
+msgstr ""
+
+msgid "task doesn't exist yet"
+msgstr ""
+
 msgid "Task: %s%s (%s)"
 msgstr ""
 
-#: ./lib/template.py:175
 msgid "Label: %s%s (%s)"
 msgstr ""
 
-#: ./lib/todoist.py:49
+msgid "get tasks for %s"
+msgstr ""
+
+msgid "found %d tasks"
+msgstr ""
+
 msgid "created new project: %s: %s"
 msgstr ""
 
-#: ./lib/todoist.py:53
 msgid "created new project: %s"
 msgstr ""
 
-#: ./lib/todoist.py:60
 msgid "created new section: %s: %s"
 msgstr ""
 
-#: ./lib/todoist.py:64
 msgid "created new section: %s"
 msgstr ""
 
-#: ./lib/todoist.py:74
 msgid "created new label: %s"
 msgstr ""
 
-#: ./lib/todoist.py:83
 msgid "created new task: %s"
 msgstr ""
 
-#: ./lib/todoist.py:92
-msgid "update task: %d"
+msgid "update task: %s"
 msgstr ""
 
-#: ./lib/todoist.py:110
 msgid "Save rollback commands to %s"
 msgstr ""
 
-#: ./lib/todoist.py:116
 msgid "Load rollback commands from %s"
 msgstr ""
 
-#: ./lib/todoist.py:123
 msgid "Failure"
 msgstr ""
 
-#: ./lib/todoist.py:123
 msgid "Rollback status: %s"
 msgstr ""
 
-#: ./lib/todoist.py:123
 msgid "Success"
 msgstr ""
 
-#: ./lib/todoist.py:127
 msgid "undo commands: %s"
 msgstr ""
 
-#: ./lib/todoist.py:129
 msgid "undo response %s"
 msgstr ""
 
-#: ./test.py:4 ./todoist_template.py:18
 msgid "This script requires Python >= 3.8 and < 4"
 msgstr ""
 
-#: ./todoist_template.py:36
 msgid "Easily add tasks to Todoist with customizable YAML templates"
 msgstr ""
 
-#: ./todoist_template.py:53
 msgid "the placeholder values replaced in template"
 msgstr ""
 
-#: ./todoist_template.py:62
 msgid "keyring service name where store Todoist API Token"
 msgstr ""
 
-#: ./todoist_template.py:73
 msgid "more verbose output"
 msgstr ""
 
-#: ./todoist_template.py:82
 msgid "suppress output"
 msgstr ""
 
-#: ./todoist_template.py:90
 msgid "allows the %(prog)s command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object IDs."
 msgstr ""
 
-#: ./todoist_template.py:99
-msgid "loads undo file and rollbacks all operations in it"
+msgid "update task with the same name instead of adding a new one"
 msgstr ""
 
-#: ./todoist_template.py:105
 msgid "the Todoist authorization token"
 msgstr ""
 
-#: ./todoist_template.py:124
-msgid "Todoist API token not found for %s application."
-msgstr ""
-
-#: ./todoist_template.py:132
-msgid "remove file %s"
-msgstr ""
-
-#: ./todoist_template.py:137
-msgid "open file %s"
+msgid "loads undo file and rollbacks all operations in it"
 msgstr ""
 
 msgid "show program's version number and exit"
 msgstr ""
 
-msgid "usage: "
+msgid "Todoist API token not found for %s application."
 msgstr ""
 
-msgid ".__call__() not defined"
+msgid "remove file %s"
 msgstr ""
 
-msgid "unknown parser %(parser_name)r (choices: %(choices)s)"
-msgstr ""
-
-msgid "argument \"-\" with mode %r"
-msgstr ""
-
-msgid "can't open '%(filename)s': %(error)s"
-msgstr ""
-
-msgid "cannot merge actions - two groups are named %r"
-msgstr ""
-
-msgid "'required' is an invalid argument for positionals"
-msgstr ""
-
-msgid "invalid option string %(option)r: must start with a character %(prefix_chars)r"
-msgstr ""
-
-msgid "dest= is required for options like %r"
-msgstr ""
-
-msgid "invalid conflict_resolution value: %r"
-msgstr ""
-
-msgid "mutually exclusive arguments must be optional"
-msgstr ""
-
-msgid "positional arguments"
-msgstr ""
-
-msgid "options"
-msgstr ""
-
-msgid "show this help message and exit"
-msgstr ""
-
-msgid "cannot have multiple subparser arguments"
-msgstr ""
-
-msgid "unrecognized arguments: %s"
-msgstr ""
-
-msgid "not allowed with argument %s"
-msgstr ""
-
-msgid "ignored explicit argument %r"
-msgstr ""
-
-msgid "the following arguments are required: %s"
-msgstr ""
-
-msgid "one of the arguments %s is required"
-msgstr ""
-
-msgid "expected one argument"
-msgstr ""
-
-msgid "expected at most one argument"
-msgstr ""
-
-msgid "expected at least one argument"
-msgstr ""
-
-msgid "ambiguous option: %(option)s could match %(matches)s"
-msgstr ""
-
-msgid "unexpected option string: %s"
-msgstr ""
-
-msgid "%r is not callable"
-msgstr ""
-
-msgid "invalid %(type)s value: %(value)r"
-msgstr ""
-
-msgid "invalid choice: %(value)r (choose from %(choices)s)"
-msgstr ""
-
-msgid ""
-"%(prog)s: error: %(message)s\n"
+msgid "open file %s"
 msgstr ""
 
