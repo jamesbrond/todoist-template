@@ -4,7 +4,7 @@ charset-normalizer==3.0.0
 idna==3.4
 keyring==23.11.0
 packaging==21.3
-pip-system-certs==3.1
+pip-system-certs==4.0
 pyparsing==3.0.9
 pywin32-ctypes==0.2.0
 PyYAML==6.0
