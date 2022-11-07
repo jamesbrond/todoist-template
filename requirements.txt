@@ -2,7 +2,7 @@ attrs==21.4.0
 certifi==2022.9.24
 charset-normalizer==3.0.0
 idna==3.4
-keyring==23.9.3
+keyring==23.11.0
 packaging==21.3
 pip-system-certs==3.1
 pyparsing==3.0.9
