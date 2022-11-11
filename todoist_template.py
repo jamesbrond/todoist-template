@@ -4,6 +4,7 @@
 
 import eel
 from lib import cli
+from lib.config import Config
 
 
 @eel.expose
@@ -16,23 +17,20 @@ def get_api_token():
 @eel.expose
 def run_script(filename, template, placeholders, api_token, dry_run=False, is_update=False):
     """Method called by JavaScript"""
-    print(f"filename: {filename}")
-    print(f"template: {template}")
-    print(f"placeholders: {placeholders}")
-    print(f"api token: {api_token}")
-    print(f"is dry run? {dry_run}")
-    print(f"is update? {is_update}")
-
     cli.run_batch_template(template, [placeholders], api_token, dry_run, is_update, undofile=None)
     return "thanks for running this script"
 
 
 if __name__ == "__main__":
+    cfg = Config()
+
     eel.init('build/ng', allowed_extensions=['.js', '.html'])
 
     eel.start(
         'index.html',
-        port=54321,
+        host=cfg.service["host"],
+        port=cfg.service["port"],
+        mode=cfg.service["mode"],
         cmdline_args=[]
     )
 

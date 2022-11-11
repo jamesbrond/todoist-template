@@ -56,7 +56,7 @@ ui/.vscode/*
 ui/.history/*
 
 # Miscellaneous
-ui/.angular/cache
+ui/.angular/
 ui/.sass-cache/
 ui/connect.lock
 ui/coverage

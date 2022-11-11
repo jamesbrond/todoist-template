@@ -13,6 +13,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CodePipe } from './pipes';
 import { TemplateSourceComponent } from './template-source/template-source.component';
 import { environment } from 'src/environments/environment';
+import { ToastComponent } from './toast/toast.component';
 
 export const USE_REAL_EEL = new InjectionToken<boolean>('Use eel.js injected by python Eel');
 
@@ -26,7 +27,8 @@ export const USE_REAL_EEL = new InjectionToken<boolean>('Use eel.js injected by 
     RunStepComponent,
     DropAreaComponent,
     CodePipe,
-    TemplateSourceComponent
+    TemplateSourceComponent,
+    ToastComponent
   ],
   imports: [
     BrowserModule,

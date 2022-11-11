@@ -16,6 +16,7 @@ PyYAML==6.0
 requests==2.28.1
 setuptools-scm==7.0.5
 todoist-api-python==2.0.1
+toml==0.10.2
 tomli==2.0.1
 typing_extensions==4.3.0
 urllib3==1.26.12
