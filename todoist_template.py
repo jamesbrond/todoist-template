@@ -7,6 +7,7 @@ import sys
 import datetime
 import logging
 import argparse
+import csv
 import lib.key_ring as keyring
 from lib.template import TodoistTemplate
 import lib.__version__ as version
@@ -19,14 +20,20 @@ def _check_python_version():
     return 1
 
 
-class StoreDictKeyPair(argparse.Action):
-    """Argparse Action"""
-    def __call__(self, parser, namespace, values, option_string=None):
+def val_placeholder(values):
+    """Argparse placeholders type"""
+    placeholders = []
+    if os.path.isfile(values):
+        with open(values, 'r', encoding='utf8') as csv_file:
+            csv_reader = csv.DictReader(csv_file, delimiter=',')
+            placeholders = list(csv_reader)
+    else:
         my_dict = {}
         for keyval in values.split(","):
             key, val = keyval.split("=")
             my_dict[key] = val
-        setattr(namespace, self.dest, my_dict)
+        placeholders = [my_dict]
+    return placeholders
 
 
 def _parse_cmd_line():
@@ -47,7 +54,7 @@ def _parse_cmd_line():
     parser.add_argument(
         "-D",
         dest="placeholders",
-        action=StoreDictKeyPair,
+        type=val_placeholder,
         metavar="KEY0=VAL0,KEY1=VAL1...",
         default={},
         help=_("the placeholder values replaced in template")
@@ -97,10 +104,12 @@ execution except for new object IDs."),
     )
 
     parser.add_argument(
-        "--undo",
-        dest="undo",
-        type=argparse.FileType("rb"),
-        help=_("loads undo file and rollbacks all operations in it")
+        "-u",
+        "--update",
+        dest="is_update",
+        default=False,
+        action="store_true",
+        help=_("Update task with the same name instead of adding a new one")
     )
 
     parser.add_argument(
@@ -109,14 +118,21 @@ execution except for new object IDs."),
         help=_("the Todoist authorization token")
     )
 
+    parser.add_argument(
+        "--undo",
+        dest="undo",
+        type=argparse.FileType("rb"),
+        help=_("loads undo file and rollbacks all operations in it")
+    )
+
     return parser.parse_args()
 
 
 def main():
     """Main function"""
     args = _parse_cmd_line()
-    logging.basicConfig(level=args.loglevel, format="%(message)s")
 
+    logging.basicConfig(level=args.loglevel, format="%(message)s")
     logging.info(version.LOGO)
 
     try:
@@ -129,7 +145,11 @@ def main():
             keyring.setup(args.service_id)
             api_token = keyring.get_api_token(args.service_id)
 
-        tmpl = TodoistTemplate(api_token, args.dry_run)
+        tmpl = TodoistTemplate(
+            api_token=api_token,
+            dry_run=args.dry_run,
+            is_update=args.is_update
+        )
         if args.undo:
             if tmpl.rollback(args.undo):
                 args.undo.close()
@@ -147,7 +167,8 @@ def main():
                     )
                 else:
                     undofile = None
-                tmpl.parse(file, args.placeholders, undofile)
+                for placeholders in args.placeholders:
+                    tmpl.parse(file, placeholders, undofile)
 
         return 0
 
