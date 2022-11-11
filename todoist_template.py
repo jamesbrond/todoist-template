@@ -15,7 +15,7 @@ def get_api_token():
 
 # Expose this function to Javascript
 @eel.expose
-def run_script(filename, template, placeholders, api_token, dry_run=False, is_update=False):
+def run_script(template, placeholders, api_token, dry_run=False, is_update=False):
     """Method called by JavaScript"""
     cli.run_batch_template(template, [placeholders], api_token, dry_run, is_update, undofile=None)
     return "thanks for running this script"

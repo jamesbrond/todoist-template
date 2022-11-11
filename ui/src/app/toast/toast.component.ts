@@ -3,7 +3,7 @@ import { Toast } from 'src/app/interfaces';
 import { ToasterService } from 'src/app/services';
 
 @Component({
-  selector: 'app-toast',
+  selector: 'td-toast',
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.scss']
 })

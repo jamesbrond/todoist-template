@@ -1,7 +1,9 @@
 """Configuration"""
 import toml
 
-class Config(object):
+
+class Config():
+    """Load and handle toml configuration file"""
     def __new__(cls):
         if not hasattr(cls, 'instance'):
             cls.instance = super(Config, cls).__new__(cls)

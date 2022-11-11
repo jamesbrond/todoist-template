@@ -25,7 +25,7 @@ export class PyEelService {
   }
 
   runScript(templateName: string, template: string, placeHolders: PlaceHolder[], token: string, dryRun: boolean, isUpdate: boolean): Observable<string> {
-    this.getEel().run_script(templateName, template, this.toObject(placeHolders), token, dryRun, isUpdate)()
+    this.getEel().run_script(template, this.toObject(placeHolders), token, dryRun, isUpdate)()
       .then((x: any) => this.output$.next(x))
       .catch((e: any) => this.catchError(e));
 
