@@ -1,30 +1,23 @@
 # Byte-compiled / optimized / DLL files
-__pycache__/
+__pycache__
 *.py[cod]
 *$py.class
 
-example/
+example
 
 # Environments
 .env
 .venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
 
 # Distutils
-build/
-dist/
-todoist_template.egg-info/
+build
+dist
+todoist_template.egg-info
 MANIFEST
 
-.make/
+.make
 
-.vscode/
-
-.make/user.mk
+.vscode
 
 locales/*.pot
 locales/**/*.mo
@@ -35,7 +28,7 @@ locales/**/*.mo
 ui/dist
 ui/tmp
 ui/out-tsc
-ui//bazel-out
+ui/bazel-out
 
 # Node
 ui/node_modules
@@ -56,8 +49,8 @@ ui/.vscode/*
 ui/.history/*
 
 # Miscellaneous
-ui/.angular/
-ui/.sass-cache/
+ui/.angular
+ui/.sass-cache
 ui/connect.lock
 ui/coverage
 ui/libpeerconnection.log
