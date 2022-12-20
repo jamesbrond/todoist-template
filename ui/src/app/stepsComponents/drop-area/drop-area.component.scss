@@ -1,0 +1,13 @@
+@import '../../style/conf';
+
+.drop_zone {
+  border: 2px dashed $todoist;
+  border-radius: 5px;
+  padding: 25px;
+  text-align: center;
+  color: $gray-900;
+
+  &:focus {
+    border-color: border_hover($todoist);
+  }
+}

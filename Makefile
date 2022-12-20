@@ -1,36 +1,52 @@
+BUILD_DIR    := build
 DIST_DIR     := dist
 LOCALES_DIR  := locales
 PACKAGE      := todoist_template
+PYTHON       := /usr/bin/python3.10
 VERSION_FILE := lib/__version__.py
 VERSION_EXP  := (__version__ = \")[0-9\.]+
+NG_DIR       := ui
+
+SHELL:=/bin/bash
 
 -include .make/misc.mk
--include .make/py.mk
 -include .make/git.mk
+-include .make/py.mk
+-include .make/angular.mk
 
-MAKE_INCLUDES = $(shell grep -E '^-include .*\s$$' Makefile | awk 'BEGIN {FS = " "}; {print $$2}')
-$(MAKE_INCLUDES):
-	@mkdir -p $$(dirname $@); \
-	NAME=$$(basename $@); \
-	URL=$$(echo "https://raw.githubusercontent.com/jamesbrond/jamesbrond/main/Makefile/$$NAME"); \
+.make:
+	@echo "make directory .make"
+	@mkdir -p $@
+
+.make/%.mk: | .make
+	@URL=$$(echo "https://raw.githubusercontent.com/jamesbrond/jamesbrond/main/Makefile/$$(basename $@)"); \
 	echo "get $$URL"; \
 	curl -s -H 'Cache-Control: no-cache, no-store' $${URL} -o $@
 
-.PHONY: clean distclean dist
+.PHONY: build clean distclean dist lint
 .DEFAULT_GOAL := help
 
-clean-dist: clean clean-venv ## Clean-up solution
+
+build:: ## Compile the entire program
+	@$(call log-info,MAKE,$@ done)
+
+clean:: ## Delete all files created by this makefile, however don’t delete the files that record configuration or environment
+	@$(call log-info,MAKE,$@ done)
+
+distclean:: clean ## Delete all files in the current directory (or created by this makefile) that are created by configuring or building the program
+	@-rm -rf $(BUILD_DIR)
+	@-rm -rf $(DIST_DIR)
 	@-rm -rf .make
-	@-rm -rf dist
+	@$(call log-info,MAKE,$@ done)
 
-clean: clean-pycache clean-pygettext ## Clean-up generated files
+dist:: build ## Create a distribution file or files for this program
+	@$(call log-info,MAKE,$@ done)
 
-deps: py-deps ## Install dependencies
+lint:: ## Perform static linting
+	@$(call log-info,MAKE,$@ done)
 
-devdeps: py-devdeps ## Install dependencies for depveloper
-
-distclean: clean clean-venv clean-dist ## Clean-up the entire solution
-
-lint: py-lint ## Lint and static-check
+run: build
+	@$(call log-info,MAKE,Run UI interface)
+	@$(call pyenv,./todoist_template.py)
 
 # ~@:-]

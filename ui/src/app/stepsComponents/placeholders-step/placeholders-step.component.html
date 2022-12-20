@@ -1,0 +1,29 @@
+<div class="container">
+
+    <div class="row">
+
+        <div class="col-8">
+            <td-template-source [source]="template" [file]="file">
+            </td-template-source>
+        </div>
+
+        <div class="col">
+            <form class="form-floating" [formGroup]="form" autocomplete="off" novalidate (submit)="submit()">
+                <div class="form-floating mb-3" *ngFor="let controlName of controlNames">
+                    <input type="text" class="form-control" [formControlName]="controlName"
+                        [ngClass]="{'is-invalid': control(controlName)?.invalid,'is-valid': control(controlName)?.valid}" [placeholder]="controlName" />
+                    <label>{{controlName}}</label>
+                </div>
+
+                <div class="row">
+                    <div class="col text-center">
+                        <button type="submit" class="btn btn-next" [disabled]="form.invalid">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>

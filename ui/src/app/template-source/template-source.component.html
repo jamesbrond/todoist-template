@@ -1,0 +1,8 @@
+<div class="card">
+    <div class="card-header">
+        Template <span *ngIf="file">({{file!.name}})</span>
+    </div>
+    <div class="card-body">
+        <code class="source" [innerHTML]="source|code"></code>
+    </div>
+</div>
