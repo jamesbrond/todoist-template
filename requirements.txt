@@ -9,7 +9,7 @@ pyparsing==3.0.9
 pywin32-ctypes==0.2.0
 PyYAML==6.0
 requests==2.28.1
-setuptools-scm==7.0.5
+setuptools-scm==7.1.0
 todoist-api-python==2.0.2
 tomli==2.0.1
 typing_extensions==4.4.0
