@@ -13,5 +13,5 @@ setuptools-scm==7.0.5
 todoist-api-python==2.0.2
 tomli==2.0.1
 typing_extensions==4.4.0
-urllib3==1.26.12
+urllib3==1.26.14
 wrapt==1.14.1
