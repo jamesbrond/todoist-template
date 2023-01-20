@@ -55,8 +55,9 @@ class TodoistTemplate:
                     # template with multiple projects
                     prj = list(templ)[0]
                     self._project(prj, templ[prj])
-        except:
+        except Exception as ex:
             logging.error(_("Something went wrong: undo all changes"))
+            logging.debug(ex, exc_info=True)
             self.todoist.rollback()
             # re-throw exception to main
             raise
@@ -153,10 +154,7 @@ class TodoistTemplate:
             replaced_task["parent_id"] = parent_id
 
         if "labels" in task:
-            label_ids = []
-            for label in task["labels"]:
-                label_ids.append(self._label(label))
-            replaced_task["label_ids"] = label_ids
+            replaced_task["labels"] = task["labels"]
 
         if self.is_update:
             task_id = self.todoist.exists_task(project_id, section_id, replaced_task["content"])
