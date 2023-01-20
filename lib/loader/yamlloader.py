@@ -8,7 +8,7 @@ import yaml
 from lib.loader.abstractloader import AbstractTemplateLoader
 
 
-class CustomYamlLoader(yaml.SafeLoader):  # pylint: disable=too-many-ancestors
+class CustomYamlLoader(yaml.SafeLoader):  # pylint: disable=too-many-ancestors disable=too-few-public-methods
     """YAML CustomYamlLoader with `!include` constructor."""
 
     def __init__(self, stream: IO) -> None:
