@@ -73,6 +73,9 @@ class TodoistTemplate:
     def _filter_and_replace(self, obj, list_keys):
         return {k: self._replace(obj[k]) for k in list_keys if k in obj}
 
+    def _filter_and_replace_array(self, arr):
+        return [self._replace(k) for k in arr]
+
     def _replace(self, value):
         if not isinstance(value, str):
             # {placholder} are always strings
@@ -154,7 +157,7 @@ class TodoistTemplate:
             replaced_task["parent_id"] = parent_id
 
         if "labels" in task:
-            replaced_task["labels"] = task["labels"]
+            replaced_task["labels"] = self._filter_and_replace_array(task["labels"])
 
         if self.is_update:
             task_id = self.todoist.exists_task(project_id, section_id, replaced_task["content"])
