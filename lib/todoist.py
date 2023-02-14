@@ -109,7 +109,7 @@ class Todoist(TodoistAPI):
 
     def store_rollback(self, filepath):
         """Save rollback instructions to filepath"""
-        logging.info(_("Save rollback commands to %s"), filepath)
+        logging.debug(_("Save rollback commands to %s"), filepath)
         with open(filepath, "ab") as file:
             pickle.dump(self.undo_commands, file)
 
