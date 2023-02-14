@@ -70,7 +70,7 @@ class TodoistTemplate:
         self.todoist.load_rollback(file)
         return self.todoist.rollback()
 
-    def _filter_and_replace(self, obj, list_keys):
+    def _filter_and_replace_dict(self, obj, list_keys):
         return {k: self._replace(obj[k]) for k in list_keys if k in obj}
 
     def _filter_and_replace_array(self, arr):
@@ -102,7 +102,7 @@ class TodoistTemplate:
             is_new = True
             project_id = self.todoist.new_project(
                 replaced_name,
-                args=self._filter_and_replace(inner, ["color", "favorite"])
+                args=self._filter_and_replace_dict(inner, ["color", "favorite"])
             )
         logging.info(_("Project: %s%s (%s)"), self._isnew(is_new), replaced_name, project_id)
 
@@ -129,7 +129,7 @@ class TodoistTemplate:
             is_new = True
             section_id = self.todoist.new_section(
                 replaced_name,
-                args=self._filter_and_replace(content, ["order"])
+                args=self._filter_and_replace_dict(content, ["order"])
             )
         logging.info(_("Section: %s%s (%s)"), self._isnew(is_new), replaced_name, section_id)
 
@@ -143,7 +143,7 @@ class TodoistTemplate:
                 )
 
     def _task(self, project_id, section_id, parent_id, task):
-        replaced_task = self._filter_and_replace(
+        replaced_task = self._filter_and_replace_dict(
             task,
             ["content", "description", "completed", "priority",
              "due_string", "due_date", "due_datetime", "due_lang", "order"]
