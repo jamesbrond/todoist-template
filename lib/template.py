@@ -53,8 +53,8 @@ class TodoistTemplate:
                     self._project(templ, template[templ])
                 else:
                     # template with multiple projects
-                    prj = list(templ)[0]
-                    self._project(prj, templ[prj])
+                    for prj in list(templ):
+                        self._project(prj, templ[prj])
         except Exception as ex:
             logging.error(_("Something went wrong: undo all changes"))
             logging.debug(ex, exc_info=True)
