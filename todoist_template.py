@@ -2,30 +2,60 @@
 
 """UI for Todoist Template"""
 
+import os
+import sys
+import datetime
+import logging
 import eel
-from lib import cli
+import lib.__version__ as version
 from lib.config import Config
+from lib.i18n import _
+from lib.template import TodoistTemplate
+from lib.loader.loaderfactory import TemplateLoaderFactory
+
+
+def get_template_content(file):
+    """Read template file with the right template loader factory"""
+    template_loader = TemplateLoaderFactory().get_loader(file.name)
+    logging.debug(_("use %s to load '%s' file"), template_loader.__class__.__name__, file.name)
+    return template_loader.load(file)
+
+
+def undo(undo_file, api_token):
+    """Rollback Todoist Actions"""
+    tmpl = TodoistTemplate(None, api_token, False, False)  # pylint: disable=too-many-function-args
+    tmpl.rollback(undo_file)
+    undo_file.close()
+    logging.debug(_("remove file %s"), undo_file.name)
+    os.remove(undo_file.name)
+
+
+def run_batch_template(template, placeholders_list, api_token, dry_run, is_update, undofile=None):
+    """Run template against a list of placeholders"""
+    tmpl = TodoistTemplate(template, api_token, dry_run, is_update)  # pylint: disable=too-many-function-args
+    for placeholders in placeholders_list:
+        tmpl.parse(template, placeholders, undofile)
 
 
 @eel.expose
 def get_api_token():
     """Method called by JavaScript to get API Token"""
-    return cli.get_keyring_api_token(cli.DEFAULT_KEYRING_TOKEN_NAME, False)
+    return ""
 
 
 # Expose this function to Javascript
 @eel.expose
 def run_script(template, placeholders, api_token, dry_run=False, is_update=False):
     """Method called by JavaScript"""
-    cli.run_batch_template(template, [placeholders], api_token, dry_run, is_update, undofile=None)
+    run_batch_template(template, [placeholders], api_token, dry_run, is_update, undofile=None)
     return "thanks for running this script"
 
 
-if __name__ == "__main__":
-    cfg = Config()
 
+def run_gui(cfg):
     eel.init('build/ng', allowed_extensions=['.js', '.html'])
 
+    logging.info(f"Service running on http://localhost:{cfg.service['port']}")
     eel.start(
         'index.html',
         host=cfg.service["host"],
@@ -33,5 +63,64 @@ if __name__ == "__main__":
         mode=cfg.service["mode"],
         cmdline_args=[]
     )
+    return 0
+
+
+def run_cli(cfg):
+    api_token = cfg.todoist['token']
+
+    if cfg.todoist['undo']:
+        undo(cfg.todoist['undo'], api_token)
+        return 0
+
+    with cfg.todoist['template'] as file:
+        logging.debug(_("open file %s"), file.name)
+
+        script_folder = os.path.dirname(os.path.realpath(sys.argv[0]))
+        if not cfg.todoist['dry_run']:
+            now = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+            undofolder = os.path.join(script_folder, cfg.todoist['undo_folder'])
+            if not os.path.exists(undofolder):
+                os.makedirs(undofolder)
+            undofile = os.path.join(
+                undofolder,
+                f"{os.path.basename(file.name)}-{now}.undo"
+            )
+        else:
+            logging.info("### DRY RUN ###")
+            undofile = None
+
+        run_batch_template(
+            get_template_content(file),
+            cfg.todoist['placeholders'],
+            api_token,
+            cfg.todoist['dry_run'],
+            cfg.todoist['is_update'],
+            undofile
+        )
+
+    return 0
+
+
+def main():
+    """Main function"""
+    cfg = Config()
+    try:
+        cfg.check_python_version()
+        print(version.LOGO)
+
+
+        if cfg.service["run_service"]:
+            return run_gui(cfg)
+
+        return run_cli(cfg)
+
+    except Exception as exc:  # pylint: disable=broad-except
+        logging.error(exc, exc_info=logging.getLogger().isEnabledFor(logging.DEBUG))
+    return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
 
 # ~@:-]
