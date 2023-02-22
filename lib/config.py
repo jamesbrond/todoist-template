@@ -192,7 +192,7 @@ class Config():
             dest="gui",
             default=False,
             action="store_true",
-            help=_("start todoist-template service for Web GUI"))
+            help=_("start todoist-template service with Web GUI"))
 
         return parser.parse_args()
 

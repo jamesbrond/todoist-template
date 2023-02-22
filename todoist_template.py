@@ -107,13 +107,9 @@ def main():
     cfg = Config()
     try:
         cfg.check_python_version()
-        print(version.LOGO)
-
-        if cfg.service["run_service"]:
-            return run_gui(cfg)
-
-        return run_cli(cfg)
-
+        if cfg.python['print_logo']:
+            print(version.LOGO)
+        return run_gui(cfg) if cfg.service["run_service"] else run_cli(cfg)
     except Exception as exc:  # pylint: disable=broad-except
         logging.error(exc, exc_info=logging.getLogger().isEnabledFor(logging.DEBUG))
     return 1
