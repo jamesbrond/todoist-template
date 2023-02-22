@@ -51,11 +51,11 @@ def run_script(template, placeholders, api_token, dry_run=False, is_update=False
     return "thanks for running this script"
 
 
-
 def run_gui(cfg):
+    """Run todoist-template with GUI"""
     eel.init('build/ng', allowed_extensions=['.js', '.html'])
 
-    logging.info(f"Service running on http://localhost:{cfg.service['port']}")
+    logging.info("Service running on http://localhost:%d", cfg.service['port'])
     eel.start(
         'index.html',
         host=cfg.service["host"],
@@ -67,6 +67,7 @@ def run_gui(cfg):
 
 
 def run_cli(cfg):
+    """Run todoist-template command line"""
     api_token = cfg.todoist['token']
 
     if cfg.todoist['undo']:
@@ -74,8 +75,6 @@ def run_cli(cfg):
         return 0
 
     with cfg.todoist['template'] as file:
-        logging.debug(_("open file %s"), file.name)
-
         script_folder = os.path.dirname(os.path.realpath(sys.argv[0]))
         if not cfg.todoist['dry_run']:
             now = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
@@ -90,6 +89,7 @@ def run_cli(cfg):
             logging.info("### DRY RUN ###")
             undofile = None
 
+        logging.debug(_("open file %s"), file.name)
         run_batch_template(
             get_template_content(file),
             cfg.todoist['placeholders'],
@@ -108,7 +108,6 @@ def main():
     try:
         cfg.check_python_version()
         print(version.LOGO)
-
 
         if cfg.service["run_service"]:
             return run_gui(cfg)
