@@ -15,7 +15,6 @@ SYNC_API = "https://api.todoist.com/sync/v9/sync"
 class Todoist(TodoistAPI):
     """Layer class to handle Todoist API"""
     def __init__(self, api_token: str, dry_run=False, session=None):
-        print(f"Todoist(TodoistAPI) {api_token}")
         super().__init__(api_token, session)
         self.projects = self.get_projects()
         self.sections = self.get_sections()
@@ -78,11 +77,11 @@ class Todoist(TodoistAPI):
         self.undo_commands.append(self._add_undo_command("label_delete", label.id))
         return label.id
 
-    def new_task(self, content: str, **kwargs):
+    def new_task(self, **kwargs):
         """Adds new task"""
         if self.dry_run:
             return None
-        task = self.add_task(content, **kwargs)
+        task = self.add_task(**kwargs)
         logging.debug(_("created new task: %s"), task)
         self.undo_commands.append(self._add_undo_command("item_delete", task.id))
         return task.id
@@ -110,7 +109,7 @@ class Todoist(TodoistAPI):
 
     def store_rollback(self, filepath):
         """Save rollback instructions to filepath"""
-        logging.info(_("Save rollback commands to %s"), filepath)
+        logging.debug(_("Save rollback commands to %s"), filepath)
         with open(filepath, "ab") as file:
             pickle.dump(self.undo_commands, file)
 
