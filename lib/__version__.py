@@ -12,7 +12,7 @@ LOGO = """
                                            ╚╝"""
 
 
-__version__ = "1.1.0"
+__version__ = "1.0.5"
 
 VERSION = tuple((int(x)) for x in __version__.split('.'))
 
