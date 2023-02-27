@@ -23,6 +23,7 @@ SHELL:=/bin/bash
 	echo "get $$URL"; \
 	curl -s -H 'Cache-Control: no-cache, no-store' $${URL} -o $@
 
+
 .PHONY: build clean distclean dist lint
 .DEFAULT_GOAL := help
 
@@ -47,6 +48,6 @@ lint:: ## Perform static linting
 
 run: build
 	@$(call log-info,MAKE,Run UI interface)
-	@$(call pyenv,./todoist_template.py)
+	@$(call pyenv,python todoist_template.py)
 
 # ~@:-]
