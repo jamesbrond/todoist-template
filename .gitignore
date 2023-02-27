@@ -1,30 +1,62 @@
 # Byte-compiled / optimized / DLL files
-__pycache__/
+__pycache__
 *.py[cod]
 *$py.class
 
-example/
+example
 
 # Environments
 .env
 .venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
 
 # Distutils
-build/
-dist/
-todoist_template.egg-info/
+build
+dist
+todoist_template.egg-info
 MANIFEST
 
-.make/
+.make
 
-.vscode/
-
-.make/user.mk
+.vscode
 
 locales/*.pot
 locales/**/*.mo
+
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# Compiled output
+ui/dist
+ui/tmp
+ui/out-tsc
+ui/bazel-out
+
+# Node
+ui/node_modules
+ui/npm-debug.log
+ui/yarn-error.log
+
+# IDEs and editors
+ui/.idea/
+ui/.project
+ui/.classpath
+ui/.c9/
+ui/*.launch
+ui/.settings/
+ui/*.sublime-workspace
+
+# Visual Studio Code
+ui/.vscode/*
+ui/.history/*
+
+# Miscellaneous
+ui/.angular
+ui/.sass-cache
+ui/connect.lock
+ui/coverage
+ui/libpeerconnection.log
+ui/testem.log
+ui/typings
+
+# System files
+ui/.DS_Store
+ui/Thumbs.db

@@ -15,19 +15,16 @@ class TodoistTemplate:
     Import YAML template file into Todoist application
     """
 
-    def __init__(self, api_token, dry_run=False, is_update=False):
+    def __init__(self, template, api_token, dry_run, is_update):
         self.todoist = Todoist(api_token, dry_run, is_update)
         self.placeholders = {}
-        self.template = None
+        self.template = template
         self.is_update = is_update
 
     def parse(self, file, placeholders, undofile=None):
         """
         Parse the template YAML file using placeholdes dictionary
         """
-
-        self.placeholders = placeholders or {}
-        logging.debug(_("Placeholders: %s"), str(self.placeholders))
 
         if file is None and self.template is None:
             return
@@ -39,25 +36,33 @@ class TodoistTemplate:
             self.template = template_loader.load(file)
 
         if self.template:
-            try:
-                for templ in self.template:
-                    if isinstance(templ, str):
-                        # template with a single project root
-                        self._project(templ, self.template[templ])
-                    else:
-                        # template with multiple projects
-                        prj = list(templ)[0]
-                        self._project(prj, templ[prj])
-            except:
-                logging.error(_("Something went wrong: undo all changes"))
-                self.todoist.rollback()
-                # re-throw exception to main
-                raise
-
-            if undofile:
-                self.todoist.store_rollback(undofile)
+            self.run_template(self.template, placeholders, undofile)
         else:
             logging.error(_("No template defined"))
+
+    def run_template(self, template, placeholders, undofile):
+        """run teplate"""
+
+        self.placeholders = placeholders or {}
+        logging.debug(_("Placeholders: %s"), str(self.placeholders))
+
+        try:
+            for templ in template:
+                if isinstance(templ, str):
+                    # template with a single project root
+                    self._project(templ, template[templ])
+                else:
+                    # template with multiple projects
+                    prj = list(templ)[0]
+                    self._project(prj, templ[prj])
+        except:
+            logging.error(_("Something went wrong: undo all changes"))
+            self.todoist.rollback()
+            # re-throw exception to main
+            raise
+
+        if undofile:
+            self.todoist.store_rollback(undofile)
 
     def rollback(self, file):
         """Applies rollback actions in file"""

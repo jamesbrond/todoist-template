@@ -1,0 +1,20 @@
+@import '../style/conf';
+
+.card {
+    max-height: 50vh;
+    overflow: auto;
+
+    .card-header {
+        color: $white;
+        background-color: $todoist;
+    }
+
+    .card-body {
+        background-color: $gray-200;
+        .source {
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            color: $black;
+        }
+    }
+}

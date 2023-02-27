@@ -1,0 +1,27 @@
+@import '../../app/style/conf';
+
+.navbar {
+    background-color: $navbar-bkg;
+
+    .navbar-brand {
+        font-size: 18px;
+        letter-spacing: 0.09px;
+        line-height: 31.5px;
+        text-transform: none;
+
+        .todoist {
+            color: $todoist;
+            font-weight: 800;
+        }
+
+        .template {
+            color: $black;
+            font-weight: 400;
+        }
+
+    }
+
+    .help {
+        color: $todoist;
+    }
+}

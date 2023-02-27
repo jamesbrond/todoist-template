@@ -15,6 +15,7 @@ SYNC_API = "https://api.todoist.com/sync/v9/sync"
 class Todoist(TodoistAPI):
     """Layer class to handle Todoist API"""
     def __init__(self, api_token: str, dry_run=False, session=None):
+        print(f"Todoist(TodoistAPI) {api_token}")
         super().__init__(api_token, session)
         self.projects = self.get_projects()
         self.sections = self.get_sections()

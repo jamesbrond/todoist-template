@@ -1,0 +1,17 @@
+<div class="container">
+    <form [formGroup]="form" autocomplete="off" novalidate (submit)="submit()">
+        <div class="row m-3">
+            <td-drop-area (data)="parse($event)">
+                <strong>Drag & Drop</strong> or <strong>Paste</strong> here the template file or <strong>Double
+                    Click</strong> to load a file from your device
+            </td-drop-area>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col-8">
+            <td-template-source *ngIf="template?.valid" [source]="template?.value" [file]="file">
+            </td-template-source>
+        </div>
+    </div>
+</div>
