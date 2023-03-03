@@ -55,7 +55,7 @@ def run_gui(cfg):
     """Run todoist-template with GUI"""
     eel.init('build/ng', allowed_extensions=['.js', '.html'])
 
-    logging.info("Service running on http://localhost:%d", cfg.service['port'])
+    logging.info(_("Service running on http://localhost:%d"), cfg.service['port'])
     eel.start(
         'index.html',
         host=cfg.service["host"],
