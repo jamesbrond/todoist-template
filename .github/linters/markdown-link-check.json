@@ -6,5 +6,9 @@
       {
         "pattern": "^https://docs.github.com/"
       }
-    ]
+    ],
+    "line-length": {
+      "code_blocks": false,
+      "tables": false
+    }
   }
