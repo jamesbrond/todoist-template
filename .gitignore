@@ -63,3 +63,5 @@ ui/typings
 # System files
 ui/.DS_Store
 ui/Thumbs.db
+
+*.po
