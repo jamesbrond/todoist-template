@@ -2,13 +2,20 @@
 
 > Easily add tasks to Todoist with customizable templates.
 
-The aim of this project is to facilitate the creation of tasks on the Todoist platform thanks to simple templates.
+The aim of this project is to facilitate the creation of tasks on the Todoist
+platform thanks to simple templates.
 
-A template is nothing more than a file written in YAML or JSON whose structure reflects the hierarchy Project - Session (optional) - Task.
-Projects, sessions and labels are automatically created if they do not already exist on your Todoist.
+A template is nothing more than a file written in YAML or JSON whose structure
+reflects the hierarchy Project - Session (optional) - Task.
+Projects, sessions and labels are automatically created if they do not already
+exist on your Todoist.
 
-Todois.com templates always create a new project, while the big difference here is that with todoist-template you can add tasks to existing projects or to the Inbox.
-Another difference is the ability to parameterize templates. For example, by passing parameters from the command line, you can create tasks with custom due date.
+Todois.com templates always create a new project, while the big difference here
+is that with todoist-template you can add tasks to existing projects or to the
+Inbox.
+Another difference is the ability to parameterize templates. For example, by
+passing parameters from the command-line, you can create tasks with custom due
+date.
 Anyway todoist-template can also import Todoist.com CSV templates.
 
 ## Installing / Getting started
@@ -17,17 +24,24 @@ Before you start check the [prerequisite and install instructions](install.md).
 
 ### Authorization token
 
-todoist-template uses Todoist REST API, in order to make authorized calls, you must provide the [Todoist authorization token](https://developer.todoist.com/rest/v1/?python#next-steps).
+todoist-template uses Todoist REST API, in order to make authorized calls, you
+must provide the [Todoist authorization token](
+https://developer.todoist.com/rest/v1/?python#next-steps).
 
-When you run todoist-template for the first time, the application will ask you for the Todoist authorization token and it will be stored in the system keyring service.
+When you run todoist-template for the first time, the application will ask you
+for the Todoist authorization token and it will be stored in the system
+keyring service.
 These keyring backends are supported:
 
 - macOS Keychain
-- Freedesktop Secret Service supports many IDE including GNOME (requires secretstorage)
+- Freedesktop Secret Service supports many IDE including GNOME (requires
+secretstorage)
 - KDE4 & KDE5 KWallet (requires dbus)
 - Windows Credential Locker
 
-To use todoist-template with different authorization tokens use the `--id` arguments (see [Run todoist-template](./README.md#run-todoist-template)) or specify `--token` argument.
+To use todoist-template with different authorization tokens use the `--id`
+arguments (see [Run todoist-template](./README.md#run-todoist-template)) or
+specify `--token` argument.
 
 ### Run todoist-template
 
@@ -74,7 +88,8 @@ python todoist_template.py -d < templates/simple_template0.yml
 
 ### Undo
 
-todoist-template produces a undo output file. You can use it to delete all created objects and revert all modified ones. For example:
+todoist-template produces a undo output file. You can use it to delete all
+created objects and revert all modified ones. For example:
 
 ```shell
 python todoist_template.py --undo simple_template0-20220808081215.undo
