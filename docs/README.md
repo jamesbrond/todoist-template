@@ -106,6 +106,10 @@ See [our developing guide](./DEVELOPING.md)
 
 See [our contributing guide](./CONTRIBUTING.md).
 
+## Security Policies and Procedures
+
+See [our security policies and procedures guidelines](./SECURITY.md).
+
 ## Links
 
 - Project homepage: <https://jamesbrond.github.com/todoist-template/>
