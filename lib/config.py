@@ -12,7 +12,18 @@ from lib.i18n import _
 import lib.key_ring as keyring
 
 
-class Config():
+class Singleton(type):
+    """Use this metaclass to create singleton instances"""
+
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+class Config(metaclass=Singleton):
     """Load and handle toml configuration file, parse command line arguments"""
 
     def __init__(self, prompt_api_token=False):
