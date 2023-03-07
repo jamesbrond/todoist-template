@@ -206,7 +206,7 @@ class Config(metaclass=Singleton):
             help=_("start todoist-template service with Web GUI"))
 
         args, unknown = parser.parse_known_args()
-        logging.debug('unknown options', unknown)
+        logging.debug('unknown options: %s',  str(unknown))
         return args
 
 # ~@:-]
