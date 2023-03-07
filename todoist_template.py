@@ -104,7 +104,7 @@ def run_cli(cfg):
 
 def main():
     """Main function"""
-    cfg = Config()
+    cfg = Config(prompt_api_token=True)
     try:
         cfg.check_python_version()
         if cfg.python['print_logo']:

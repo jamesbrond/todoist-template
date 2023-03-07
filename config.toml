@@ -4,7 +4,7 @@ host = "0.0.0.0"
 port = 54321
 
 [keyring]
-keyring_token_name = 'TODOIST-TEMPLATE'
+keyring_token_name = 'TODOIST_TEMPLATE'
 
 [todoist]
 undo_folder = "undo"
