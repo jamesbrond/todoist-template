@@ -23,12 +23,16 @@ def setup(service_id):
 
 def get_keyring_api_token(service_id, prompt=False):
     """Get API Token from keyring"""
-    api_token = get_api_token(service_id)
-    if api_token is None and prompt:
-        while not api_token:
-            logging.warning(_("Todoist API token not found for %s application."), service_id)
-            setup(service_id)
-            api_token = get_api_token(service_id)
-    return api_token
+    try:
+        api_token = get_api_token(service_id)
+        if api_token is None and prompt:
+            while not api_token:
+                logging.warning(_("Todoist API token not found for %s application."), service_id)
+                setup(service_id)
+                api_token = get_api_token(service_id)
+        return api_token
+    except keyring.errors.NoKeyringError as err:
+        logging.error(err)
+        return None
 
 # ~@:-]
