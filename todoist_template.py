@@ -8,6 +8,7 @@ import datetime
 import logging
 import eel
 import lib.__version__ as version
+from lib.argparse import parse_cmd_line
 from lib.config import Config
 from lib.i18n import _
 from lib.template import TodoistTemplate
@@ -104,7 +105,8 @@ def run_cli(cfg):
 
 def main():
     """Main function"""
-    cfg = Config(prompt_api_token=True)
+    args = parse_cmd_line()
+    cfg = Config(args, prompt_api_token=True)
     try:
         cfg.check_python_version()
         if cfg.python['print_logo']:

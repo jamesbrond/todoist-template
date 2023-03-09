@@ -7,7 +7,7 @@ from lib.i18n import _
 
 
 def set_api_token(service_id, token):
-    """Store token in key ring or environment"""
+    """Store token in key ring or fallbacks to environment"""
     try:
         keyring.set_password(service_id, "API_TOKEN", token)
     except keyring.errors.NoKeyringError as err:
@@ -16,7 +16,7 @@ def set_api_token(service_id, token):
 
 
 def get_api_token(service_id):
-    """Get token from key ring"""
+    """Get token from key ring or from environment as fallback"""
     try:
         return keyring.get_password(service_id, "API_TOKEN")
     except keyring.errors.NoKeyringError as err:
@@ -31,7 +31,9 @@ def setup(service_id):
 
 
 def get_keyring_api_token(service_id, prompt=False):
-    """Get API Token from keyring"""
+    """Get API Token from keyring or fallback from environment.
+    If both methods return `None` and `prompt` is true prompt the user for a
+    valid API token and store it"""
     api_token = get_api_token(service_id)
     if api_token is None and prompt:
         while not api_token:
