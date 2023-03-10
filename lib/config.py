@@ -6,7 +6,7 @@ import logging
 import logging.handlers
 import toml
 from lib.i18n import _
-import lib.key_ring as keyring
+from lib.key_ring import APITokenStore
 
 
 class Singleton(type):
@@ -82,13 +82,14 @@ class Config(metaclass=Singleton):
 
         data["service"]["run_service"] = args.get("gui")
 
+        token_store = APITokenStore(data['keyring']['keyring_token_name'], prompt_api_token)
+
         data["todoist"].update({
             "template": args.get("template"),
             "placeholders": args.get("placeholders") if args.get("placeholders") else [{}],
             "dry_run": args.get("dry_run"),
             "is_update": args.get("is_update"),
-            "token": args.get("token") if args.get("token") is not None
-            else keyring.get_keyring_api_token(data['keyring']['keyring_token_name'], prompt_api_token),
+            "token": args.get("token") if args.get("token") is not None else token_store.get(),
             "undo": args.get("undo")
         })
 
