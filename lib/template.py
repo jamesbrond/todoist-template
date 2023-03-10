@@ -22,6 +22,7 @@ class TodoistTemplate:
         self.is_update = is_update
 
     def close(self):
+        """Close all connections to Todoist"""
         self.todoist.close()
 
     def parse(self, file, placeholders, undofile=None):

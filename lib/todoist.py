@@ -23,6 +23,7 @@ class Todoist(TodoistAPI):
         self.undo_commands = []
 
     def close(self):
+        """Close all connections to Todoist"""
         self._session.close()
 
     def exists_project(self, name):
