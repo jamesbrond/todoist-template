@@ -22,6 +22,9 @@ class Todoist(TodoistAPI):
         self.dry_run = dry_run
         self.undo_commands = []
 
+    def close(self):
+        self._session.close()
+
     def exists_project(self, name):
         """Returns the Todoist project ID if project exists; False otherwise"""
         return self._exists([name], self.projects, ["name"])

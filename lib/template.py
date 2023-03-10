@@ -21,6 +21,9 @@ class TodoistTemplate:
         self.template = template
         self.is_update = is_update
 
+    def close(self):
+        self.todoist.close()
+
     def parse(self, file, placeholders, undofile=None):
         """
         Parse the template YAML file using placeholdes dictionary

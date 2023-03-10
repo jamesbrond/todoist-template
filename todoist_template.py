@@ -36,6 +36,7 @@ def run_batch_template(template, placeholders_list, api_token, dry_run, is_updat
     tmpl = TodoistTemplate(template, api_token, dry_run, is_update)  # pylint: disable=too-many-function-args
     for placeholders in placeholders_list:
         tmpl.parse(template, placeholders, undofile)
+    tmpl.close()
 
 
 @eel.expose
