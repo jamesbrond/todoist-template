@@ -16,11 +16,15 @@ class Todoist(TodoistAPI):
     """Layer class to handle Todoist API"""
     def __init__(self, api_token: str, dry_run=False, session=None):
         super().__init__(api_token, session)
-        self.projects = self.get_projects()
-        self.sections = self.get_sections()
-        self.labels = self.get_labels()
-        self.dry_run = dry_run
-        self.undo_commands = []
+        try:
+            self.projects = self.get_projects()
+            self.sections = self.get_sections()
+            self.labels = self.get_labels()
+            self.dry_run = dry_run
+            self.undo_commands = []
+        except:
+            self._session.close()
+            raise
 
     def close(self):
         """Close all connections to Todoist"""
