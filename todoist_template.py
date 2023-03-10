@@ -75,7 +75,7 @@ def run_cli(cfg):
         undo(cfg.todoist['undo'], api_token)
         return 0
 
-    with cfg.todoist['template'] as file:
+    with open(cfg.todoist['template'], "r", encoding="utf8") as file:
         script_folder = os.path.dirname(os.path.realpath(sys.argv[0]))
         if not cfg.todoist['dry_run']:
             now = datetime.datetime.now().strftime('%Y%m%d%H%M%S')

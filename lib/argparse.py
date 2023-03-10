@@ -36,7 +36,7 @@ def parse_cmd_line(cli=None):
     parser.add_argument(
         "template",
         nargs="?",  # a single value, which can be optional
-        type=argparse.FileType("r", encoding="utf8"),
+        type=str,
         default=sys.stdin)
 
     # options
