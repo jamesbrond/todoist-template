@@ -1,0 +1,5 @@
+Inbox:
+  tasks:
+    - content: "delete {test_name|me}"
+      priority: 3
+      due_string: "{test_date}"

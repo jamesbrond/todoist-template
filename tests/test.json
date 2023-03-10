@@ -1,0 +1,11 @@
+{
+    "Inbox": {
+        "tasks": [
+            {
+                "content": "delete me",
+                "priority": 3,
+                "due_string": "{test_date}"
+            }
+        ]
+    }
+}

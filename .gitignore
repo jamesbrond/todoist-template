@@ -65,3 +65,4 @@ ui/.DS_Store
 ui/Thumbs.db
 
 *.po
+.coverage

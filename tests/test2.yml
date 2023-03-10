@@ -1,0 +1,13 @@
+- !include test.yml
+
+Test project:
+  Test section:
+    tasks:
+      - content: "Test task 1"
+        priority: 3
+        due_string: "today"
+        description: "This is a test"
+      - content: "Test task 2"
+        priority: 4
+        due_string: "weekend"
+        description: "This is another test"

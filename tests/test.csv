@@ -1,0 +1,7 @@
+type,content,priority,due_string,description
+task,Test task 0,1,wed,This is an Inbox task
+
+project,Test project,,,
+section,Test section,,,
+task,Test task 1,3,today,This is a test
+task,Test task 2,4,weekend,This is another test
