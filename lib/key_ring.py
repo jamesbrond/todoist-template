@@ -20,7 +20,8 @@ class EnvKeyring(keyring.backend.KeyringBackend):
         return os.environ.get(service)
 
     def delete_password(self, service, username):
-        os.environ.pop(service)
+        if os.environ.get(service) is not None:
+            os.environ.pop(service)
 
 
 class APITokenStore:  # pylint: disable=too-few-public-methods
