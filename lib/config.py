@@ -9,18 +9,7 @@ from lib.i18n import _
 from lib.key_ring import APITokenStore
 
 
-class Singleton(type):
-    """Use this metaclass to create singleton instances"""
-
-    _instances = {}
-
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
-        return cls._instances[cls]
-
-
-class Config(metaclass=Singleton):
+class Config():
     """Load and handle toml configuration file, parse command line arguments"""
 
     def __init__(self, args=None, prompt_api_token=False):
