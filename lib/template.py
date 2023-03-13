@@ -16,7 +16,7 @@ class TodoistTemplate:
     """
 
     def __init__(self, template, api_token, dry_run, is_update):
-        self.todoist = Todoist(api_token, dry_run, is_update)
+        self.todoist = Todoist(api_token, dry_run)
         self.placeholders = {}
         self.template = template
         self.is_update = is_update
