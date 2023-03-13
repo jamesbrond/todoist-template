@@ -1,3 +1,4 @@
+"""Test Config class"""
 import os
 import logging
 import unittest
@@ -6,6 +7,7 @@ from lib.config import Config
 
 
 class TestConfig(unittest.TestCase):
+    """Test Config class"""
 
     def setUp(self):
         logging.disable(logging.CRITICAL)
@@ -26,9 +28,20 @@ class TestConfig(unittest.TestCase):
         self.cfg = Config(parse_cmd_line(cli), prompt_api_token=False)
 
     def test_is_dry_run(self):
+        """Test if config has correct cli argument"""
         self.assertTrue(self.cfg.todoist['dry_run'], "This test doesn't run in dry-run")
 
+    def test_keyring_token_name(self):
+        """Test if config has correct config.toml options keyring token name"""
+        self.assertEqual(self.cfg.keyring['keyring_token_name'], 'TODOIST_TEMPLATE',
+                         "Wrong storage service name")
+
+    def test_service_port(self):
+        """Test if config has correct config.toml options service port"""
+        self.assertEqual(self.cfg.service['port'], 54321, "Wrong service port")
+
     def test_python_version(self):
+        """Test python version"""
         self.cfg.check_python_version()
 
 

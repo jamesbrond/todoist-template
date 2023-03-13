@@ -1,3 +1,4 @@
+"""Test command line parsing"""
 import logging
 import unittest
 import collections.abc
@@ -5,10 +6,13 @@ from lib.argparse import parse_cmd_line
 
 
 class TestCommandLine(unittest.TestCase):
+    """Test command line parsing"""
+
     def setUp(self) -> None:
         logging.disable(logging.CRITICAL)
 
     def test_command_line_arguments(self):
+        """Test command line parsing"""
         cli = ["tests/test.yml",
                "-D", "test_name=me,test_date=today",
                "--id", "TODOIST_TEMPLATE",
@@ -27,6 +31,7 @@ class TestCommandLine(unittest.TestCase):
         self.assertTrue(args.get("dry_run"))
 
     def test_command_line_placeholders_csv(self):
+        """Test command line parsing with CSV as placeholders"""
         cli = ["tests/test.yml", "-D", "tests/placeholders.csv"]
         args = parse_cmd_line(cli)
         self.assertIsInstance(args.get("placeholders"), collections.abc.Sequence, 'placeholder is not an array')
