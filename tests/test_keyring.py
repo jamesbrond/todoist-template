@@ -2,14 +2,14 @@ import os
 import logging
 import keyring
 import unittest
-from lib.key_ring import EnvKeyring, APITokenStore
+from lib.key_ring import EnvKeyring
 
 
 class TestKeyring(unittest.TestCase):
 
     def setUp(self):
         logging.disable(logging.CRITICAL)
-        self.service = "TODOIST_TEMPLATE"
+        self.service = "FAKE_API_SERVICE"
         self.username = "API_TOKEN"
         self.token = "fake_token"
 

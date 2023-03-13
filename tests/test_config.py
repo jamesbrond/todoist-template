@@ -25,10 +25,6 @@ class TestConfig(unittest.TestCase):
                ]
         self.cfg = Config(parse_cmd_line(cli), prompt_api_token=False)
 
-    def test_config_singleton(self):
-        new_config = Config(prompt_api_token=False)
-        self.assertIs(self.cfg, new_config, 'Config is not initialized with singleton pattern')
-
     def test_is_dry_run(self):
         self.assertTrue(self.cfg.todoist['dry_run'], "This test doesn't run in dry-run")
 

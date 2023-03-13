@@ -3,7 +3,6 @@ import unittest
 from lib.loader.loaderfactory import TemplateLoaderFactory, JsonTemplateLoader, CsvTemplateLoader, YamlTemplateLoader
 
 
-
 class TestFactoryLoader(unittest.TestCase):
 
     def setUp(self):

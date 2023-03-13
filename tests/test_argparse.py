@@ -3,6 +3,7 @@ import unittest
 import collections.abc
 from lib.argparse import parse_cmd_line
 
+
 class TestCommandLine(unittest.TestCase):
     def setUp(self) -> None:
         logging.disable(logging.CRITICAL)
@@ -18,7 +19,8 @@ class TestCommandLine(unittest.TestCase):
         args = parse_cmd_line(cli)
         self.assertEqual(args.get("template"), "tests/test.yml")
         self.assertIsInstance(args.get("placeholders"), collections.abc.Sequence, 'placeholder is not an array')
-        self.assertIn({'test_name': 'me', 'test_date': 'today'}, args.get("placeholders"), 'wrong parameters in placeholder')
+        self.assertIn({'test_name': 'me', 'test_date': 'today'}, args.get("placeholders"),
+                      'wrong parameters in placeholder')
         self.assertEqual(args.get("service_id"), 'TODOIST_TEMPLATE')
         self.assertEqual(args.get("token"), '1234567890abcdef')
         self.assertEqual(args.get("loglevel"), logging.DEBUG)
@@ -29,6 +31,7 @@ class TestCommandLine(unittest.TestCase):
         args = parse_cmd_line(cli)
         self.assertIsInstance(args.get("placeholders"), collections.abc.Sequence, 'placeholder is not an array')
         self.assertEqual(len(args.get("placeholders")), 3, 'wrong parameters in placeholder')
+
 
 if __name__ == '__main__':
     unittest.main(warnings='ignore')
