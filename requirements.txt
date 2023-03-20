@@ -11,7 +11,7 @@ gevent==22.10.2
 gevent-websocket==0.10.1
 greenlet==2.0.2
 idna==3.4
-importlib-metadata==6.0.0
+importlib-metadata==6.1.0
 jaraco.classes==3.2.3
 jeepney==0.8.0
 keyring==23.13.1
@@ -28,4 +28,4 @@ urllib3==1.26.14
 whichcraft==0.6.1
 zipp==3.15.0
 zope.event==4.6
-zope.interface==5.5.2
+zope.interface==6.0
