@@ -21,11 +21,11 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(find_needle_in_haystack([3], self.haystack, ["id", "key"]), None)
 
     def test_find_needle_in_haystack_success_1(self):
-        """Search 1 key"""
+        """Search with 1 key"""
         item = find_needle_in_haystack([3], self.haystack, ["id"])
         self.assertEqual(item.get("name"), "item3")
 
     def test_find_needle_in_haystack_success_2(self):
-        """Search 2 key"""
+        """Search with 2 keys"""
         item = find_needle_in_haystack([2, 'key2'], self.haystack, ["id", "key"])
         self.assertEqual(item.get("name"), "item2")

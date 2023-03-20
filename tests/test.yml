@@ -3,3 +3,7 @@ Inbox:
     - content: "delete {test_name|me}"
       priority: 3
       due_string: "{test_date}"
+      labels: ["test"]
+      tasks:
+        - content: "sub task of delete {test_name|me}"
+          priority: 4

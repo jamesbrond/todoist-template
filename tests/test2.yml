@@ -7,6 +7,7 @@
           priority: 3
           due_string: "today"
           description: "This is a test"
+          labels: ["label1", "{test_name|default_label}"]
         - content: "Test task 2"
           priority: 4
           due_string: "weekend"
