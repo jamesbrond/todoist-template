@@ -1,13 +1,10 @@
 """Tansform a template into Todoist tasks"""
 
 import logging
-import re
 from lib.todoist import Todoist
 from lib.loader.loaderfactory import TemplateLoaderFactory
+from lib.placeholders import replace, filter_and_replace_array, filter_and_replace_dict
 from lib.i18n import _
-
-
-PLACEHOLDER_REGEXP = re.compile(r"{(\w+)\s*\|?\s*([^}]+)?}")
 
 
 class TodoistTemplate:
@@ -74,21 +71,6 @@ class TodoistTemplate:
         self.todoist.load_rollback(file)
         return self.todoist.rollback()
 
-    def _filter_and_replace_dict(self, obj, list_keys):
-        return {k: self._replace(obj[k]) for k in list_keys if k in obj}
-
-    def _filter_and_replace_array(self, arr):
-        return [self._replace(k) for k in arr]
-
-    def _replace(self, value):
-        if not isinstance(value, str):
-            # {placholder} are always strings
-            return value
-        return PLACEHOLDER_REGEXP.sub(
-            lambda x: self.placeholders.get(x.group(1)) or x.group(2),
-            value
-        )
-
     def _project(self, name, inner):
         if name == "tasks":
             for task in inner:
@@ -99,14 +81,14 @@ class TodoistTemplate:
                     task=task
                 )
             return
-        replaced_name = self._replace(name)
+        replaced_name = replace(name, self.placeholders)
         project_id = self.todoist.exists_project(replaced_name)
         is_new = False
         if not project_id:
             is_new = True
             project_id = self.todoist.new_project(
                 replaced_name,
-                args=self._filter_and_replace_dict(inner, ["color", "favorite"])
+                args=filter_and_replace_dict(inner, ["color", "favorite"], self.placeholders)
             )
         logging.info(_("Project: %s%s (%s)"), self._isnew(is_new), replaced_name, project_id)
 
@@ -125,7 +107,7 @@ class TodoistTemplate:
                 self._section(project_id, section, inner[section])
 
     def _section(self, project_id, name, content):
-        replaced_name = self._replace(name)
+        replaced_name = replace(name, self.placeholders)
         section_id = self.todoist.exists_section(replaced_name, project_id)
 
         is_new = False
@@ -133,7 +115,7 @@ class TodoistTemplate:
             is_new = True
             section_id = self.todoist.new_section(
                 replaced_name,
-                args=self._filter_and_replace_dict(content, ["order"])
+                args=filter_and_replace_dict(content, ["order"], self.placeholders)
             )
         logging.info(_("Section: %s%s (%s)"), self._isnew(is_new), replaced_name, section_id)
 
@@ -147,10 +129,11 @@ class TodoistTemplate:
                 )
 
     def _task(self, project_id, section_id, parent_id, task):
-        replaced_task = self._filter_and_replace_dict(
+        replaced_task = filter_and_replace_dict(
             task,
             ["content", "description", "completed", "priority",
-             "due_string", "due_date", "due_datetime", "due_lang", "order"]
+             "due_string", "due_date", "due_datetime", "due_lang", "order"],
+            self.placeholders
         )
 
         if section_id is not None:
@@ -161,7 +144,7 @@ class TodoistTemplate:
             replaced_task["parent_id"] = parent_id
 
         if "labels" in task:
-            replaced_task["labels"] = self._filter_and_replace_array(task["labels"])
+            replaced_task["labels"] = filter_and_replace_array(task["labels"], self.placeholders)
 
         if self.is_update:
             task_id = self.todoist.exists_task(project_id, section_id, replaced_task["content"])
@@ -188,7 +171,7 @@ class TodoistTemplate:
         return task_id
 
     def _label(self, name):
-        replaced_name = self._replace(name)
+        replaced_name = replace(name, self.placeholders)
         label_id = self.todoist.exists_label(replaced_name)
         is_new = False
         if not label_id:
