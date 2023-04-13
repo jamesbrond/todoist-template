@@ -6,6 +6,9 @@ VERSION_FILE := lib/__version__.py
 VERSION_EXP  := (__version__ = \")[0-9\.]+
 NG_DIR       := ui
 
+PY_CONF_FLAKE8 = .github/linters/flake8
+PY_CONF_PYLINT = .github/linters/pylint.toml
+
 DIRS = $(MAKE_DIR)
 
 SHELL:=/bin/bash
