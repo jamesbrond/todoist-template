@@ -10,7 +10,7 @@ example
 .venv
 
 # Distutils
-build
+.build
 dist
 todoist_template.egg-info
 MANIFEST
