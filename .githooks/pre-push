@@ -50,12 +50,12 @@ do
 	fi
 done
 
-
+echo -n "make lint "
 if ! make lint >/dev/null 2>&1; then
-	echo "lint failed"
+	echo "............................................ FAILED"
 	exit 1
 else
-	echo "lint passed"
+	echo "............................................ PASSED"
 fi
 
 exit 0
