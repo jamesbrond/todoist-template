@@ -1,19 +1,17 @@
 """Utilities"""
-
 import uuid
 
 
-def find_needle_in_haystack(needles, haystack, params):
-    """Find all needles in the array haystack filtering by params"""
-    if len(needles) != len(params):
-        return None
-    query = dict(zip(params, needles))
+def find_needle_in_haystack(haystack, match):
+    """
+    Find all items in the array `haystack` that have a `match`
+    """
     for straw in haystack:
         if isinstance(straw, dict):
-            if all(str(straw.get(k)) == str(v) for k, v in query.items()):
+            if all(str(straw.get(k)) == str(v) for k, v in match.items()):
                 return straw
         else:
-            if all(str(getattr(straw, k)) == str(v) for k, v in query.items()):
+            if all(str(getattr(straw, k)) == str(v) for k, v in match.items()):
                 return straw
 
     return None

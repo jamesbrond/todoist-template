@@ -1,4 +1,4 @@
-"""Keyring functions"""
+"""API_KEY storage"""
 
 import os
 import logging
@@ -39,6 +39,7 @@ class APITokenStore:  # pylint: disable=too-few-public-methods
 
     def _get(self):
         """Return API token"""
+        logging.debug("API Token storage: %s", type(keyring.get_keyring()))
         return keyring.get_password(self.service, "API_TOKEN")
 
     def _prompt(self):

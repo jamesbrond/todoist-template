@@ -66,3 +66,4 @@ ui/Thumbs.db
 
 *.po
 .coverage
+htmlcov/

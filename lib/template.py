@@ -1,187 +1,57 @@
-"""Tansform a template into Todoist tasks"""
+"""Tansform the template for Todoist-Templete"""
 
+import re
 import logging
-from lib.todoist import Todoist
 from lib.loader.loaderfactory import TemplateLoaderFactory
-from lib.placeholders import replace, filter_and_replace_array, filter_and_replace_dict
-from lib.i18n import _
 
 
-class TodoistTemplate:
+class TodoistTemplateError(Exception):
+    """Todoist-Template exception"""
+
+
+class Template:
     """
-    Import YAML template file into Todoist application
+    Import a template file and replace placeholders occurrences
     """
 
-    def __init__(self, template, api_token, dry_run, is_update):
-        self.todoist = Todoist(api_token, dry_run)
-        self.placeholders = {}
-        self.template = template
-        self.is_update = is_update
+    PLACEHOLDER_REGEXP = re.compile(r"{(\w+)\s*\|?\s*([^}]+)?}")
 
-    def close(self):
-        """Close all connections to Todoist"""
-        self.todoist.close()
-
-    def parse(self, file, placeholders, undofile=None):
+    def load_template(self, tpl_file, file_type=None):
         """
-        Parse the template YAML file using placeholdes dictionary
+        Loaad the template file using the right loader and return always an array
+        even if the template contains only one root element
         """
 
-        if file is None and self.template is None:
-            return
+        if tpl_file is None:
+            raise TodoistTemplateError("Template file cannot be empty")
 
-        if self.template is None:
-            template_loader = TemplateLoaderFactory().get_loader(file.name)
-            logging.debug(_("use %s to load '%s' file"), template_loader.__class__.__name__, file.name)
+        logging.debug("loading template %s (force loader: %s)", tpl_file.name, file_type)
+        with tpl_file:
+            tpl_loader = TemplateLoaderFactory().get_loader(tpl_file, file_type)
+            logging.debug("use %s to load '%s' file", tpl_loader.__class__.__name__, tpl_file.name)
+            tpl_object = tpl_loader.load(tpl_file)
 
-            self.template = template_loader.load(file)
+        return tpl_object
 
-        if self.template:
-            self.run_template(self.template, placeholders, undofile)
-        else:
-            logging.error(_("No template defined"))
+    def parse_template(self, tpl_object, placeholders=None):
+        """
+        Parse teplate object and replace all occurrence of placeholders
+        """
+        logging.debug("placeholders: %s", str(placeholders))
+        if not placeholders:
+            return tpl_object
+        return self._replace(tpl_object, placeholders or {})
 
-    def run_template(self, template, placeholders, undofile):
-        """run teplate"""
-
-        self.placeholders = placeholders or {}
-        logging.debug(_("Placeholders: %s"), str(self.placeholders))
-
-        try:
-            for templ in template:
-                if isinstance(templ, str):
-                    # template with a single project root
-                    self._project(templ, template[templ])
-                else:
-                    # template with multiple projects
-                    for prj in list(templ):
-                        self._project(prj, templ[prj])
-        except Exception as ex:
-            logging.error(_("Something went wrong: undo all changes"))
-            logging.debug(ex, exc_info=True)
-            self.todoist.rollback()
-            # re-throw exception to main
-            raise
-
-        if undofile:
-            self.todoist.store_rollback(undofile)
-
-    def rollback(self, file):
-        """Applies rollback actions in file"""
-        self.todoist.load_rollback(file)
-        return self.todoist.rollback()
-
-    def _project(self, name, inner):
-        if name == "tasks":
-            for task in inner:
-                self._task(
-                    project_id=None,
-                    section_id=None,
-                    parent_id=None,
-                    task=task
-                )
-            return
-        replaced_name = replace(name, self.placeholders)
-        project_id = self.todoist.exists_project(replaced_name)
-        is_new = False
-        if not project_id:
-            is_new = True
-            project_id = self.todoist.new_project(
-                replaced_name,
-                args=filter_and_replace_dict(inner, ["color", "favorite"], self.placeholders)
+    def _replace(self, obj, placeholders):
+        if isinstance(obj, list):
+            return [self._replace(i, placeholders) for i in obj]
+        if isinstance(obj, dict):
+            return {key: self._replace(value, placeholders) for key, value in obj.items()}
+        if isinstance(obj, str):
+            return self.PLACEHOLDER_REGEXP.sub(
+                lambda x: placeholders.get(x.group(1)) or x.group(2),
+                obj
             )
-        logging.info(_("Project: %s%s (%s)"), self._isnew(is_new), replaced_name, project_id)
-
-        sections = list(inner)
-        for section in sections:
-            if section == "tasks":
-                for task in inner[section]:
-                    self._task(
-                        project_id=project_id,
-                        section_id=None,
-                        parent_id=None,
-                        task=task
-                    )
-            elif isinstance(inner[section], dict):
-                # if it'a a dict it'a section becouse we exclude tasks in the previous if
-                self._section(project_id, section, inner[section])
-
-    def _section(self, project_id, name, content):
-        replaced_name = replace(name, self.placeholders)
-        section_id = self.todoist.exists_section(replaced_name, project_id)
-
-        is_new = False
-        if not section_id:
-            is_new = True
-            section_id = self.todoist.new_section(
-                replaced_name,
-                args=filter_and_replace_dict(content, ["order"], self.placeholders)
-            )
-        logging.info(_("Section: %s%s (%s)"), self._isnew(is_new), replaced_name, section_id)
-
-        if "tasks" in content:
-            for task in content["tasks"]:
-                self._task(
-                    project_id=None,
-                    section_id=section_id,
-                    parent_id=None,
-                    task=task
-                )
-
-    def _task(self, project_id, section_id, parent_id, task):
-        replaced_task = filter_and_replace_dict(
-            task,
-            ["content", "description", "completed", "priority",
-             "due_string", "due_date", "due_datetime", "due_lang", "order"],
-            self.placeholders
-        )
-
-        if section_id is not None:
-            replaced_task["section_id"] = section_id
-        elif project_id is not None:
-            replaced_task["project_id"] = project_id
-        elif parent_id is not None:
-            replaced_task["parent_id"] = parent_id
-
-        if "labels" in task:
-            replaced_task["labels"] = filter_and_replace_array(task["labels"], self.placeholders)
-
-        if self.is_update:
-            task_id = self.todoist.exists_task(project_id, section_id, replaced_task["content"])
-        else:
-            task_id = None
-        if task_id:
-            logging.debug(_("task already exists"))
-            is_new = False
-            self.todoist.modify_task(task_id, **replaced_task)
-        else:
-            logging.debug(_("task doesn't exist yet"))
-            is_new = True
-            task_id = self.todoist.new_task(**replaced_task)
-        logging.info(_("Task: %s%s (%s)"), self._isnew(is_new), replaced_task['content'], task_id)
-
-        if "tasks" in task:
-            for subtask in task["tasks"]:
-                self._task(
-                    project_id=None,
-                    section_id=None,
-                    parent_id=task_id,
-                    task=subtask
-                )
-        return task_id
-
-    def _label(self, name):
-        replaced_name = replace(name, self.placeholders)
-        label_id = self.todoist.exists_label(replaced_name)
-        is_new = False
-        if not label_id:
-            label_id = self.todoist.new_label(replaced_name)
-            is_new = True
-        logging.debug(_("Label: %s%s (%s)"), self._isnew(is_new), replaced_name, label_id)
-        return label_id
-
-    def _isnew(self, is_new):
-        return "[NEW] " if is_new else ""
-
+        return obj
 
 # ~@:-]

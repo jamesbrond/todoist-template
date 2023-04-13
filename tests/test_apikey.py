@@ -3,7 +3,7 @@ import os
 import logging
 import unittest
 import keyring
-from lib.key_ring import EnvKeyring
+from lib.config.apikey import EnvKeyring
 
 
 class TestKeyring(unittest.TestCase):

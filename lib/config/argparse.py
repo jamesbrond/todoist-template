@@ -1,11 +1,11 @@
 """Command line parser util"""
 import os
-import sys
 import logging
 import argparse
 import csv
 from lib.i18n import _
 import lib.__version__ as version
+from lib.loader.loaderfactory import TEMPLATE_CSV, TEMPLATE_JSON, TEMPLATE_YAML
 
 
 def val_placeholder(values):
@@ -29,20 +29,28 @@ def parse_cmd_line(cli=None):
     parser = argparse.ArgumentParser(
         prog="todoist_template.py",
         usage='%(prog)s [options]',
-        description=_('Easily add tasks to Todoist with customizable YAML templates')
+        description=_('Easily add tasks to Todoist with customizable YAML templates'),
+        exit_on_error=False
     )
 
     # positional arguments:
-    parser.add_argument(
-        "template",
+    file_parser = parser.add_mutually_exclusive_group()
+    file_parser.add_argument(
+        "template.file",
         nargs="?",  # a single value, which can be optional
-        type=str,
-        default=sys.stdin)
+        type=argparse.FileType('r', encoding='utf8'))
+    file_parser.add_argument(
+        "--undo",
+        dest="template.undo.file",
+        metavar="UNDO_FILE",
+        type=argparse.FileType("rb"),
+        help=_("loads undo file and rollbacks all operations in it")
+    )
 
     # options
     parser.add_argument(
         "-D",
-        dest="placeholders",
+        dest="template.placeholders",
         type=val_placeholder,  # can be a file or a comma separated list of key=value
         metavar="KEY0=VAL0,KEY1=VAL1...",
         default={},
@@ -51,31 +59,39 @@ def parse_cmd_line(cli=None):
 
     parser.add_argument(
         "--id",
-        dest="service_id",
+        dest="config.api_key_service",
+        metavar="API_KEY_SERVICE",
         help=_("keyring service name where store Todoist API Token")
+    )
+
+    parser.add_argument(
+        "-c",
+        "--config",
+        dest="configfile",
+        help=_("configuration file")
     )
 
     command_group = parser.add_mutually_exclusive_group()
     command_group.add_argument(
         "-d",
         "--debug",
-        dest="loglevel",
+        dest="log.loggers.root.level",
         action="store_const",
-        const=logging.DEBUG,
+        const="DEBUG",
         help=_("more verbose output"),
     )
     command_group.add_argument(
         "-q",
         "--quiet",
-        dest="loglevel",
+        dest="log.loggers.root.level",
         action="store_const",
-        const=logging.NOTSET,
+        const="NOTSET",
         help=_("suppress output"),
     )
 
     parser.add_argument(
         "--dry-run",
-        dest="dry_run",
+        dest="template.dry_run",
         default=False,
         action="store_true",
         help=_("allows the %(prog)s command to run a trial without making \
@@ -86,7 +102,7 @@ execution except for new object IDs."),
     parser.add_argument(
         "-u",
         "--update",
-        dest="is_update",
+        dest="template.is_update",
         default=False,
         action="store_true",
         help=_("update task with the same name instead of adding a new one")
@@ -94,15 +110,9 @@ execution except for new object IDs."),
 
     parser.add_argument(
         "--token",
-        dest="token",
+        dest="config.api_token",
+        metavar="API_TOKEN",
         help=_("the Todoist authorization token")
-    )
-
-    parser.add_argument(
-        "--undo",
-        dest="undo",
-        type=argparse.FileType("rb"),
-        help=_("loads undo file and rollbacks all operations in it")
     )
 
     parser.add_argument(
@@ -113,10 +123,33 @@ execution except for new object IDs."),
 
     parser.add_argument(
         "--gui",
-        dest="gui",
+        dest="general.gui",
         default=False,
         action="store_true",
         help=_("start todoist-template service with Web GUI"))
+
+    tpl_type_group = parser.add_mutually_exclusive_group()
+    tpl_type_group.add_argument(
+        "--yaml",
+        dest="template.type",
+        action="store_const",
+        const=TEMPLATE_YAML,
+        help=_("template input file has YAML format")
+    )
+    tpl_type_group.add_argument(
+        "--json",
+        dest="template.type",
+        action="store_const",
+        const=TEMPLATE_JSON,
+        help=_("template input file has JSON format")
+    )
+    tpl_type_group.add_argument(
+        "--csv",
+        dest="template.type",
+        action="store_const",
+        const=TEMPLATE_CSV,
+        help=_("template input file has CSV format")
+    )
 
     args, unknown = parser.parse_known_args(cli)
     logging.debug('unknown options: %s', str(unknown))

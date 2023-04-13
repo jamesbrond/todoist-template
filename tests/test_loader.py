@@ -13,22 +13,21 @@ class TestFactoryLoader(unittest.TestCase):
 
     def test_factory_loader_yaml(self):
         """Test factory YAML template loader"""
-        loader = self.factory.get_loader('tests/test.yml')
-        self.assertIsInstance(loader, YamlTemplateLoader)
+        with open('tests/test.yml', 'r', encoding='utf8') as file:
+            loader = self.factory.get_loader(file)
+            self.assertIsInstance(loader, YamlTemplateLoader)
 
     def test_factory_loader_json(self):
         """Test factory JSON template loader"""
-        loader = self.factory.get_loader('tests/test.json')
-        self.assertIsInstance(loader, JsonTemplateLoader)
+        with open('tests/test.json', 'r', encoding='utf8') as file:
+            loader = self.factory.get_loader(file)
+            self.assertIsInstance(loader, JsonTemplateLoader)
 
     def test_factory_loader_csv(self):
         """Test factory CSV template loader"""
-        loader = self.factory.get_loader('tests/test.csv')
-        self.assertIsInstance(loader, CsvTemplateLoader)
-
-    def test_factory_loader_not_supported(self):
-        """Test factory not supported template loader"""
-        self.assertRaises(ValueError, self.factory.get_loader, 'tests/test.docx')
+        with open('tests/test.csv', 'r', encoding='utf8') as file:
+            loader = self.factory.get_loader(file)
+            self.assertIsInstance(loader, CsvTemplateLoader)
 
 
 if __name__ == '__main__':

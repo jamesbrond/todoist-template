@@ -1,14 +1,20 @@
 - !include test.yml
 
 - Test project:
+    color: "lime_green"
+    is_favorite: false
+    view_style: 'list'
     Test section:
+      order: 1
       tasks:
         - content: "Test task 1"
+          description: "This is a test"
+          order: 1
+          labels: ["label1", "{test_name|default_label}"]
           priority: 3
           due_string: "today"
-          description: "This is a test"
-          labels: ["label1", "{test_name|default_label}"]
+          due_lang: "en"
         - content: "Test task 2"
-          priority: 4
-          due_string: "weekend"
-          description: "This is another test"
+          due_date: "2023-04-01"
+        - content: "Test task 3"
+          due_datetime: "2023-04-01T12:25:45.000000Z"

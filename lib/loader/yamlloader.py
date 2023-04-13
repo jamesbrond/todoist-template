@@ -37,7 +37,7 @@ def construct_include(loader: CustomYamlLoader, node: yaml.Node) -> Any:
     logging.debug(_("include %s"), filename)
     with open(filename, "r", encoding="utf8") as file:
         if extension in ("yaml", "yml"):
-            return yaml.load(file, CustomYamlLoader)
+            return yaml.load(file, Loader=CustomYamlLoader)
         if extension in ("json",):
             return json.load(file)
         return "".join(file.readlines())

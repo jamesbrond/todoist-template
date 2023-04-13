@@ -29,20 +29,32 @@ class TemplateLoaderFactory:  # pylint: disable=too-few-public-methods
     template loader according to file type
     """
 
-    def get_loader(self, filepath):
+    def get_loader(self, file, template_type=None):
         """Returns the right template loader according to file type"""
 
-        template_type = self._guess_by_mimetypes(filepath)
+        template_type = self._guess(file, template_type)
         if template_type is None:
-            # if mimetypes fail guess by extension
-            template_type = self._guess_by_extension(filepath)
-
-            if template_type is None:
-                # if template_type is still None raise exception
-                raise ValueError(f"Cannot find template loader for {filepath}")
+            # if template_type is still None raise exception
+            raise ValueError(f"Cannot find template loader for {file.name}")
 
         loader = globals()[template_type]
         return loader()
+
+    def _guess(self, file, template_type=None):
+        if template_type is not None:
+            return template_type
+
+        if file.name == '<stdin>':
+            # if user do not set template type (ie --yaml, -json, etc)
+            # do not guess the loader from stdin
+            return None
+
+        template_type = self._guess_by_mimetypes(file.name)
+        if template_type is not None:
+            return template_type
+
+        template_type = self._guess_by_extension(file.name)
+        return template_type
 
     def _guess_by_mimetypes(self, filepath):
         file_mimetype = mimetypes.MimeTypes().guess_type(filepath)[0]
@@ -53,13 +65,15 @@ class TemplateLoaderFactory:  # pylint: disable=too-few-public-methods
 
     def _guess_by_extension(self, filepath):
         i, ext = os.path.splitext(filepath)  # pylint: disable=unused-variable
+        if not ext.rstrip():
+            return None
         if ext in (".yaml", ".yml"):
             logging.debug(_("YAML extension %s"), ext)
             return TEMPLATE_YAML
-        if ext in (".json"):
+        if ext == ".json":
             logging.debug(_("JSON extension %s"), ext)
             return TEMPLATE_JSON
-        if ext in (".csv"):
+        if ext == ".csv":
             logging.debug(_("CSV extension %s"), ext)
             return TEMPLATE_CSV
         return None
