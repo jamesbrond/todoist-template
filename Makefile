@@ -1,5 +1,4 @@
-BUILD_DIR    := build
-DIST_DIR     := dist
+MAKE_DIR     = .make
 LOCALES_DIR  := locales
 PACKAGE      := todoist_template
 PYTHON       := /usr/bin/python3.10
@@ -7,18 +6,16 @@ VERSION_FILE := lib/__version__.py
 VERSION_EXP  := (__version__ = \")[0-9\.]+
 NG_DIR       := ui
 
+DIRS = $(MAKE_DIR)
+
 SHELL:=/bin/bash
 
--include .make/misc.mk
--include .make/git.mk
--include .make/py.mk
--include .make/angular.mk
+-include $(MAKE_DIR)/misc.mk
+-include $(MAKE_DIR)/git.mk
+-include $(MAKE_DIR)/py.mk
+-include $(MAKE_DIR)/angular.mk
 
-.make:
-	@echo "make directory .make"
-	@mkdir -p $@
-
-.make/%.mk: | .make
+$(MAKE_DIR)/%.mk: | $(MAKE_DIR)
 	@URL=$$(echo "https://raw.githubusercontent.com/jamesbrond/jamesbrond/main/Makefile/$$(basename $@)"); \
 	echo "get $$URL"; \
 	curl -s -H 'Cache-Control: no-cache, no-store' $${URL} -o $@
@@ -31,7 +28,7 @@ LANG_DIRS       := $(shell /usr/bin/find $(LOCALES_DIR)/* -type d -prune)
 LANG_SRCS       := $(shell /usr/bin/find $(LOCALES_DIR) -name "*.po" -print)
 LANG_OBJS       := $(LANG_SRCS:.po=.mo)
 
-.PHONY: build clean distclean dist lint
+.PHONY: build clean distclean dist init lint
 .SUFFIXES: .po .mo
 .DEFAULT_GOAL := help
 
@@ -39,6 +36,13 @@ LANG_OBJS       := $(LANG_SRCS:.po=.mo)
 .po.mo:
 	$(PYTHON) $(MSGFMT) -o $@ $<
 
+
+$(DIRS):
+	@$(call log-debug,MAKE,make '$@' folder)
+	@mkdir -p $@
+
+init:: ## Initialize development environment
+	@$(call log-info,MAKE,$@ done)
 
 build:: ## Compile the entire program
 	@$(call log-info,MAKE,$@ done)
