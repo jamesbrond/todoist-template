@@ -1,10 +1,11 @@
+PACKAGE      := todoist_template
 MAKE_DIR     = .make
 LOCALES_DIR  := locales
-PACKAGE      := todoist_template
 PYTHON       := /usr/bin/python3.10
-VERSION_FILE := lib/__version__.py
-VERSION_EXP  := (__version__ = \")[0-9\.]+
 NG_DIR       := ui
+
+VERSION_FILE := lib/__version__.py
+VERSION_EXP  := (.*__version__ = \")([0-9\.]+)(.*)
 
 PY_CONF_FLAKE8 = .github/linters/flake8
 PY_CONF_PYLINT = .github/linters/pylint.toml
@@ -19,7 +20,7 @@ SHELL:=/bin/bash
 -include $(MAKE_DIR)/angular.mk
 
 $(MAKE_DIR)/%.mk: | $(MAKE_DIR)
-	@URL=$$(echo "https://raw.githubusercontent.com/jamesbrond/jamesbrond/main/Makefile/$$(basename $@)"); \
+	@URL=$$(echo "https://raw.githubusercontent.com/jamesbrond/jamesbrond/main/Makefile/.make/$(@F)"); \
 	echo "get $$URL"; \
 	curl -s -H 'Cache-Control: no-cache, no-store' $${URL} -o $@
 
@@ -31,39 +32,37 @@ LANG_DIRS       := $(shell /usr/bin/find $(LOCALES_DIR)/* -type d -prune)
 LANG_SRCS       := $(shell /usr/bin/find $(LOCALES_DIR) -name "*.po" -print)
 LANG_OBJS       := $(LANG_SRCS:.po=.mo)
 
-.PHONY: build clean distclean dist init lint
+.PHONY: build clean distclean dist init lint test
 .SUFFIXES: .po .mo
 .DEFAULT_GOAL := help
-
 
 .po.mo:
 	$(PYTHON) $(MSGFMT) -o $@ $<
 
-
 $(DIRS):
 	@$(call log-debug,MAKE,make '$@' folder)
 	@mkdir -p $@
-
-init:: ## Initialize development environment
-	@$(call log-info,MAKE,$@ done)
 
 build:: ## Compile the entire program
 	@$(call log-info,MAKE,$@ done)
 
 clean:: ## Delete all files created by this makefile, however don’t delete the files that record configuration or environment
 	@$(call prompt-log,Removing pot file "$(LANG_BASE_FILE)")
-	@-rm $(LANG_BASE_FILE)
+	@-$(RM) $(LANG_BASE_FILE) $(NULL_STDERR)
 	@$(call prompt-log,Removing compiled locale translations files)
-	@-rm $(LANG_OBJS)
+	@-$(RM) $(LANG_OBJS) $(NULL_STDERR)
 	@$(call log-info,MAKE,$@ done)
 
 distclean:: clean ## Delete all files in the current directory (or created by this makefile) that are created by configuring or building the program
-	@-rm -rf $(BUILD_DIR)
-	@-rm -rf $(DIST_DIR)
-	@-rm -rf .make
+	@-$(RMDIR) $(BUILD_DIR) $(NULL_STDERR)
+	@-$(RMDIR) $(DIST_DIR) $(NULL_STDERR)
+	@-$(RMDIR) $(MAKE_DIR) $(NULL_STDERR)
 	@$(call log-info,MAKE,$@ done)
 
 dist:: build ## Create a distribution file or files for this program
+	@$(call log-info,MAKE,$@ done)
+
+init:: ## Initialize development environment
 	@$(call log-info,MAKE,$@ done)
 
 lint:: ## Perform static linting
@@ -71,7 +70,7 @@ lint:: ## Perform static linting
 
 run: build
 	@$(call log-info,MAKE,Run UI interface)
-	@$(call pyenv,python todoist_template.py)
+	@$(PYENV)/python todoist_template.py --gui
 
 $(LANG_BASE_FILE):
 	@$(GETTEXT) -d base -o $(LANG_BASE_FILE) $(PY_SRCS)
