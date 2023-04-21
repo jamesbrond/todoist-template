@@ -33,10 +33,9 @@ def run_cli(api_token, cfg):
     else:
         template_filename = cfg.template.file.name
 
-        with cfg.template.file:
-            todoist.upload(
-                todoist.template(cfg.template),
-                update_task=cfg.template.is_update)
+        todoist.upload(
+            todoist.template(cfg.template),
+            update_task=cfg.template.is_update)
 
         if not cfg.template.dry_run:
             now = datetime.datetime.now().strftime('%Y%m%d%H%M%S')

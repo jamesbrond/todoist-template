@@ -16,6 +16,9 @@ class Template:
 
     PLACEHOLDER_REGEXP = re.compile(r"{(\w+)\s*\|?\s*([^}]+)?}")
 
+    def __init__(self):
+        self._tpl_objects = {}
+
     def load_template(self, tpl_file, file_type=None):
         """
         Loaad the template file using the right loader and return always an array
@@ -25,11 +28,16 @@ class Template:
         if tpl_file is None:
             raise TodoistTemplateError("Template file cannot be empty")
 
-        logging.debug("loading template %s (force loader: %s)", tpl_file.name, file_type)
-        with tpl_file:
-            tpl_loader = TemplateLoaderFactory().get_loader(tpl_file, file_type)
-            logging.debug("use %s to load '%s' file", tpl_loader.__class__.__name__, tpl_file.name)
-            tpl_object = tpl_loader.load(tpl_file)
+        tpl_object = self._tpl_objects.get(tpl_file.name)
+
+        if tpl_object is None:
+            logging.debug("loading template %s (force loader: %s)", tpl_file.name, file_type)
+
+            with tpl_file:
+                tpl_loader = TemplateLoaderFactory().get_loader(tpl_file, file_type)
+                logging.debug("use %s to load '%s' file", tpl_loader.__class__.__name__, tpl_file.name)
+                tpl_object = tpl_loader.load(tpl_file)
+                self._tpl_objects[tpl_file.name] = tpl_object
 
         return tpl_object
 
