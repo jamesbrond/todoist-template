@@ -22,9 +22,11 @@ class TodoistTemplate:
     def template(self, template):
         """Get template"""
         tpl = Template()
-        return [tpl.parse_template(
-            tpl.load_template(template.file, template.type),
-            placeholders) for placeholders in template.placeholders]
+        if template.placeholders:
+            return [tpl.parse_template(
+                tpl.load_template(template.file, template.type),
+                placeholders) for placeholders in template.placeholders]
+        return [tpl.parse_template(tpl.load_template(template.file, template.type), [])]
 
     def upload(self, tpl_objs, update_task=False):
         """Create tasks in Todoist"""
