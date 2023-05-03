@@ -1,5 +1,6 @@
 PACKAGE      := todoist_template
-MAKE_DIR     = .make
+BUILD_DIR    := .build
+MAKE_DIR     = $(BUILD_DIR)/make
 LOCALES_DIR  := locales
 PYTHON       := /usr/bin/python3.10
 NG_DIR       := ui
@@ -66,6 +67,9 @@ init:: ## Initialize development environment
 	@$(call log-info,MAKE,$@ done)
 
 lint:: ## Perform static linting
+	@$(call log-info,MAKE,$@ done)
+
+test:: build ## Unit test
 	@$(call log-info,MAKE,$@ done)
 
 run: build
