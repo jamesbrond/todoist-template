@@ -7,7 +7,7 @@ platform thanks to simple templates.
 
 A template is nothing more than a file written in YAML or JSON whose structure
 reflects the hierarchy Project - Session (optional) - Task.
-Projects, sessions and labels are automatically created if they do not already
+Projects, sessions and labels are automatically created if they don't already
 exist on your Todoist.
 
 Todois.com templates always create a new project, while the big difference here
@@ -55,14 +55,16 @@ Where options are:
 |--------------------------|-----------|-----------------------------------------------------------|
 | TEMPLATE                 | stdin     | Mandatory path to the YAML or JSON template file          |
 | -h, --help               |           | Show help message and exit                                |
-| -D KEY0=VAL0,KEY1=VAL1...|           | The placeholder values replaced in template               |
+| -D KEY0=VAL0,KEY1=VAL1...|           | The placeholder values replaced in template or the CSV file |
 | --id SERVICE_ID          | TODOIST-TEMPLATE | Keyring service name where store Todoist API Token |
 | --version                |           | Show program's version number and exit                    |
 | -d, --debug              | False     | More verbose output. Default log level is INFO            |
 | -q, --quiet              | False     | Suppress output                                           |
 | --dry-run                | False     | Allows the `todoist-template` command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object IDs. |
+| -u, --update             |           | it updates task with the same name instead of adding a new one |
 | --undo UNDOFILE          |           | Loads undo file and rollbacks all operations in it        |
 | --token API_TOKEN        |           | The Todoist authorization token. It will use this token instead of reading it from Keyring service |
+| --gui                    |           | Start Todoist-Template service with web frontend          |
 
 Example
 
