@@ -5,6 +5,7 @@ import os
 import json
 from typing import Any, IO
 import yaml
+from lib.i18n import _
 from lib.loader.abstractloader import AbstractTemplateLoader
 
 
@@ -33,10 +34,10 @@ def construct_include(loader: CustomYamlLoader, node: yaml.Node) -> Any:
         os.path.join(loader.get_root(), loader.construct_scalar(node))
     )
     extension = os.path.splitext(filename)[1].lstrip(".")
-    logging.debug("include %s", filename)
+    logging.debug(_("include %s"), filename)
     with open(filename, "r", encoding="utf8") as file:
         if extension in ("yaml", "yml"):
-            return yaml.load(file, CustomYamlLoader)
+            return yaml.load(file, Loader=CustomYamlLoader)
         if extension in ("json",):
             return json.load(file)
         return "".join(file.readlines())

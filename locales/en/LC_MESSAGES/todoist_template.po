@@ -1,152 +1,168 @@
 # TODOIST-TEMPLATE LANGUAGE CATALOG.
-# Copyright (C) 2022
-# Diego Brondo <jamesbrond@gmail.com>, 2022.
+# Copyright (C) 2023
+# Diego Brondo <jamesbrond@gmail.com>, 2023.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: TODOIST-TEMPLATE\n"
-"POT-Creation-Date: 2022-08-30 14:57+0200\n"
-"PO-Revision-Date: 2022-08-30 14:57+0200\n"
-"Last-Translator: Diego Brondo <jamesbrond@gmail.com>\n"
-"Language-Team: ENGLISH <jamesbrond@gmail.com>\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2023-04-13 11:25+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
 
+#: lib/config/apikey.py:47
 msgid "Please enter your API token: "
 msgstr ""
 
-msgid "File mimetype %s"
-msgstr ""
-
-msgid "YAML extension %s"
-msgstr ""
-
-msgid "JSON extension %s"
-msgstr ""
-
-msgid "CSV extension %s"
-msgstr ""
-
-msgid "Placeholders: %s"
-msgstr ""
-
-msgid "use %s to load '%s' file"
-msgstr ""
-
-msgid "Something went wrong: undo all changes"
-msgstr ""
-
-msgid "No template defined"
-msgstr ""
-
-msgid "Project: %s%s (%s)"
-msgstr ""
-
-msgid "Section: %s%s (%s)"
-msgstr ""
-
-msgid "task already exists"
-msgstr ""
-
-msgid "task doesn't exist yet"
-msgstr ""
-
-msgid "Task: %s%s (%s)"
-msgstr ""
-
-msgid "Label: %s%s (%s)"
-msgstr ""
-
-msgid "get tasks for %s"
-msgstr ""
-
-msgid "found %d tasks"
-msgstr ""
-
-msgid "created new project: %s: %s"
-msgstr ""
-
-msgid "created new project: %s"
-msgstr ""
-
-msgid "created new section: %s: %s"
-msgstr ""
-
-msgid "created new section: %s"
-msgstr ""
-
-msgid "created new label: %s"
-msgstr ""
-
-msgid "created new task: %s"
-msgstr ""
-
-msgid "update task: %s"
-msgstr ""
-
-msgid "Save rollback commands to %s"
-msgstr ""
-
-msgid "Load rollback commands from %s"
-msgstr ""
-
-msgid "Failure"
-msgstr ""
-
-msgid "Rollback status: %s"
-msgstr ""
-
-msgid "Success"
-msgstr ""
-
-msgid "undo commands: %s"
-msgstr ""
-
-msgid "undo response %s"
-msgstr ""
-
-msgid "This script requires Python >= 3.8 and < 4"
-msgstr ""
-
-msgid "Easily add tasks to Todoist with customizable YAML templates"
-msgstr ""
-
-msgid "the placeholder values replaced in template"
-msgstr ""
-
-msgid "keyring service name where store Todoist API Token"
-msgstr ""
-
-msgid "more verbose output"
-msgstr ""
-
-msgid "suppress output"
-msgstr ""
-
-msgid "allows the %(prog)s command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object IDs."
-msgstr ""
-
-msgid "update task with the same name instead of adding a new one"
-msgstr ""
-
-msgid "the Todoist authorization token"
-msgstr ""
-
-msgid "loads undo file and rollbacks all operations in it"
-msgstr ""
-
-msgid "show program's version number and exit"
-msgstr ""
-
+#: lib/config/apikey.py:56
 msgid "Todoist API token not found for %s application."
 msgstr ""
 
+#: lib/config/argparse.py:32
+msgid "Easily add tasks to Todoist with customizable YAML templates"
+msgstr ""
+
+#: lib/config/argparse.py:47
+msgid "loads undo file and rollbacks all operations in it"
+msgstr ""
+
+#: lib/config/argparse.py:57
+msgid "the placeholder values replaced in template"
+msgstr ""
+
+#: lib/config/argparse.py:64
+msgid "keyring service name where store Todoist API Token"
+msgstr ""
+
+#: lib/config/argparse.py:71
+msgid "configuration file"
+msgstr ""
+
+#: lib/config/argparse.py:81
+msgid "more verbose output"
+msgstr ""
+
+#: lib/config/argparse.py:89
+msgid "suppress output"
+msgstr ""
+
+#: lib/config/argparse.py:97
+msgid "allows the %(prog)s command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object IDs."
+msgstr ""
+
+#: lib/config/argparse.py:108
+msgid "update task with the same name instead of adding a new one"
+msgstr ""
+
+#: lib/config/argparse.py:115
+msgid "the Todoist authorization token"
+msgstr ""
+
+#: lib/config/argparse.py:122
+msgid "show program's version number and exit"
+msgstr ""
+
+#: lib/config/argparse.py:129
+msgid "start todoist-template service with Web GUI"
+msgstr ""
+
+#: lib/config/argparse.py:137
+msgid "template input file has YAML format"
+msgstr ""
+
+#: lib/config/argparse.py:144
+msgid "template input file has JSON format"
+msgstr ""
+
+#: lib/config/argparse.py:151
+msgid "template input file has CSV format"
+msgstr ""
+
+#: lib/loader/loaderfactory.py:62
+msgid "File mimetype %s"
+msgstr ""
+
+#: lib/loader/loaderfactory.py:71
+msgid "YAML extension %s"
+msgstr ""
+
+#: lib/loader/loaderfactory.py:74
+msgid "JSON extension %s"
+msgstr ""
+
+#: lib/loader/loaderfactory.py:77
+msgid "CSV extension %s"
+msgstr ""
+
+#: lib/loader/yamlloader.py:37
+msgid "include %s"
+msgstr ""
+
+#: lib/todoist.py:41 lib/todoist.py:44
+msgid "Project"
+msgstr ""
+
+#: lib/todoist.py:59 lib/todoist.py:62
+msgid "Section"
+msgstr ""
+
+#: lib/todoist.py:77 lib/todoist.py:93
+msgid "Task"
+msgstr ""
+
+#: lib/todoist.py:84
+msgid "update task: %s"
+msgstr ""
+
+#: lib/todoist.py:89
+msgid "created new task: %s"
+msgstr ""
+
+#: lib/todoist.py:111
+msgid "get tasks for %s"
+msgstr ""
+
+#: lib/todoist.py:113
+msgid "found %d tasks"
+msgstr ""
+
+#: lib/todoist.py:152
+msgid "Rollback status: Dry Run"
+msgstr ""
+
+#: lib/todoist.py:154
+msgid "Failure"
+msgstr ""
+
+#: lib/todoist.py:154
+msgid "Rollback status: %s"
+msgstr ""
+
+#: lib/todoist.py:154
+msgid "Success"
+msgstr ""
+
+#: lib/todoist.py:158
+msgid "undo commands: %s"
+msgstr ""
+
+#: lib/todoist.py:163
+msgid "undo response %s"
+msgstr ""
+
+#: lib/todoist_template.py:41
+msgid "Save rollback commands to %s"
+msgstr ""
+
+#: lib/todoist_template.py:52
+msgid "Load rollback commands from %s"
+msgstr ""
+
+#: todoist_template.py:29
 msgid "remove file %s"
 msgstr ""
-
-msgid "open file %s"
-msgstr ""
-

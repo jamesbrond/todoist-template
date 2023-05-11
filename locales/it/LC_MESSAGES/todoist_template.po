@@ -1,152 +1,169 @@
 # TODOIST-TEMPLATE LANGUAGE CATALOG.
-# Copyright (C) 2022
-# Diego Brondo <jamesbrond@gmail.com>, 2022.
+# Copyright (C) 2023
+# Diego Brondo <jamesbrond@gmail.com>, 2023.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: TODOIST-TEMPLATE\n"
-"POT-Creation-Date: 2022-08-30 14:57+0200\n"
-"PO-Revision-Date: 2022-08-30 14:57+0200\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2023-04-13 11:25+0200\n"
+"PO-Revision-Date: 2023-04-13 11:25+0200\n"
 "Last-Translator: Diego Brondo <jamesbrond@gmail.com>\n"
-"Language-Team: ITALIAN <jamesbrond@gmail.com>\n"
+"Language-Team: ITALIAN\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
 
-
+#: lib/config/apikey.py:47
 msgid "Please enter your API token: "
-msgstr "Immettere il token per le API di Todoist"
+msgstr "Inserisci il tuo token per accedere alle API"
 
+#: lib/config/apikey.py:56
+msgid "Todoist API token not found for %s application."
+msgstr "Il token per l'applicazione %s non è stato trovato"
+
+#: lib/config/argparse.py:32
+msgid "Easily add tasks to Todoist with customizable YAML templates"
+msgstr "Aggiungi facilemnte compiti a Todoist con template personalizzabili in YAML"
+
+#: lib/config/argparse.py:47
+msgid "loads undo file and rollbacks all operations in it"
+msgstr "carica il file di undo e ripristina tutte le operazioni"
+
+#: lib/config/argparse.py:57
+msgid "the placeholder values replaced in template"
+msgstr "i valori rimpiazzati nel template"
+
+#: lib/config/argparse.py:64
+msgid "keyring service name where store Todoist API Token"
+msgstr "il none del servizio di keyting dove archiviave il token di Todoist"
+
+#: lib/config/argparse.py:71
+msgid "configuration file"
+msgstr "file di configurazione"
+
+#: lib/config/argparse.py:81
+msgid "more verbose output"
+msgstr "output più verboso"
+
+#: lib/config/argparse.py:89
+msgid "suppress output"
+msgstr "nessun output"
+
+#: lib/config/argparse.py:97
+msgid "allows the %(prog)s command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object IDs."
+msgstr "permette a %(prog)s di eseguire una prova senza apportare alcuna modifica su Todoist.com, il processo ha lo stesso output come una vera esecuzione fatta eccezione per gli ID degli oggetti"
+
+#: lib/config/argparse.py:108
+msgid "update task with the same name instead of adding a new one"
+msgstr "aggiorna i task con lo stesso nome ivece che aggiungerne uno nuovo"
+
+#: lib/config/argparse.py:115
+msgid "the Todoist authorization token"
+msgstr "il token autorizzativo per Todoist"
+
+#: lib/config/argparse.py:122
+msgid "show program's version number and exit"
+msgstr "mostra la versione del programma ed esce"
+
+#: lib/config/argparse.py:129
+msgid "start todoist-template service with Web GUI"
+msgstr "lancua il servizio con interdaccia web"
+
+#: lib/config/argparse.py:137
+msgid "template input file has YAML format"
+msgstr "il file di ingresso ha formato YAML"
+
+#: lib/config/argparse.py:144
+msgid "template input file has JSON format"
+msgstr "il file di ingresso ha formato JSON"
+
+#: lib/config/argparse.py:151
+msgid "template input file has CSV format"
+msgstr "il file di ingresso ha formato CSV"
+
+#: lib/loader/loaderfactory.py:62
 msgid "File mimetype %s"
-msgstr "Tipo di file %s"
+msgstr ""
 
+#: lib/loader/loaderfactory.py:71
 msgid "YAML extension %s"
-msgstr "Estensione YAML %s"
+msgstr "estensione YAML %s"
 
+#: lib/loader/loaderfactory.py:74
 msgid "JSON extension %s"
-msgstr "Estensione JSON %s"
+msgstr "estensione JSON %s"
 
+#: lib/loader/loaderfactory.py:77
 msgid "CSV extension %s"
-msgstr "Estensione CSV %s"
+msgstr "estensione CSV %s"
 
-msgid "Placeholders: %s"
-msgstr "Variabili segnaposto"
+#: lib/loader/yamlloader.py:37
+msgid "include %s"
+msgstr "includi %s"
 
-msgid "use %s to load '%s' file"
-msgstr "uso %s per caricare '%s'"
+#: lib/todoist.py:41 lib/todoist.py:44
+msgid "Project"
+msgstr "Progetto"
 
-msgid "Something went wrong: undo all changes"
-msgstr "Qualcosa è andato storto: butto via tutto"
+#: lib/todoist.py:59 lib/todoist.py:62
+msgid "Section"
+msgstr "Sezione"
 
-msgid "No template defined"
-msgstr "Nessun template definito"
+#: lib/todoist.py:77 lib/todoist.py:93
+msgid "Task"
+msgstr "Compito"
 
-msgid "Project: %s%s (%s)"
-msgstr "Progetto %s%s (%s)"
-
-msgid "Section: %s%s (%s)"
-msgstr "Sessione: %s%s (%s)"
-
-msgid "task already exists"
-msgstr "L'attività esiste già"
-
-msgid "task doesn't exist yet"
-msgstr "L'attività non esiste ancora"
-
-msgid "Task: %s%s (%s)"
-msgstr "Attività: %s%s (%s)"
-
-msgid "Label: %s%s (%s)"
-msgstr "Etichetta: %s%s (%s)"
-
-msgid "get tasks for %s"
-msgstr "ottengo le attivià per %s"
-
-msgid "found %d tasks"
-msgstr "trovate %d attivià"
-
-msgid "created new project: %s: %s"
-msgstr "creato nuovo progetto: %s: %s"
-
-msgid "created new project: %s"
-msgstr "creato nuovo progetto: %s"
-
-msgid "created new section: %s: %s"
-msgstr "creata nuova sessione: %s: %s"
-
-msgid "created new section: %s"
-msgstr "creata nuova sessione: %s"
-
-msgid "created new label: %s"
-msgstr "creata nuova etichetta: %s"
-
-msgid "created new task: %s"
-msgstr "creata nuova attività: %s"
-
+#: lib/todoist.py:84
 msgid "update task: %s"
-msgstr "aggiornata l'attività: %s"
+msgstr "aggiornamento compito: %s"
 
-msgid "Save rollback commands to %s"
-msgstr "Salvataggio comandi di ripistino in %s"
+#: lib/todoist.py:89
+msgid "created new task: %s"
+msgstr "Creato nuovo compito: %s"
 
-msgid "Load rollback commands from %s"
-msgstr "Caricamento dei comandi di ripistino da %s"
+#: lib/todoist.py:111
+msgid "get tasks for %s"
+msgstr "ottenuti compito per %s"
 
+#: lib/todoist.py:113
+msgid "found %d tasks"
+msgstr "trovati %d compiti"
+
+#: lib/todoist.py:152
+msgid "Rollback status: Dry Run"
+msgstr "Stato di ripristino: Prova"
+
+#: lib/todoist.py:154
 msgid "Failure"
 msgstr "Fallimento"
 
+#: lib/todoist.py:154
 msgid "Rollback status: %s"
-msgstr "Stato ripristino: %s"
+msgstr "Stato di ripristino: %s"
+msgstr ""
 
+#: lib/todoist.py:154
 msgid "Success"
 msgstr "Successo"
 
+#: lib/todoist.py:158
 msgid "undo commands: %s"
-msgstr "comandi annullo: %s"
+msgstr "comandi di annullo: %s"
 
+#: lib/todoist.py:163
 msgid "undo response %s"
-msgstr "risposta operazione di annullamento %s"
+msgstr "rsiposta di annullo %s"
 
-msgid "This script requires Python >= 3.8 and < 4"
-msgstr "Questo script richiede Python >= 3.8 e < 4"
+#: lib/todoist_template.py:41
+msgid "Save rollback commands to %s"
+msgstr "Salvataggio dei comandi di ripristiono su %s"
 
-msgid "Easily add tasks to Todoist with customizable YAML templates"
-msgstr "Aggiungi facilemnte attività a Todoist con template"
+#: lib/todoist_template.py:52
+msgid "Load rollback commands from %s"
+msgstr "Caricamento dei comandi di ripristino da %s"
 
-msgid "the placeholder values replaced in template"
-msgstr "Il valore del segnaposto rimpiazzato nel template"
-
-msgid "keyring service name where store Todoist API Token"
-msgstr "nome del servizio keyring dove è archiviato il token delle API di Todoist"
-
-msgid "more verbose output"
-msgstr "più prolisso nei messaggi"
-
-msgid "suppress output"
-msgstr "disabilita i messaggi"
-
-msgid "allows the %(prog)s command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object IDs."
-msgstr "permette al comando %(prog)s di essere eseguito im modalità di prova senza fare alcun cambiamento a Todoist.com, ma producendo gli stessi messaggi di una vera esecuzione, fatta eccezione per gli ID degli oggetti."
-
-msgid "update task with the same name instead of adding a new one"
-msgstr "modifica l'attività con lo stesso nome anziché aggiungerne una nuova"
-
-msgid "the Todoist authorization token"
-msgstr "il token di autorizzazione di Todoist"
-
-msgid "loads undo file and rollbacks all operations in it"
-msgstr "carica il file di ripristino e annullo tutte le operazioni in esso"
-
-msgid "show program's version number and exit"
-msgstr "mostra al versione del programma ed esce"
-
-msgid "Todoist API token not found for %s application."
-msgstr "Il token per le API di todoist non può essere trovato"
-
+#: todoist_template.py:29
 msgid "remove file %s"
-msgstr "timozione del file %s"
-
-msgid "open file %s"
-msgstr "apertura del file %s"
+msgstr "rimozione del file %s"

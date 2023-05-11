@@ -10,7 +10,7 @@ example
 .venv
 
 # Distutils
-build
+.build
 dist
 todoist_template.egg-info
 MANIFEST
@@ -63,3 +63,7 @@ ui/typings
 # System files
 ui/.DS_Store
 ui/Thumbs.db
+
+*.po
+.coverage
+htmlcov/

@@ -10,7 +10,8 @@ class CsvTemplateLoader(AbstractTemplateLoader):  # pylint: disable=too-few-publ
     """CSV Template Loader (can load ufficial Todoist templates)"""
 
     def load(self, file):
-        reader = csv.DictReader(file, delimiter=',')
+        fieldnames = ['type', 'content', 'priority', 'due_string', 'description']
+        reader = csv.DictReader(file, fieldnames, delimiter=',', dialect='excel')
         projects = []
 
         base_prj = {
@@ -22,27 +23,27 @@ class CsvTemplateLoader(AbstractTemplateLoader):  # pylint: disable=too-few-publ
         curr_prj = None
         curr_sec = None
         for row in reader:
-            if row['TYPE'] == "project":
-                curr_prj = row['CONTENT']
+            if row['type'] == "project":
+                curr_prj = row['content']
                 projects.append({
                     curr_prj: {
                         "tasks": []
                     }
                 })
-            elif row['TYPE'] == "section":
-                curr_sec = row['CONTENT']
+            elif row['type'] == "section":
+                curr_sec = row['content']
                 if not curr_prj:
                     projects.append(base_prj)
                     curr_prj = DEFAULT_PROJECT
                 projects[-1][curr_sec] = {
                     "tasks": []
                 }
-            elif row['TYPE'] == "task":
+            elif row['type'] == "task":
                 task = {
-                    "content": row["CONTENT"],
-                    "description": row["DESCRIPTION"],
-                    "priority": int(row["PRIORITY"]),
-                    "due_string": row["DATE"]
+                    "content": row["content"],
+                    "description": row["description"],
+                    "priority": int(row["priority"]),
+                    "due_string": row["due_string"]
                 }
                 if not curr_prj:
                     projects.append(base_prj)

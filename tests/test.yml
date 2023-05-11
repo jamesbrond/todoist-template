@@ -1,0 +1,9 @@
+Inbox:
+  tasks:
+    - content: "delete {test_name|me}"
+      priority: 3
+      due_string: "{test_date}"
+      labels: ["{test_label}", "{another_test_label|mylabel}"]
+      tasks:
+        - content: "sub task of delete {test_name|me}"
+          priority: 4
