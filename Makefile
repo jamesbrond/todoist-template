@@ -2,7 +2,7 @@ PACKAGE      := todoist_template
 BUILD_DIR    := .build
 MAKE_DIR     = $(BUILD_DIR)/make
 LOCALES_DIR  := locales
-PYTHON       := /usr/bin/python3.10
+PYTHON       := /cygdrive/c/Users/320072283/bin/python/python.exe
 NG_DIR       := ui
 
 VERSION_FILE := lib/__version__.py
