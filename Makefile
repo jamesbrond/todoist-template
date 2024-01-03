@@ -3,7 +3,6 @@ BUILD_DIR    := .build
 MAKE_DIR     = $(BUILD_DIR)/make
 LOCALES_DIR  := locales
 PYTHON       := /cygdrive/c/Users/320072283/bin/python/python.exe
-NG_DIR       := ui
 
 VERSION_FILE := lib/__version__.py
 VERSION_EXP  := (.*__version__ = \")([0-9\.]+)(.*)
@@ -18,7 +17,6 @@ SHELL:=/bin/bash
 -include $(MAKE_DIR)/misc.mk
 -include $(MAKE_DIR)/git.mk
 -include $(MAKE_DIR)/py.mk
--include $(MAKE_DIR)/angular.mk
 
 $(MAKE_DIR)/%.mk: | $(MAKE_DIR)
 	@URL=$$(echo "https://raw.githubusercontent.com/jamesbrond/jamesbrond/main/Makefile/.make/$(@F)"); \
