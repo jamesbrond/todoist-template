@@ -1,5 +1,5 @@
 PACKAGE      := todoist_template
-BUILD_DIR    := .build
+BUILD_DIR    := build
 MAKE_DIR     = $(BUILD_DIR)/make
 LOCALES_DIR  := locales
 PYTHON       := /cygdrive/c/Users/320072283/bin/python/python.exe

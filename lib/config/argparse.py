@@ -121,13 +121,6 @@ execution except for new object IDs."),
         version="%(prog)s " + version.__version__,
         help=_("show program's version number and exit"))
 
-    parser.add_argument(
-        "--gui",
-        dest="general.gui",
-        default=False,
-        action="store_true",
-        help=_("start todoist-template service with Web GUI"))
-
     tpl_type_group = parser.add_mutually_exclusive_group()
     tpl_type_group.add_argument(
         "--yaml",

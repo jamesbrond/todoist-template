@@ -1,11 +1,6 @@
 [general]
 print_logo = true
 
-[service]
-host = "localhost"
-port = 54321
-path = ".build/ng"
-
 [config]
 api_key_service = 'TODOIST_TEMPLATE'
 

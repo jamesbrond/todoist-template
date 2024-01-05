@@ -9,14 +9,7 @@ import lib.__version__ as version
 from lib.config.config import TTConfig
 from lib.todoist_template import TodoistTemplate
 from lib.config.apikey import APITokenStore
-from lib.gui import TTBackendService
 from lib.i18n import _
-
-
-def run_gui(api_token, cfg):
-    """Run todoist-template as web service"""
-    service = TTBackendService(api_token, cfg.service)
-    service.start()
 
 
 def run_cli(api_token, cfg):
@@ -72,10 +65,7 @@ def main():
         else:
             logging.debug('Use API token from cli')
 
-        if cfg.general.gui:
-            run_gui(api_token, cfg)
-        else:
-            run_cli(api_token, cfg)
+        run_cli(api_token, cfg)
 
         return 0
 
