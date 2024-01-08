@@ -15,7 +15,7 @@ importlib-metadata==6.8.0
 jaraco.classes==3.2.3
 jeepney==0.8.0
 keyring==23.13.1
-more-itertools==9.1.0
+more-itertools==10.1.0
 pycparser==2.21
 pyparsing==3.0.9
 PyYAML==6.0
