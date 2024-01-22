@@ -54,6 +54,10 @@ class TodoistTemplate:
             logging.info(_("Load rollback commands from %s"), file.name)
             self.todoist.rollback(pickle.load(file))
 
+    def quick_add(self, text):
+        """Add a new item using the Quick Add implementation available in the official clients"""
+        return self.todoist.quick_add(text)
+
     def _upload(self, tpl_obj):
         for obj in tpl_obj:
             if isinstance(obj, str):

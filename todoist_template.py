@@ -15,6 +15,7 @@ from lib.i18n import _
 def run_cli(api_token, cfg):
     """Run todoist-template as command line application"""
     is_undo = cfg.template.undo.file is not None
+    is_quick_add = cfg.template.quick_add is not None
 
     todoist = TodoistTemplate(api_token, cfg.template.dry_run, is_undo)
 
@@ -23,6 +24,13 @@ def run_cli(api_token, cfg):
         if todoist.rollback(cfg.template.undo.file):
             logging.debug(_("remove file %s"), undo_filename)
             os.remove(undo_filename)
+    elif is_quick_add:
+        text = cfg.template.quick_add
+        if (len(text) >= 2 and text[0] == text[-1]) and text.startswith(("'", '"')):
+            text =  text[1:-1]
+        task = todoist.quick_add(text)
+        logging.info("Task %s correctly added", task.id)
+        logging.debug(task)
     else:
         template_filename = cfg.template.file.name
 

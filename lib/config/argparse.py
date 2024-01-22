@@ -46,6 +46,13 @@ def parse_cmd_line(cli=None):
         type=argparse.FileType("rb"),
         help=_("loads undo file and rollbacks all operations in it")
     )
+    file_parser.add_argument(
+        "-t",
+        dest="template.quick_add",
+        metavar="QUICK ADD TEXT",
+        type=ascii,
+        help=_("add a new item using the Quick Add implementation available in the official clients")
+    )
 
     # options
     parser.add_argument(
