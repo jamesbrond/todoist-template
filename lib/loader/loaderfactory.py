@@ -3,6 +3,7 @@
 import os
 import logging
 import mimetypes
+from Cheetah.Template import Template as TemplatEngine
 from lib.loader.csvloader import CsvTemplateLoader  # pylint: disable=unused-import
 from lib.loader.jsonloader import JsonTemplateLoader  # pylint: disable=unused-import
 from lib.loader.yamlloader import YamlTemplateLoader  # pylint: disable=unused-import
@@ -29,6 +30,18 @@ class TemplateLoaderFactory:  # pylint: disable=too-few-public-methods
     template loader according to file type
     """
 
+    def __init__(self, file, template_type=None):
+        self._template_file = file
+        self._engine = TemplatEngine.compile(file=file)
+        self._loader = self.get_loader(file, template_type)
+        logging.debug("use %s to load '%s' file", self._loader.__class__.__name__, self._template_file.name)
+
+    def render(self, variables):
+        """Returns a template object parsed"""
+        logging.debug("render template with %s variables", str(variables))
+        t = self._engine(namespaces=[variables])
+        return self._loader.load(str(t))
+
     def get_loader(self, file, template_type=None):
         """Returns the right template loader according to file type"""
 
@@ -36,7 +49,7 @@ class TemplateLoaderFactory:  # pylint: disable=too-few-public-methods
         if template_type is None:
             # if template_type is still None raise exception
             raise ValueError(f"Cannot find template loader for {file.name}")
-
+        logging.debug('template type: %s', template_type)
         loader = globals()[template_type]
         return loader()
 

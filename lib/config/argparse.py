@@ -8,20 +8,20 @@ import lib.__version__ as version
 from lib.loader.loaderfactory import TEMPLATE_CSV, TEMPLATE_JSON, TEMPLATE_YAML
 
 
-def val_placeholder(values):
-    """Argparse placeholders type"""
-    placeholders = []
+def val_variable(values):
+    """Argparse variables type"""
+    variables = []
     if os.path.isfile(values):
         with open(values, 'r', encoding='utf8') as csv_file:
             csv_reader = csv.DictReader(csv_file, delimiter=',')
-            placeholders = list(csv_reader)
+            variables = list(csv_reader)
     else:
         my_dict = {}
         for keyval in values.split(","):
             key, val = keyval.split("=")
             my_dict[key] = val
-        placeholders = [my_dict]
-    return placeholders
+        variables = [my_dict]
+    return variables
 
 
 def parse_cmd_line(cli=None):
@@ -50,11 +50,11 @@ def parse_cmd_line(cli=None):
     # options
     parser.add_argument(
         "-D",
-        dest="template.placeholders",
-        type=val_placeholder,  # can be a file or a comma separated list of key=value
+        dest="template.variables",
+        type=val_variable,  # can be a file or a comma separated list of key=value
         metavar="KEY0=VAL0,KEY1=VAL1...",
         default={},
-        help=_("the placeholder values replaced in template")
+        help=_("the variable values replaced in template")
     )
 
     parser.add_argument(

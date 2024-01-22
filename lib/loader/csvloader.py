@@ -1,5 +1,6 @@
 """CSV Template Loader (can load ufficial Todoist templates)"""
 
+import io
 import csv
 from lib.loader.abstractloader import AbstractTemplateLoader
 
@@ -9,9 +10,9 @@ DEFAULT_PROJECT = "Inbox"
 class CsvTemplateLoader(AbstractTemplateLoader):  # pylint: disable=too-few-public-methods
     """CSV Template Loader (can load ufficial Todoist templates)"""
 
-    def load(self, file):
+    def load(self, content):
         fieldnames = ['type', 'content', 'priority', 'due_string', 'description']
-        reader = csv.DictReader(file, fieldnames, delimiter=',', dialect='excel')
+        reader = csv.DictReader(io.StringIO(content), fieldnames, delimiter=',', dialect='excel')
         projects = []
 
         base_prj = {

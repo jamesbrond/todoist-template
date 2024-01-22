@@ -1,6 +1,7 @@
 astroid==3.0.2
 certifi==2023.11.17
 charset-normalizer==3.3.2
+Cheetah3==3.2.6.post1
 colorama==0.4.6
 dill==0.3.7
 idna==3.6
