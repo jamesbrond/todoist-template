@@ -12,7 +12,8 @@ class TodoistTemplate:
     PROJECT_KEYS_LIST = ['color', 'is_favorite', 'view_style']
     SECTION_KEYS_LIST = ['order']
     TASK_KEYS_LIST = ['content', 'description', 'order', 'labels', 'priority',
-                      'due_string', 'due_date', 'due_datetime', 'due_lang']
+                      'due_string', 'due_date', 'due_datetime', 'due_lang',
+                      'assignee']
 
     def __init__(self, api_token, dry_run=False, is_undo=False):
         self.api_token = api_token

@@ -24,6 +24,7 @@ class Todoist(TodoistAPI):
                 logging.debug('retrieved %d project from Todoist', len(self.projects))
                 self.sections = self.get_sections()
                 logging.debug('retrieved %d sections from Todoist', len(self.sections))
+                self.collaborators = []
             except:
                 self._session.close()
                 raise
@@ -40,6 +41,7 @@ class Todoist(TodoistAPI):
         project_id = self._exists_project(project['name'])
         if project_id:
             logging.info(self._log_message(_('Project'), project['name'], project_id, False))
+            self.collaborators = self.get_collaborators(project_id)
             return project_id
 
         logging.info(self._log_message(_('Project'), project['name']))
@@ -70,8 +72,14 @@ class Todoist(TodoistAPI):
 
     def task(self, task, update=False):
         """Create or update task"""
+        if task.get('assignee'):
+            task['assignee_id'] = self.get_collaborator_id(task.get('assignee'))
+
         if update:
-            task_id = self._exists_task(task.get('project_id'), task.get('section_id'), task.get('content'))
+            task_id = self._exists_task(
+                task.get('project_id'),
+                task.get('section_id'),
+                task.get('content'))
         else:
             task_id = None
 
@@ -206,5 +214,9 @@ class Todoist(TodoistAPI):
         else:
             raise TodoistTemplateError(str(response.content))
 
+    def get_collaborator_id(self, name):
+        """Returns collabotor ID by name"""
+        coll = [element for element in self.collaborators if element.name.casefold() == name.casefold()]
+        return coll[0].id if len(coll) == 1 else None
 
 # ~@:-]
