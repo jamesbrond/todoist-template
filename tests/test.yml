@@ -1,9 +1,9 @@
 Inbox:
   tasks:
-    - content: "delete {test_name|me}"
+    - content: "delete $test_name"
       priority: 3
-      due_string: "{test_date}"
-      labels: ["{test_label}", "{another_test_label|mylabel}"]
+      due_string: "$test_date"
+      labels: ["$test_label", "$getVar('another_test_label', 'fallback_label')"]
       tasks:
-        - content: "sub task of delete {test_name|me}"
+        - content: "sub task of delete $test_name"
           priority: 4

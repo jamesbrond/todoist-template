@@ -1,4 +1,4 @@
-- !include test.yml
+- #include "tests/test.yml"
 
 - Test project:
     color: "lime_green"
@@ -10,7 +10,7 @@
         - content: "Test task 1"
           description: "This is a test"
           order: 1
-          labels: ["label1", "{test_name|default_label}"]
+          labels: ["label1", "$getVar('test_name','default_label')"]
           priority: 3
           due_string: "today"
           due_lang: "en"
