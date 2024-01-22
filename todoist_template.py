@@ -28,9 +28,9 @@ def run_cli(api_token, cfg):
         text = cfg.template.quick_add
         if (len(text) >= 2 and text[0] == text[-1]) and text.startswith(("'", '"')):
             text =  text[1:-1]
-        task = todoist.quick_add(text)
-        logging.info("Task %s correctly added", task.id)
-        logging.debug(task)
+        quick_add_result = todoist.quick_add(text)
+        logging.info("Task %s correctly added", quick_add_result.task.id)
+        logging.debug(quick_add_result.task)
     else:
         template_filename = cfg.template.file.name
 

@@ -4,15 +4,13 @@ import logging
 import json
 import requests
 from todoist_api_python.api import TodoistAPI
-from lib.template import TodoistTemplateError
+from todoist_api_python.endpoints import SYNC_API
 from lib.utils import find_needle_in_haystack, uid
 from lib.i18n import _
 
 
 class Todoist(TodoistAPI):
     """Layer class to handle Todoist API"""
-
-    SYNC_API = "https://api.todoist.com/sync/v9"
 
     def __init__(self, api_token, dry_run=False, is_undo=False):
         super().__init__(api_token, None)
@@ -191,7 +189,7 @@ class Todoist(TodoistAPI):
             params = {"commands": json.dumps(commands, skipkeys=True, allow_nan=False)}
 
         response = requests.get(
-            f'{self.SYNC_API}/sync',
+            f'{SYNC_API}/sync',
             headers={"Authorization": f"Bearer {self._token}"},
             params=params,
             timeout=60.0
@@ -200,19 +198,7 @@ class Todoist(TodoistAPI):
 
     def quick_add(self, text):
         """Add a new item using the Quick Add implementation available in the official clients"""
-        params = {
-            "text": text
-        }
-        response = requests.get(
-            f'{self.SYNC_API}/quick/add',
-            headers={"Authorization": f"Bearer {self._token}"},
-            params=params,
-            timeout=60.0
-        )
-        if response.status_code == 200:
-            return response.json()
-        else:
-            raise TodoistTemplateError(str(response.content))
+        return self.quick_add_task(text)
 
     def get_collaborator_id(self, name):
         """Returns collabotor ID by name"""
