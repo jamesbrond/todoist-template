@@ -1,6 +1,6 @@
 """Test Unit for Template class"""
 import unittest
-from lib.template import Template
+from lib.template.template_factory import TemplateFactory
 
 
 class TestTemplate(unittest.TestCase):
@@ -16,7 +16,7 @@ class TestTemplate(unittest.TestCase):
     def test_load_existing_yml_template1(self):
         """Load existing YAML template with one project"""
         with open('tests/test.yml', 'r', encoding='utf8') as file:
-            template = Template(file)
+            template = TemplateFactory(file)
             tpl_obj = template.render(self.variables)
         self.assertIsInstance(tpl_obj, dict)
         self.assertEqual(len(tpl_obj), 1)
@@ -24,7 +24,7 @@ class TestTemplate(unittest.TestCase):
     def test_load_existing_yml_template2(self):
         """Load existing YAML template with two projects"""
         with open('tests/test2.yml', 'r', encoding='utf8') as file:
-            template = Template(file)
+            template = TemplateFactory(file)
             tpl_obj = template.render(self.variables)
         self.assertIsInstance(tpl_obj, list)
         self.assertEqual(len(tpl_obj), 2)
@@ -32,7 +32,7 @@ class TestTemplate(unittest.TestCase):
     def test_load_existing_json_template(self):
         """Load existing JSON template"""
         with open('tests/test.json', 'r', encoding='utf8') as file:
-            template = Template(file)
+            template = TemplateFactory(file)
             tpl_obj = template.render(self.variables)
         self.assertIsInstance(tpl_obj, dict)
         self.assertEqual(len(tpl_obj), 1)
@@ -40,7 +40,7 @@ class TestTemplate(unittest.TestCase):
     def test_load_existing_csv_template(self):
         """Load existing CSV template"""
         with open('tests/test.csv', 'r', encoding='utf8') as file:
-            template = Template(file)
+            template = TemplateFactory(file)
             tpl_obj = template.render(self.variables)
         self.assertIsInstance(tpl_obj, list)
         self.assertEqual(len(tpl_obj), 2)

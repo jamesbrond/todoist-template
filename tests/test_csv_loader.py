@@ -1,7 +1,7 @@
 """Test CSV template loader"""
 import logging
 import unittest
-from lib.loader.csvloader import CsvTemplateLoader
+from lib.template.loader.csvloader import CsvTemplateLoader
 
 
 class TestCSVLoader(unittest.TestCase):

@@ -1,4 +1,6 @@
-- #include "tests/test.yml"
+# Includes test and test3
+
+- #!include    test.yml
 
 - Test project:
     color: "lime_green"
@@ -7,14 +9,16 @@
     Test section:
       order: 1
       tasks:
-        - content: "Test task 1"
+        - content: "Test task 💯 {test_name|me}"
+        - content: "Test task 1 {test_name|me}"
           description: "This is a test"
           order: 1
-          labels: ["label1", "$getVar('test_name','default_label')"]
+          labels: ["label1", "{test_name|default_label}"]
           priority: 3
           due_string: "today"
           due_lang: "en"
         - content: "Test task 2"
-          due_date: "2023-04-01"
+          due_date: "{test_date}"
         - content: "Test task 3"
-          due_datetime: "2023-04-01T12:25:45.000000Z"
+          due_datetime: "{test_date}T12:25:45.000000Z"
+#!include test3.yml

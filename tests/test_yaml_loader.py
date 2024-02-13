@@ -1,7 +1,7 @@
 """Test YAML template loader"""
 import logging
 import unittest
-from lib.loader.yamlloader import YamlTemplateLoader
+from lib.template.loader.yamlloader import YamlTemplateLoader
 
 
 class TestYamlLoader(unittest.TestCase):
@@ -11,7 +11,7 @@ class TestYamlLoader(unittest.TestCase):
         logging.disable(logging.CRITICAL)
         loader = YamlTemplateLoader()
         with open('tests/test.yml', 'r', encoding='utf-8') as file:
-            self.content = loader.load(file.read())
+            self.content = loader.load(file)
 
     def test_yaml_load(self):
         """Test YAML template"""
@@ -27,7 +27,7 @@ class TestYamlLoader(unittest.TestCase):
     def test_yaml_task(self):
         """Test YAML template Inbox task"""
         tasks = self.content['Inbox']['tasks']
-        self.assertEqual(tasks[0]['content'], 'delete $test_name')
+        self.assertEqual(tasks[0]['content'], '🗑 delete {test_name|me} 🗑')
 
 
 if __name__ == '__main__':

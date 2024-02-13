@@ -12,11 +12,11 @@ from lib.i18n import _
 class Todoist(TodoistAPI):
     """Layer class to handle Todoist API"""
 
-    def __init__(self, api_token, dry_run=False, is_undo=False):
+    def __init__(self, api_token, dry_run=False, is_undo=False, is_quick_add=False):
         super().__init__(api_token, None)
         self.dry_run = dry_run
         self.undo_commands = []
-        if not is_undo:
+        if not (is_undo or is_quick_add):
             try:
                 self.projects = self.get_projects()
                 logging.debug('retrieved %d project from Todoist', len(self.projects))
@@ -198,11 +198,18 @@ class Todoist(TodoistAPI):
 
     def quick_add(self, text):
         """Add a new item using the Quick Add implementation available in the official clients"""
-        return self.quick_add_task(text)
+        if self.dry_run:
+            logging.info(self._log_message(_('Task'), text, None, True))
+            return None
+
+        quick = self.quick_add_task(text)
+        logging.info(self._log_message(_('Task'), quick.task.content, quick.task.id, True))
+        return quick.task.id
 
     def get_collaborator_id(self, name):
         """Returns collabotor ID by name"""
         coll = [element for element in self.collaborators if element.name.casefold() == name.casefold()]
+        # what if we have more collaborators with the same name?
         return coll[0].id if len(coll) == 1 else None
 
 # ~@:-]

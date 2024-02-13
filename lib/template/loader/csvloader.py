@@ -2,7 +2,7 @@
 
 import io
 import csv
-from lib.loader.abstractloader import AbstractTemplateLoader
+from lib.template.loader.abstractloader import AbstractTemplateLoader
 
 DEFAULT_PROJECT = "Inbox"
 

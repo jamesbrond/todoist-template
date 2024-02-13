@@ -2,7 +2,7 @@
 
 import json
 
-from lib.loader.abstractloader import AbstractTemplateLoader
+from lib.template.loader.abstractloader import AbstractTemplateLoader
 
 
 class JsonTemplateLoader(AbstractTemplateLoader):  # pylint: disable=too-few-public-methods

@@ -1,7 +1,7 @@
 """Test JSON template loader"""
 import logging
 import unittest
-from lib.loader.jsonloader import JsonTemplateLoader
+from lib.template.loader.jsonloader import JsonTemplateLoader
 
 
 class TestJsonLoader(unittest.TestCase):

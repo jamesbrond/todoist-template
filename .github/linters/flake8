@@ -2,4 +2,4 @@
 max-line-length = 120
 ignore = E722
 per-file-ignores =
-    lib/loader/loaderfactory.py: F401
+    lib/template/template_factory.py: F401
