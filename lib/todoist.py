@@ -2,6 +2,7 @@
 
 import logging
 import json
+import certifi
 import requests
 from todoist_api_python.api import TodoistAPI
 from todoist_api_python.endpoints import SYNC_API
@@ -12,10 +13,25 @@ from lib.i18n import _
 class Todoist(TodoistAPI):
     """Layer class to handle Todoist API"""
 
-    def __init__(self, api_token, dry_run=False, is_undo=False, is_quick_add=False):
+    def __init__(self, api_token, cfg):
         super().__init__(api_token, None)
-        self.dry_run = dry_run
+
+        is_undo = cfg.template.undo.file is not None
+        is_quick_add = cfg.template.quick_add
+        self.dry_run = cfg.template.dry_run
         self.undo_commands = []
+
+        try:
+            if cfg.security and cfg.security.ssl_certificate is not None:
+                logging.debug('Adding custom certs to Certifi store "%s"', cfg.security.ssl_certificate)
+                cafile = certifi.where()
+                with open(cfg.security.ssl_certificate, 'rb') as certfile:
+                    customca = certfile.read()
+                with open(cafile, 'ab') as outfile:
+                    outfile.write(customca)
+        except (AttributeError, FileNotFoundError) as exc:
+            logging.warning(exc)
+
         if not (is_undo or is_quick_add):
             try:
                 self.projects = self.get_projects()

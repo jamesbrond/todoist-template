@@ -15,9 +15,9 @@ class TodoistTemplate:
                       'due_string', 'due_date', 'due_datetime', 'due_lang',
                       'assignee']
 
-    def __init__(self, api_token, dry_run=False, is_undo=False, is_quick_add=False):
+    def __init__(self, api_token, cfg):
         self.api_token = api_token
-        self.todoist = Todoist(self.api_token, dry_run, is_undo, is_quick_add)
+        self.todoist = Todoist(self.api_token, cfg)
         self.update_task = False
 
     def _generate_jobs_list(self, file, file_type, variables=None):

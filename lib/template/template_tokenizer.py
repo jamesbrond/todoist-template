@@ -22,20 +22,20 @@ def get_path(file):
 
 
 class AbstractToken(ABC):
+    """Generic Token Class"""
 
     RE_INCLUDES = re.compile(r"#!\s*include +([A-Za-z0-9\/._-]+)")
     RE_VARS = re.compile(r"{(\w+)\s*\|?\s*([^}]+)?}")
     RE_COMMENTS = re.compile(r"^#+(?!!).*[\n\r]+", re.MULTILINE)
     RE_INLINE_COMMENTS = re.compile(r" +#+(?!!).*")
 
-    """Single template token"""
-    def __init__(self, type):
-        self.type = type
+    def __init__(self, text, token_type):
+        self._source = text
+        self.type = token_type
 
     @abstractmethod
-    def render(self, vars):
+    def render(self, variables):
         """Render token"""
-        pass
 
     def raw(self):
         """Return template not processed"""
@@ -48,32 +48,30 @@ class AbstractToken(ABC):
 class PlainTextToken(AbstractToken):
     """Plain text token"""
     def __init__(self, text):
-        super().__init__(TokenType.PLAINTEXT)
+        super().__init__(text, TokenType.PLAINTEXT)
         self._source = text
 
-    def render(self, vars):
+    def render(self, variables):
         return self._source
 
 
 class PlaceholderToken(AbstractToken):
     """Placeholder token"""
     def __init__(self, text):
-        super().__init__(TokenType.PLACEHOLDER)
-        self._source = text
+        super().__init__(text, TokenType.PLACEHOLDER)
         match = self.RE_VARS.search(text)
         self._value, self._default_value = match.group(1), match.group(2)
 
-    def render(self, vars):
-        return vars.get(self._value) or self._default_value or self._source
+    def render(self, variables):
+        return variables.get(self._value) or self._default_value or self._source
 
 
 class CommentToken(AbstractToken):
     """Comment token"""
     def __init__(self, text):
-        super().__init__(TokenType.COMMENT)
-        self._source = text
+        super().__init__(text, TokenType.COMMENT)
 
-    def render(self, vars):
+    def render(self, variables):
         return ''
 
 
@@ -84,7 +82,7 @@ class TemplateTokenizer(AbstractToken):
                  filename=None,
                  folder=None,
                  encoding='utf-8'):
-        super().__init__(TokenType.TEMPLATE)
+        super().__init__(text, TokenType.TEMPLATE)
 
         self._encoding = encoding
 
@@ -106,13 +104,13 @@ class TemplateTokenizer(AbstractToken):
         else:
             raise ValueError("TemplateEngine requires text or filename")
 
-        self._tokens =  self._compile(self._source, tempalte_path, encoding)
+        self._tokens = self._compile(self._source, tempalte_path, encoding)
 
-    def render(self, vars):
+    def render(self, variables):
         """Render template tokens as a single output string"""
         out = ''
         for token in self._tokens:
-            out += token.render(vars)
+            out += token.render(variables)
 
         return out
 
@@ -124,11 +122,11 @@ class TemplateTokenizer(AbstractToken):
         tokens = []
         cursor = 0
         for match in matches:
-            begin,end = match.span()
+            begin, end = match.span()
             tokens.append(PlainTextToken(text[cursor:begin]))
-            if (self.RE_INCLUDES == match.re):
+            if self.RE_INCLUDES == match.re:
                 tokens.append(TemplateTokenizer(filename=match.group(1), folder=folder, encoding=encoding))
-            elif (self.RE_VARS == match.re):
+            elif self.RE_VARS == match.re:
                 tokens.append(PlaceholderToken(text[begin:end]))
             else:
                 tokens.append(CommentToken(text[begin:end]))

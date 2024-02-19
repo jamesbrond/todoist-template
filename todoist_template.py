@@ -17,7 +17,7 @@ def run_cli(api_token, cfg):
     is_undo = cfg.template.undo.file is not None
     is_quick_add = cfg.template.quick_add
 
-    todoist = TodoistTemplate(api_token, cfg.template.dry_run, is_undo, is_quick_add)
+    todoist = TodoistTemplate(api_token, cfg)
 
     if is_undo:
         _undo(todoist, cfg.template.undo)
