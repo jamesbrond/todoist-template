@@ -2,11 +2,12 @@
 import io
 import os
 import re
+import logging
 from enum import Enum
 from abc import ABC, abstractmethod
 
 
-TokenType = Enum('TokenType', ['TEMPLATE', 'PLAINTEXT', 'PLACEHOLDER', 'COMMENT'])
+TokenType = Enum('TokenType', ['TEMPLATE', 'PLAINTEXT', 'PLACEHOLDER'])
 
 
 def read_file(filename, encoding):
@@ -27,7 +28,7 @@ class AbstractToken(ABC):
     RE_INCLUDES = re.compile(r"#!\s*include +([A-Za-z0-9\/._-]+)")
     RE_VARS = re.compile(r"{(\w+)\s*\|?\s*([^}]+)?}")
     RE_COMMENTS = re.compile(r"^#+(?!!).*[\n\r]+", re.MULTILINE)
-    RE_INLINE_COMMENTS = re.compile(r" +#+(?!!).*")
+    RE_INLINE_COMMENTS = re.compile(r"\s*#+(?!!).*")
 
     def __init__(self, text, token_type):
         self._source = text
@@ -66,15 +67,6 @@ class PlaceholderToken(AbstractToken):
         return variables.get(self._value) or self._default_value or self._source
 
 
-class CommentToken(AbstractToken):
-    """Comment token"""
-    def __init__(self, text):
-        super().__init__(text, TokenType.COMMENT)
-
-    def render(self, variables):
-        return ''
-
-
 class TemplateTokenizer(AbstractToken):
     """Parse a template file or string and tokenize it"""
     def __init__(self,
@@ -84,6 +76,7 @@ class TemplateTokenizer(AbstractToken):
                  encoding='utf-8'):
         super().__init__(text, TokenType.TEMPLATE)
 
+        self._filename = filename
         self._encoding = encoding
 
         if text is not None:
@@ -104,19 +97,21 @@ class TemplateTokenizer(AbstractToken):
         else:
             raise ValueError("TemplateEngine requires text or filename")
 
-        self._tokens = self._compile(self._source, tempalte_path, encoding)
+        text = self._purge_comments(self._source)
+
+        self._tokens = self._compile(text, tempalte_path, encoding)
 
     def render(self, variables):
         """Render template tokens as a single output string"""
         out = ''
         for token in self._tokens:
             out += token.render(variables)
-
+        logging.debug("%s\n%s", self._filename, out)
         return out
 
     def _compile(self, text, folder, encoding):
         # parse template source and generate an object ready to be rendered
-        matches = [*self._preprocessing_includes(text), *self._preprocessing(text), *self._preprocessing_comments(text)]
+        matches = [*self._preprocessing_includes(text), *self._preprocessing(text)]
         matches.sort(key=lambda x: x.span()[0])
 
         tokens = []
@@ -129,10 +124,16 @@ class TemplateTokenizer(AbstractToken):
             elif self.RE_VARS == match.re:
                 tokens.append(PlaceholderToken(text[begin:end]))
             else:
-                tokens.append(CommentToken(text[begin:end]))
+                tokens.append(PlainTextToken(text[begin:end]))
             cursor = end
         tokens.append(PlainTextToken(text[cursor:]))
         return tokens
+
+    def _purge_comments(self, text):
+        # remove all comments lines and inline comments
+        txt = re.sub(self.RE_COMMENTS, '', text)
+        txt = re.sub(self.RE_INLINE_COMMENTS, '', txt)
+        return txt
 
     def _includes(self, text):
         yield from self.RE_INCLUDES.finditer(text)
@@ -145,14 +146,5 @@ class TemplateTokenizer(AbstractToken):
 
     def _preprocessing(self, text):
         return list(self._tokenize(text))
-
-    def _comments(self, text):
-        yield from self.RE_COMMENTS.finditer(text)
-
-    def _inline_comments(self, text):
-        yield from self.RE_INLINE_COMMENTS.finditer(text)
-
-    def _preprocessing_comments(self, text):
-        return list(self._comments(text)) + list(self._inline_comments(text))
 
 # ~@:-]
