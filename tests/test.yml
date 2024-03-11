@@ -1,7 +1,7 @@
 # This is a comment
 
 Inbox:
-  tasks:
+    tasks:
       - content: "🗑 delete {test_name|me} 🗑"
         priority: 3 # priority 1 to 4 where 1 is the highest
         due_string: "{test_date}"
