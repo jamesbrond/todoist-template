@@ -1,6 +1,8 @@
 # Includes test and test3
 
 - #!include    test.yml
+# include commenented out
+# - #!include test3.yml
 
 - Test project:
     color: "lime_green"
@@ -13,8 +15,9 @@
         - content: "Test task 1 {test_name|me}"
           description: "This is a test"
           order: 1
+          # I ❤ comments
           labels: ["label1", "{test_name|default_label}"]
-          priority: 3
+          priority: 3 # priority 1 to 4 where 1 is the highest
           due_string: "today"
           due_lang: "en"
         - content: "Test task 2"

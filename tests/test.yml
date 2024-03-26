@@ -1,12 +1,12 @@
 # This is a comment
 
 Inbox:
-    tasks:
-      - content: "🗑 delete {test_name|me} 🗑"
-        priority: 3 # priority 1 to 4 where 1 is the highest
-        due_string: "{test_date}"
-        # I ❤ comments
-        labels: ["{test_label}", "{another_test_label|❤}"]
-        tasks:
-              - content: "sub task of delete {test_name|me}"
-                priority: 4
+  tasks:
+    - content: "🗑 delete {test_name|me} 🗑"
+      priority: 3 # priority 1 to 4 where 1 is the highest
+      due_string: "{test_date}"
+      # I ❤ comments
+      labels: ["{test_label}", "{another_test_label|❤}"]
+      tasks:
+        - content: "sub task of delete {test_name|me}"
+          priority: 4

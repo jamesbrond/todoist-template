@@ -25,10 +25,11 @@ def get_path(file):
 class AbstractToken(ABC):
     """Generic Token Class"""
 
-    RE_INCLUDES = re.compile(r"#!\s*include +([A-Za-z0-9\/._-]+)")
+    RE_INCLUDES = re.compile(r"(.*)#!\s*include +([A-Za-z0-9\/._-]+)")
     RE_VARS = re.compile(r"{(\w+)\s*\|?\s*([^}]+)?}")
-    RE_COMMENTS = re.compile(r"^#+(?!!).*[\n\r]+", re.MULTILINE)
+    RE_COMMENTS = re.compile(r"(?m)^ *#[^!].*[\n\r]?", re.MULTILINE)
     RE_INLINE_COMMENTS = re.compile(r"\s*#+(?!!).*")
+    RE_EMPTY_LINE = re.compile(r"^\s*$\r?\n", re.MULTILINE)
 
     def __init__(self, text, token_type):
         self._source = text
@@ -73,11 +74,13 @@ class TemplateTokenizer(AbstractToken):
                  text=None,
                  filename=None,
                  folder=None,
-                 encoding='utf-8'):
+                 encoding='utf-8',
+                 indent=""):
         super().__init__(text, TokenType.TEMPLATE)
 
         self._filename = filename
         self._encoding = encoding
+        self._indent = indent
 
         if text is not None:
             self._source = text
@@ -106,6 +109,13 @@ class TemplateTokenizer(AbstractToken):
         out = ''
         for token in self._tokens:
             out += token.render(variables)
+
+        padding = len(self._indent)
+        if padding > 0:
+            lines = out.splitlines()
+            out = f"{self._indent}{lines[0]}\n"
+            # add padding to all lines but the first one
+            out += "\n".join([f"{' ' * padding}{x}" for x in lines[1:]])
         logging.debug("%s\n%s", self._filename, out)
         return out
 
@@ -120,7 +130,11 @@ class TemplateTokenizer(AbstractToken):
             begin, end = match.span()
             tokens.append(PlainTextToken(text[cursor:begin]))
             if self.RE_INCLUDES == match.re:
-                tokens.append(TemplateTokenizer(filename=match.group(1), folder=folder, encoding=encoding))
+                tokens.append(TemplateTokenizer(
+                    filename=match.group(2),
+                    folder=folder,
+                    encoding=encoding,
+                    indent=match.group(1)))
             elif self.RE_VARS == match.re:
                 tokens.append(PlaceholderToken(text[begin:end]))
             else:
@@ -131,8 +145,10 @@ class TemplateTokenizer(AbstractToken):
 
     def _purge_comments(self, text):
         # remove all comments lines and inline comments
-        txt = re.sub(self.RE_COMMENTS, '', text)
+        txt = text
+        txt = re.sub(self.RE_COMMENTS, '', txt)
         txt = re.sub(self.RE_INLINE_COMMENTS, '', txt)
+        txt = re.sub(self.RE_EMPTY_LINE, '', txt)
         return txt
 
     def _includes(self, text):
