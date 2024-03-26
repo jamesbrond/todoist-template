@@ -168,7 +168,7 @@ def parse_cmd_line(cli=None):
         metavar="TEMPLATE FILE",
         type=argparse.FileType('r', encoding='utf8'),
         default=None,
-        help=_("""the template fil, if no file is supplied it uses standard input.
+        help=_("""the template file, if no file is supplied it uses standard input.
  Requirement: file encoding must be UTF-8"""))
     file_parser.add_argument(
         "--undo",
