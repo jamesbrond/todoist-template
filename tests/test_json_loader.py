@@ -1,7 +1,7 @@
 """Test JSON template loader"""
 import logging
 import unittest
-from lib.loader.jsonloader import JsonTemplateLoader
+from lib.template.loader.jsonloader import JsonTemplateLoader
 
 
 class TestJsonLoader(unittest.TestCase):
@@ -11,7 +11,7 @@ class TestJsonLoader(unittest.TestCase):
         logging.disable(logging.CRITICAL)
         loader = JsonTemplateLoader()
         with open('tests/test.json', 'r', encoding='utf-8') as file:
-            self.content = loader.load(file)
+            self.content = loader.load(file.read())
 
     def test_json_load(self):
         """Test JSON template loader"""

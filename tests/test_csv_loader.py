@@ -1,7 +1,7 @@
 """Test CSV template loader"""
 import logging
 import unittest
-from lib.loader.csvloader import CsvTemplateLoader
+from lib.template.loader.csvloader import CsvTemplateLoader
 
 
 class TestCSVLoader(unittest.TestCase):
@@ -11,7 +11,7 @@ class TestCSVLoader(unittest.TestCase):
         logging.disable(logging.CRITICAL)
         loader = CsvTemplateLoader()
         with open('tests/test.csv', 'r', encoding='utf-8') as file:
-            self.content = loader.load(file)
+            self.content = loader.load(file.read())
 
     def test_csv_load(self):
         """Test load CSV"""

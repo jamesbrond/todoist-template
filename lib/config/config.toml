@@ -1,13 +1,16 @@
 [general]
 print_logo = true
 
-[service]
-host = "localhost"
-port = 54321
-path = ".build/ng"
-
 [config]
 api_key_service = 'TODOIST_TEMPLATE'
+
+[security]
+# If you are working within a corporate environment that decrypts your traffic,
+# or possibly proxy servers as part of a VPN, then I have found that the certifi
+# library fails to include the certificate for the decryption server in the
+# certificate package. The solution is append the CA Root & Intermediates to
+# the cacert.pem file. Of course, this own certificates were in PEM format.
+ssl_certificate='corporate.cer'
 
 [template.undo]
 folder = "undo"
