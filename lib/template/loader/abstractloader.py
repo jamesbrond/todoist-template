@@ -7,7 +7,7 @@ class AbstractTemplateLoader(ABC):  # pylint: disable=too-few-public-methods
     """Abstract class for father of all template loader classes"""
 
     @abstractmethod
-    def load(self, file):
-        """Implement template loading"""
+    def load(self, content):
+        """Implements template parsing from string"""
 
 # ~@:-]

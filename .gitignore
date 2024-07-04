@@ -5,12 +5,14 @@ __pycache__
 
 example
 
+.configure
+
 # Environments
 .env
 .venv
 
 # Distutils
-.build
+build
 dist
 todoist_template.egg-info
 MANIFEST
@@ -67,3 +69,15 @@ ui/Thumbs.db
 *.po
 .coverage
 htmlcov/
+build
+build/make
+build/make/
+.githooks/
+./release/source/
+build/htmlcov/
+build/venv/Scripts
+build
+build/make
+build/venv/Scripts
+corporate.cer
+build/docker_compose/
