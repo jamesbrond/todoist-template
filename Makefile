@@ -1,9 +1,8 @@
 PACKAGE      := todoist_template
-BUILD_DIR    := .build
+BUILD_DIR    := build
 MAKE_DIR     = $(BUILD_DIR)/make
+VENV_DIR     = $(BUILD_DIR)/venv
 LOCALES_DIR  := locales
-PYTHON       := /cygdrive/c/Users/320072283/bin/python/python.exe
-NG_DIR       := ui
 
 VERSION_FILE := lib/__version__.py
 VERSION_EXP  := (.*__version__ = \")([0-9\.]+)(.*)
@@ -11,14 +10,14 @@ VERSION_EXP  := (.*__version__ = \")([0-9\.]+)(.*)
 PY_CONF_FLAKE8 = .github/linters/flake8
 PY_CONF_PYLINT = .github/linters/pylint.toml
 
-DIRS = $(MAKE_DIR)
+DIRS = $(MAKE_DIR) $(VENV_DIR)
 
 SHELL:=/bin/bash
 
 -include $(MAKE_DIR)/misc.mk
 -include $(MAKE_DIR)/git.mk
 -include $(MAKE_DIR)/py.mk
--include $(MAKE_DIR)/angular.mk
+-include $(CONFIGURE)
 
 $(MAKE_DIR)/%.mk: | $(MAKE_DIR)
 	@URL=$$(echo "https://raw.githubusercontent.com/jamesbrond/jamesbrond/main/Makefile/.make/$(@F)"); \
@@ -26,8 +25,6 @@ $(MAKE_DIR)/%.mk: | $(MAKE_DIR)
 	curl -s -H 'Cache-Control: no-cache, no-store' $${URL} -o $@
 
 
-GETTEXT         := /usr/bin/pygettext3.10
-MSGFMT          := /mnt/c/Users/320072283/bin/python/Tools/i18n/msgfmt.py
 LANG_BASE_FILE  := $(LOCALES_DIR)/$(PACKAGE).pot
 LANG_DIRS       := $(shell /usr/bin/find $(LOCALES_DIR)/* -type d -prune)
 LANG_SRCS       := $(shell /usr/bin/find $(LOCALES_DIR) -name "*.po" -print)

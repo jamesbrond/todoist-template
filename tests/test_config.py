@@ -1,6 +1,6 @@
 """Test Config class"""
 import unittest
-from lib.config.config import TTConfig
+from lib.config.config import TTConfig, DEFAULT_CONFIG_FILE
 
 
 class TestConfig(unittest.TestCase):
@@ -8,22 +8,23 @@ class TestConfig(unittest.TestCase):
 
     def test_config_load_valid_file(self):
         """Load a valid TOML file"""
-        args = ["--config", "lib/config/config.toml"]
+        args = ["--config", DEFAULT_CONFIG_FILE]
         cfg = TTConfig(args)
         self.assertFalse(cfg.is_empty())
+        self.assertEqual(DEFAULT_CONFIG_FILE, cfg.config.file)
 
     def test_config_load_not_existing_file(self):
         """Load not existing file fallbacks on default"""
         args = ["--config", "./asddr55rgas.toml"]
         cfg = TTConfig(args)
         self.assertFalse(cfg.is_empty())
-        self.assertEqual(cfg.DEFAULT_CONFIG_FILE, cfg.config.file)
+        self.assertEqual(DEFAULT_CONFIG_FILE, cfg.config.file)
 
     def test_config_load_no_file(self):
         """Load no file fallbacks on default"""
         cfg = TTConfig()
         self.assertFalse(cfg.is_empty())
-        self.assertEqual(cfg.DEFAULT_CONFIG_FILE, cfg.config.file)
+        self.assertEqual(DEFAULT_CONFIG_FILE, cfg.config.file)
 
     def test_config_load_not_valid_file(self):
         """Load not valid TOML"""
@@ -34,19 +35,17 @@ class TestConfig(unittest.TestCase):
     def test_check_python_version_fail(self):
         """Check wrong python version"""
         cfg = TTConfig()
-        with self.assertRaises(SystemError):
-            cfg.check_python_version([2, 7], [3, 5])
+        self.assertFalse(cfg.check_python_version([2, 7], [3, 5]))
 
     def test_check_python_version_fail_none(self):
         """Check wrong python version passing None"""
         cfg = TTConfig()
-        with self.assertRaises(SystemError):
-            cfg.check_python_version(None, None)
+        self.assertFalse(cfg.check_python_version(None, None))
 
     def test_config_getattr(self):
         """Get attribute from config"""
         cfg = TTConfig()
-        self.assertTrue(cfg.log)
+        self.assertTrue(cfg.log.handlers.console_handler)
 
     def test_argparse(self):
         """Config parse command line"""
@@ -57,6 +56,7 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(cfg.config.api_token, "123456789")
         self.assertTrue(cfg.template.dry_run)
         cfg.template.file.close()
+        self.assertTrue(cfg.template.file.closed)
 
 
 if __name__ == '__main__':
