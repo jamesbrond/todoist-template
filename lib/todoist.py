@@ -2,8 +2,10 @@
 
 import logging
 import json
+import certifi
 import requests
 from todoist_api_python.api import TodoistAPI
+from todoist_api_python.endpoints import SYNC_API
 from lib.utils import find_needle_in_haystack, uid
 from lib.i18n import _
 
@@ -11,18 +13,32 @@ from lib.i18n import _
 class Todoist(TodoistAPI):
     """Layer class to handle Todoist API"""
 
-    SYNC_API = "https://api.todoist.com/sync/v9/sync"
-
-    def __init__(self, api_token, dry_run=False, is_undo=False):
+    def __init__(self, api_token, cfg):
         super().__init__(api_token, None)
-        self.dry_run = dry_run
+
+        is_undo = cfg.template.undo.file is not None
+        is_quick_add = cfg.template.quick_add
+        self.dry_run = cfg.template.dry_run
         self.undo_commands = []
-        if not is_undo:
+
+        try:
+            if cfg.security and cfg.security.ssl_certificate is not None:
+                logging.debug('Adding custom certs to Certifi store "%s"', cfg.security.ssl_certificate)
+                cafile = certifi.where()
+                with open(cfg.security.ssl_certificate, 'rb') as certfile:
+                    customca = certfile.read()
+                with open(cafile, 'ab') as outfile:
+                    outfile.write(customca)
+        except (AttributeError, FileNotFoundError) as exc:
+            logging.warning(exc)
+
+        if not (is_undo or is_quick_add):
             try:
                 self.projects = self.get_projects()
                 logging.debug('retrieved %d project from Todoist', len(self.projects))
                 self.sections = self.get_sections()
                 logging.debug('retrieved %d sections from Todoist', len(self.sections))
+                self.collaborators = []
             except:
                 self._session.close()
                 raise
@@ -39,6 +55,7 @@ class Todoist(TodoistAPI):
         project_id = self._exists_project(project['name'])
         if project_id:
             logging.info(self._log_message(_('Project'), project['name'], project_id, False))
+            self.collaborators = self.get_collaborators(project_id)
             return project_id
 
         logging.info(self._log_message(_('Project'), project['name']))
@@ -69,8 +86,14 @@ class Todoist(TodoistAPI):
 
     def task(self, task, update=False):
         """Create or update task"""
+        if task.get('assignee'):
+            task['assignee_id'] = self.get_collaborator_id(task.get('assignee'))
+
         if update:
-            task_id = self._exists_task(task.get('project_id'), task.get('section_id'), task.get('content'))
+            task_id = self._exists_task(
+                task.get('project_id'),
+                task.get('section_id'),
+                task.get('content'))
         else:
             task_id = None
 
@@ -182,11 +205,27 @@ class Todoist(TodoistAPI):
             params = {"commands": json.dumps(commands, skipkeys=True, allow_nan=False)}
 
         response = requests.get(
-            self.SYNC_API,
+            f'{SYNC_API}/sync',
             headers={"Authorization": f"Bearer {self._token}"},
             params=params,
             timeout=60.0
         )
         return response.json() if response.status_code == 200 else response.content
+
+    def quick_add(self, text):
+        """Add a new item using the Quick Add implementation available in the official clients"""
+        if self.dry_run:
+            logging.info(self._log_message(_('Task'), text, None, True))
+            return None
+
+        quick = self.quick_add_task(text)
+        logging.info(self._log_message(_('Task'), quick.task.content, quick.task.id, True))
+        return quick.task.id
+
+    def get_collaborator_id(self, name):
+        """Returns collabotor ID by name"""
+        coll = [element for element in self.collaborators if element.name.casefold() == name.casefold()]
+        # what if we have more collaborators with the same name?
+        return coll[0].id if len(coll) == 1 else None
 
 # ~@:-]
