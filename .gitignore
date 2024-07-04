@@ -76,3 +76,8 @@ build/make/
 ./release/source/
 build/htmlcov/
 build/venv/Scripts
+build
+build/make
+build/venv/Scripts
+corporate.cer
+build/docker_compose/

@@ -6,7 +6,7 @@ import sys
 import logging
 import datetime
 import lib.__version__ as version
-from lib.config.config import TTConfig
+from lib.config.config import TTConfig, PYTHON_MAX, PYTHON_MIN
 from lib.todoist_template import TodoistTemplate
 from lib.config.apikey import APITokenStore
 from lib.i18n import _
@@ -15,42 +15,60 @@ from lib.i18n import _
 def run_cli(api_token, cfg):
     """Run todoist-template as command line application"""
     is_undo = cfg.template.undo.file is not None
+    is_quick_add = cfg.template.quick_add
 
-    todoist = TodoistTemplate(api_token, cfg.template.dry_run, is_undo)
+    todoist = TodoistTemplate(api_token, cfg)
 
     if is_undo:
-        undo_filename = cfg.template.undo.file.name
-        if todoist.rollback(cfg.template.undo.file):
-            logging.debug(_("remove file %s"), undo_filename)
-            os.remove(undo_filename)
+        _undo(todoist, cfg.template.undo)
+    elif is_quick_add:
+        _quick_add(todoist, cfg.template)
     else:
-        template_filename = cfg.template.file.name
+        _template(todoist, cfg.template)
 
-        todoist.upload(
-            todoist.template(cfg.template),
-            update_task=cfg.template.is_update)
 
-        if not cfg.template.dry_run:
-            now = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-            undofolder = os.path.join(
-                os.path.dirname(os.path.realpath(sys.argv[0])),
-                cfg.template.undo.folder)
+def _undo(todoist, undo):
+    logging.info("undo action")
+    undo_filename = undo.file.name
+    if todoist.rollback(undo.file):
+        logging.debug(_("remove file %s"), undo_filename)
+        os.remove(undo_filename)
 
-            if not os.path.exists(undofolder):
-                os.makedirs(undofolder)
 
-            undofile = os.path.join(
-                undofolder,
-                f"{os.path.basename(template_filename)}-{now}.undo")
+def _quick_add(todoist, config):
+    # Example: echo "test {when} @bb" | python todoist_template.py -t -D when=today -
+    logging.info("quick add action")
+    todoist.quick_add(config)
 
-            todoist.store_rollback(undofile)
+
+def _template(todoist, config):
+    logging.debug("template action")
+
+    template_filename = "".join([x if x.isalnum() else "" for x in config.file.name])
+    todoist.template(config, update_task=config.is_update)
+
+    if not config.dry_run:
+        now = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+        undofolder = os.path.join(
+            os.path.dirname(os.path.realpath(sys.argv[0])),
+            config.undo.folder)
+
+        if not os.path.exists(undofolder):
+            os.makedirs(undofolder)
+
+        undofile = os.path.join(
+            undofolder,
+            f"{os.path.basename(template_filename)}-{now}.undo")
+
+        todoist.store_rollback(undofile)
 
 
 def main():
     """Main function"""
     try:
         cfg = TTConfig()
-        cfg.check_python_version(cfg.PYTHON_MIN, cfg.PYTHON_MAX)
+        if not cfg.check_python_version(PYTHON_MIN, PYTHON_MAX):
+            raise SystemError(f"This script requires Python >= {PYTHON_MIN} and < {PYTHON_MAX}")
 
         if cfg.general.print_logo:
             print(version.LOGO)
@@ -60,7 +78,7 @@ def main():
             # get api_token from keyring or as user input
             api_token_store = APITokenStore(
                 cfg.config.api_key_service,
-                prompt=not cfg.general.gui)
+                prompt=True)
             api_token = api_token_store.get()
         else:
             logging.debug('Use API token from cli')
