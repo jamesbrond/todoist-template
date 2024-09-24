@@ -167,7 +167,7 @@ def parse_cmd_line(cli=None):
         nargs="?",  # a single value, which can be optional
         metavar="TEMPLATE FILE",
         type=argparse.FileType('r', encoding='utf8'),
-        default=None,
+        default=sys.stdin,
         help=_("""the template file, if no file is supplied it uses standard input.
  Requirement: file encoding must be UTF-8"""))
     file_parser.add_argument(

@@ -19,9 +19,10 @@ class TodoistTemplate:
         self.api_token = api_token
         self.todoist = Todoist(self.api_token, cfg)
         self.update_task = False
+        self._is_quick_add = cfg.template.quick_add
 
     def _generate_jobs_list(self, file, file_type, variables=None):
-        factory = TemplateFactory(file, file_type)
+        factory = TemplateFactory(file, file_type, is_quick_add=self._is_quick_add)
         if bool(variables):
             return [factory.render(vars) for vars in variables]
         return [factory.render({})]

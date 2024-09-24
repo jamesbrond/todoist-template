@@ -75,12 +75,14 @@ class TemplateTokenizer(AbstractToken):
                  filename=None,
                  folder=None,
                  encoding='utf-8',
-                 indent=""):
+                 indent="",
+                 skip_comments=True):
         super().__init__(text, TokenType.TEMPLATE)
 
         self._filename = filename
         self._encoding = encoding
         self._indent = indent
+        self._skip_comments = skip_comments
 
         if text is not None:
             self._source = text
@@ -96,11 +98,13 @@ class TemplateTokenizer(AbstractToken):
                     path = filename
                 self._source = read_file(path, encoding)
                 tempalte_path = get_path(path)
-
         else:
             raise ValueError("TemplateEngine requires text or filename")
 
-        text = self._purge_comments(self._source)
+        if self._skip_comments:
+            text = self._purge_comments(self._source)
+        else:
+            text = self._source
 
         self._tokens = self._compile(text, tempalte_path, encoding)
 
@@ -134,7 +138,8 @@ class TemplateTokenizer(AbstractToken):
                     filename=match.group(2),
                     folder=folder,
                     encoding=encoding,
-                    indent=match.group(1)))
+                    indent=match.group(1),
+                    skip_comments=self._skip_comments))
             elif self.RE_VARS == match.re:
                 tokens.append(PlaceholderToken(text[begin:end]))
             else:
