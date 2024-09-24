@@ -1,10 +1,10 @@
-certifi==2024.2.2
+certifi==2024.8.30
 charset-normalizer==3.3.2
 idna==3.7
 importlib-metadata==7.1.0
 jaraco.classes==3.4.0
-keyring==24.3.0
-more-itertools==10.2.0
+keyring==25.4.1
+more-itertools==10.5.0
 pywin32-ctypes==0.2.2
 PyYAML==6.0.1
 requests==2.32.3
@@ -12,4 +12,4 @@ SecretStorage==3.3.3
 todoist-api-python==2.1.5
 toml==0.10.2
 urllib3==2.2.2
-zipp==3.17.0
+zipp==3.20.2
