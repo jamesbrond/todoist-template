@@ -10,6 +10,7 @@ example
 # Environments
 .env
 .venv
+venv
 
 # Distutils
 build
