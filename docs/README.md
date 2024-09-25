@@ -25,8 +25,7 @@ Before you start check the [prerequisite and install instructions](install.md).
 ### Authorization token
 
 todoist-template uses Todoist REST API, in order to make authorized calls, you
-must provide the [Todoist authorization token](
-https://developer.todoist.com/rest/v1/?python#next-steps).
+must provide the [Todoist authorization token](https://developer.todoist.com/rest/v1/?python#next-steps).
 
 When you run todoist-template for the first time, the application will ask you
 for the Todoist authorization token and it will be stored in the system
@@ -35,7 +34,7 @@ These keyring backends are supported:
 
 - macOS Keychain
 - Freedesktop Secret Service supports many IDE including GNOME (requires
-secretstorage)
+  secretstorage)
 - KDE4 & KDE5 KWallet (requires dbus)
 - Windows Credential Locker
 
@@ -46,25 +45,29 @@ specify `--token` argument.
 ### Run todoist-template
 
 ```shell
-python todoist-template.py [options]
+python todoist_template.py [options]
 ```
 
 Where options are:
 
-| Option                   | Default   | Description                                               |
-|--------------------------|-----------|-----------------------------------------------------------|
-| TEMPLATE                 | stdin     | Mandatory path to the YAML or JSON template file          |
-| -h, --help               |           | Show help message and exit                                |
-| -D KEY0=VAL0,KEY1=VAL1...|           | The placeholder values replaced in template or the CSV file |
-| --id SERVICE_ID          | TODOIST-TEMPLATE | Keyring service name where store Todoist API Token |
-| --version                |           | Show program's version number and exit                    |
-| -d, --debug              | False     | More verbose output. Default log level is INFO            |
-| -q, --quiet              | False     | Suppress output                                           |
-| --dry-run                | False     | Allows the `todoist-template` command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object IDs. |
-| -u, --update             |           | it updates task with the same name instead of adding a new one |
-| --undo UNDOFILE          |           | Loads undo file and rollbacks all operations in it        |
-| --token API_TOKEN        |           | The Todoist authorization token. It will use this token instead of reading it from Keyring service |
-| --gui                    |           | Start Todoist-Template service with web frontend          |
+| Option                    | Default          | Description                                                                                                                                                                       |
+| ------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TEMPLATE                  | stdin            | Mandatory path to the YAML, JSON or CSV template file                                                                                                                             |
+| -h, --help                |                  | Show help message and exit                                                                                                                                                        |
+| -D KEY0=VAL0,KEY1=VAL1... |                  | The placeholder values replaced in template or the CSV file                                                                                                                       |
+| --id SERVICE_ID           | TODOIST-TEMPLATE | Keyring service name where store Todoist API Token                                                                                                                                |
+| --version                 |                  | Show program's version number and exit                                                                                                                                            |
+| -d, --debug               | False            | More verbose output. Default log level is INFO                                                                                                                                    |
+| -q, --quiet               | False            | Suppress output                                                                                                                                                                   |
+| --dry-run                 | False            | Allows the `todoist_template` command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object IDs. |
+| -u, --update              |                  | it updates task with the same name instead of adding a new one                                                                                                                    |
+| --undo UNDOFILE           |                  | Loads undo file and rollbacks all operations in it                                                                                                                                |
+| --token API_TOKEN         |                  | The Todoist authorization token. It will use this token instead of reading it from Keyring service                                                                                |
+| -t                        | False            | Adds a new item using the Todoist Quick Add implementation, the template will be used as text for the new task                                                                    |
+| --gui                     |                  | Start Todoist-Template service with web frontend                                                                                                                                  |
+| --yaml                    |                  | template input file has YAML format                                                                                                                                               |
+| --json                    |                  | template input file has JSON format                                                                                                                                               |
+| --csv                     |                  | template input file has CSV format                                                                                                                                                |
 
 Example
 
@@ -88,6 +91,12 @@ You can use standar input to provide the template to todoist-template:
 python todoist_template.py -d < templates/simple_template0.yml
 ```
 
+Example of adding a new task with the Todoist Quick Add implementation:
+
+```shell
+echo -e "test quick add {day}" | python todoist_template.py -t -D day=tod
+```
+
 ### Undo
 
 todoist-template produces a undo output file. You can use it to delete all
@@ -104,15 +113,19 @@ The undo file is named as `template_file_name-YYYYmmddHHMMSS.undo`.
 To learn how to write and use templates please read the template examples:
 
 [Simple template](./template/simple_template.md)
+
 > Basic template
 
 [Parameterized template](./template/param_template.md)
+
 > Template with placeholder replaced runtime
 
 [Complex template](./template/complex_template.md)
+
 > Templete with multiple projects and sections and sub-tasks
 
 [Inlcude templates](./template/include_template.md)
+
 > Include templates to create a more complex template
 
 ## Developing
