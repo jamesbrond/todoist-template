@@ -1,10 +1,9 @@
 # include_template_0.yml
 - Personal:
   tasks:
-      -
-        content: Stay focused and motivated
-        due_string: every day
+    - content: Stay focused and motivated
+      due_string: every day
 
-- !include param_template_0.yml
-- !include param_template_1.yml
-- !include param_template_2.yml
+-  #!include param_template_0.yml
+-  #!include param_template_1.yml
+-  #!include param_template_2.yml
