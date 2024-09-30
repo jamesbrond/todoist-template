@@ -5,7 +5,7 @@ importlib-metadata==7.1.0
 jaraco.classes==3.4.0
 keyring==25.4.1
 more-itertools==10.5.0
-pywin32-ctypes==0.2.2
+pywin32-ctypes==0.2.3
 PyYAML==6.0.1
 requests==2.32.3
 SecretStorage==3.3.3
