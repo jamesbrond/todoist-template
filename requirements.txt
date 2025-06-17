@@ -1,4 +1,4 @@
-certifi==2024.8.30
+certifi==2025.6.15
 charset-normalizer==3.3.2
 idna==3.7
 importlib-metadata==7.1.0
