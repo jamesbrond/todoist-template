@@ -1,6 +1,60 @@
-# todoist-template
+<a id="readme-top"></a>
 
-> Easily add tasks to Todoist with customizable templates.
+<!-- PROJECT SHIELDS -->
+<!--
+*** I'm using markdown "reference style" links for readability.
+*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
+*** See the bottom of this document for the declaration of the reference variables
+*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
+*** https://www.markdownguide.org/basic-syntax/#reference-style-links
+-->
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![Unlicense License][license-shield]][license-url]
+
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <h3 align="center">Todoist-Template</h3>
+
+  <p align="center">
+    Easily add tasks to Todoist with customizable templates!
+    <br />
+    <br />
+    <a href="https://github.com/jamesbrond/todoist-template/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    &middot;
+    <a href="https://github.com/jamesbrond/todoist-template/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+  </p>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a> 
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#authorization-token">Authorization token</a></li>
+        <li><a href="#run-todoist-template">Run todoist-template</a></li>
+        <li><a href="#undo">Undo</a></li>
+      </ul>
+    </li>
+    <li><a href="#template">Template</a></li>
+    <li><a href="#developing">Developing</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#security-policies-and-procedures">Security Policies and Procedures</a></li>
+    <li><a href="#links">Links</a></li>
+    <li><a href="#license">License</a></li>
+  </ol>
+</details>
+
+<!-- ABOUT THE PROJECT -->
+## About The Project
 
 The aim of this project is to facilitate the creation of tasks on the Todoist
 platform thanks to simple templates.
@@ -18,7 +72,7 @@ passing parameters from the command-line, you can create tasks with custom due
 date.
 Anyway todoist-template can also import Todoist.com CSV templates.
 
-## Installing / Getting started
+## Getting started
 
 Before you start check the [prerequisite and install instructions](install.md).
 
@@ -146,6 +200,20 @@ See [our security policies and procedures guidelines](./SECURITY.md).
 - Repository: <https://github.com/jamesbrond/todoist-template/>
 - Issue tracker: <https://github.com/jamesbrond/todoist-template/issues>
 
-## Licensing
+## License
 
 See [license](../LICENSE)
+
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[contributors-shield]: https://img.shields.io/github/contributors/jamesbrond/todoist-template.svg?style=for-the-badge
+[contributors-url]: https://github.com/jamesbrond/todoist-template/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/jamesbrond/todoist-template.svg?style=for-the-badge
+[forks-url]: https://github.com/jamesbrond/todoist-template/network/members
+[stars-shield]: https://img.shields.io/github/stars/jamesbrond/todoist-template.svg?style=for-the-badge
+[stars-url]: https://github.com/jamesbrond/todoist-template/stargazers
+[issues-shield]: https://img.shields.io/github/issues/jamesbrond/todoist-template.svg?style=for-the-badge
+[issues-url]: https://github.com/jamesbrond/todoist-template/issues
+[license-shield]: https://img.shields.io/github/license/jamesbrond/todoist-template.svg?style=for-the-badge
+[license-url]: https://github.com/jamesbrond/todoist-template/blob/master/LICENSE
