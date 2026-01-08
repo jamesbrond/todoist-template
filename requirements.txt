@@ -7,7 +7,7 @@ keyring==25.4.1
 more-itertools==10.5.0
 pywin32-ctypes==0.2.2
 PyYAML==6.0.1
-requests==2.32.3
+requests==2.32.4
 SecretStorage==3.3.3
 todoist-api-python==2.1.5
 toml==0.10.2
