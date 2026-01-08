@@ -210,6 +210,9 @@ class Todoist(TodoistAPI):
             params=params,
             timeout=60.0
         )
+        if response.status_code != 200:
+            logging.warning(self._log_message("request returning stutus code: ", response.status_code))
+            logging.warning(str(response.content))
         return response.json() if response.status_code == 200 else response.content
 
     def quick_add(self, text):

@@ -69,10 +69,6 @@ lint:: ## Perform static linting
 test:: build ## Unit test
 	@$(call log-info,MAKE,$@ done)
 
-run: build
-	@$(call log-info,MAKE,Run UI interface)
-	@$(PYENV)/python todoist_template.py --gui
-
 $(LANG_BASE_FILE):
 	@$(GETTEXT) -d base -o $(LANG_BASE_FILE) $(PY_SRCS)
 	@sed -i 's/SOME DESCRIPTIVE TITLE/TODOIST-TEMPLATE LANGUAGE CATALOG/' $(LANG_BASE_FILE)
