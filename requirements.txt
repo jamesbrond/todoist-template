@@ -10,7 +10,7 @@ pywin32-ctypes==0.2.2
 PyYAML==6.0.2
 requests==2.32.4
 SecretStorage==3.3.3
-todoist-api-python==2.1.5
+todoist-api-python==3.1.0
 toml==0.10.2
 urllib3==2.6.3
 zipp==3.20.2
