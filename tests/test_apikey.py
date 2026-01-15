@@ -7,7 +7,7 @@ from lib.config.apikey import EnvKeyring
 
 
 class TestKeyring(unittest.TestCase):
-    """Test API topken storage"""
+    """Test API token storage"""
 
     def setUp(self):
         logging.disable(logging.CRITICAL)

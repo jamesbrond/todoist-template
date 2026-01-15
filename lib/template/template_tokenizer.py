@@ -76,7 +76,7 @@ class TemplateTokenizer(AbstractToken):
                  folder=None,
                  encoding='utf-8',
                  indent="",
-                 skip_comments=True):
+                 skip_comments=True):  # pylint: disable=too-many-positional-arguments
         super().__init__(text, TokenType.TEMPLATE)
 
         self._filename = filename

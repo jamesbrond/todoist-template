@@ -21,12 +21,15 @@ class EnvKeyring(keyring.backend.KeyringBackend):
     priority = 1
 
     def set_password(self, service, username, password):
+        logging.debug("Storing API token in environment variable %s", service)
         os.environ[service] = password
 
     def get_password(self, service, username):
+        logging.debug("Retrieving API token from environment variable %s", service)
         return os.environ.get(service)
 
     def delete_password(self, service, username):
+        logging.debug("Deleting API token from environment variable %s", service)
         if os.environ.get(service) is not None:
             os.environ.pop(service)
 
@@ -43,14 +46,15 @@ class APITokenStore:  # pylint: disable=too-few-public-methods
 
     def __init__(self, service, prompt=False) -> None:
         """
-        Initilaze `APITokenStore`
+        Initialize `APITokenStore`
 
         :param service: The name of the service where the `API_TOKEN` is stored.
-        :param promt:  is true and there is no stored value it prompts the user for secret
+        :param prompt:  is true and there is no stored value it prompts the user for secret
         """
         self.service = service
         self.prompt = prompt
         if isinstance(keyring.get_keyring(), keyring.backends.fail.Keyring):
+            logging.warning("keyring backends fail")
             keyring.set_keyring(EnvKeyring())
 
     def _set(self, token):

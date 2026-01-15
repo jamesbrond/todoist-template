@@ -41,5 +41,5 @@ delay = false
 
 [log.loggers.root]
 handlers = ['console_handler', 'file_handler']
-level = 'INFO'
+level = 'DEBUG'
 propagate = true

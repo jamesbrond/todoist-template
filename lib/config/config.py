@@ -151,6 +151,23 @@ def val_variable(values):
     return variables
 
 
+def readable_file(filepath: str):
+    """Checks if a file exists and is readable"""
+
+    if filepath == '-':
+        return sys.stdin
+
+    if not os.path.exists(filepath):
+        # Raise ArgumentTypeError to make argparse show a clean error message
+        raise argparse.ArgumentTypeError(f"File not found: {filepath}")
+
+    if not os.access(filepath, os.R_OK):
+        raise argparse.ArgumentTypeError(f"File not readable: {filepath}")
+
+    # If all checks pass, return the original string (the filepath)
+    return filepath
+
+
 def parse_cmd_line(cli=None):
     """Command line parser function"""
     parser = argparse.ArgumentParser(
@@ -166,7 +183,7 @@ def parse_cmd_line(cli=None):
         "template.file",
         nargs="?",  # a single value, which can be optional
         metavar="TEMPLATE FILE",
-        type=argparse.FileType('r', encoding='utf8'),
+        type=readable_file,
         default=sys.stdin,
         help=_("""the template file, if no file is supplied it uses standard input.
  Requirement: file encoding must be UTF-8"""))
@@ -174,7 +191,7 @@ def parse_cmd_line(cli=None):
         "--undo",
         dest="template.undo.file",
         metavar="UNDO_FILE",
-        type=argparse.FileType("rb"),
+        type=readable_file,
         help=_("loads undo file and rollbacks all operations in it")
     )
 

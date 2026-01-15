@@ -1,7 +1,7 @@
 PACKAGE      := todoist_template
-BUILD_DIR    := build
+BUILD_DIR    := ./build
 MAKE_DIR     = $(BUILD_DIR)/make
-VENV_DIR     = $(BUILD_DIR)/venv
+VENV_DIR     = ./venv
 LOCALES_DIR  := locales
 
 VERSION_FILE := lib/__version__.py

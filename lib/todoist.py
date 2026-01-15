@@ -5,7 +5,7 @@ import json
 import certifi
 import requests
 from todoist_api_python.api import TodoistAPI
-from todoist_api_python.endpoints import SYNC_API
+from todoist_api_python._core.endpoints import API_URL
 from lib.utils import find_needle_in_haystack, uid
 from lib.i18n import _
 
@@ -34,9 +34,9 @@ class Todoist(TodoistAPI):
 
         if not (is_undo or is_quick_add):
             try:
-                self.projects = self.get_projects()
+                self.projects = next(self.get_projects())
                 logging.debug('retrieved %d project from Todoist', len(self.projects))
-                self.sections = self.get_sections()
+                self.sections = next(self.get_sections())
                 logging.debug('retrieved %d sections from Todoist', len(self.sections))
                 self.collaborators = []
             except:
@@ -55,7 +55,7 @@ class Todoist(TodoistAPI):
         project_id = self._exists_project(project['name'])
         if project_id:
             logging.info(self._log_message(_('Project'), project['name'], project_id, False))
-            self.collaborators = self.get_collaborators(project_id)
+            self.collaborators = next(self.get_collaborators(project_id))
             return project_id
 
         logging.info(self._log_message(_('Project'), project['name']))
@@ -133,7 +133,7 @@ class Todoist(TodoistAPI):
 
         query = {"project_id": project_id, "section_id": section_id}
         logging.debug(_("get tasks for %s"), query)
-        tasks = self.get_tasks(**query)
+        tasks = next(self.get_tasks(**query))
         logging.debug(_("found %d tasks"), len(tasks))
         return self._exists(tasks, {"content": content})
 
@@ -205,7 +205,7 @@ class Todoist(TodoistAPI):
             params = {"commands": json.dumps(commands, skipkeys=True, allow_nan=False)}
 
         response = requests.get(
-            f'{SYNC_API}/sync',
+            f'{API_URL}/sync',
             headers={"Authorization": f"Bearer {self._token}"},
             params=params,
             timeout=60.0
@@ -221,7 +221,7 @@ class Todoist(TodoistAPI):
             logging.info(self._log_message(_('Task'), text, None, True))
             return None
 
-        quick = self.quick_add_task(text)
+        quick = self.add_task_quick(text)
         logging.info(self._log_message(_('Task'), quick.task.content, quick.task.id, True))
         return quick.task.id
 

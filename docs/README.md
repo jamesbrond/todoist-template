@@ -8,6 +8,7 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
+<div align="center">
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
@@ -16,7 +17,6 @@
 
 <!-- PROJECT LOGO -->
 <br />
-<div align="center">
   <h3 align="center">Todoist-Template</h3>
 
   <p align="center">
@@ -34,7 +34,7 @@
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#about-the-project">About The Project</a> 
+      <a href="#about-the-project">About The Project</a>
     </li>
     <li>
       <a href="#getting-started">Getting Started</a>

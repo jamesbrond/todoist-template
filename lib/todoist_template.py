@@ -29,9 +29,10 @@ class TodoistTemplate:
 
     def template(self, template, update_task=False):
         """Create tasks in Todoist"""
-
         jobs = self._generate_jobs_list(template.file, template.type, template.variables)
-
+        print("#############")
+        repr(jobs)
+        print("#############")
         if not jobs:
             raise TodoistTemplateError("Cannot upload None")
 
@@ -53,9 +54,8 @@ class TodoistTemplate:
 
     def rollback(self, file):
         """Load rollback instructions from file ad run rollback"""
-        with file:
-            logging.info(_("Load rollback commands from %s"), file.name)
-            self.todoist.rollback(pickle.load(file))
+        logging.info(_("Load rollback commands from %s"), file.name)
+        self.todoist.rollback(pickle.load(file))
 
     def quick_add(self, template):
         """Add a new item using the Quick Add implementation available in the official clients"""
