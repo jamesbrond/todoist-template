@@ -30,9 +30,6 @@ class TodoistTemplate:
     def template(self, template, update_task=False):
         """Create tasks in Todoist"""
         jobs = self._generate_jobs_list(template.file, template.type, template.variables)
-        print("#############")
-        repr(jobs)
-        print("#############")
         if not jobs:
             raise TodoistTemplateError("Cannot upload None")
 
