@@ -204,10 +204,10 @@ class Todoist(TodoistAPI):
             # significantly reducing the amount of network calls
             params = {"commands": json.dumps(commands, skipkeys=True, allow_nan=False)}
 
-        response = requests.get(
+        response = requests.post(
             f'{API_URL}/sync',
             headers={"Authorization": f"Bearer {self._token}"},
-            params=params,
+            data=params,
             timeout=60.0
         )
         if response.status_code != 200:

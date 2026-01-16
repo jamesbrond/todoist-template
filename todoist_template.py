@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 """Todoist-Template entry"""
+
 import os
 import sys
 import logging
@@ -20,22 +21,22 @@ def run_cli(api_token, cfg):
     todoist = TodoistTemplate(api_token, cfg)
 
     if is_undo:
-        _undo(todoist, cfg.template.undo)
+        _undo(todoist, cfg.template.undo.file)
     elif is_quick_add:
         _quick_add(todoist, cfg.template)
     else:
         _template(todoist, cfg.template)
 
 
-def _undo(todoist, undo_filename):
-    logging.info("undo action")
+def _undo(todoist:TodoistTemplate, undo_filename:str):
+    logging.info("Undo action")
     with open(undo_filename, "rb") as undo:
         if todoist.rollback(undo):
             logging.debug(_("remove file %s"), undo_filename)
             os.remove(undo_filename)
 
 
-def _quick_add(todoist, config):
+def _quick_add(todoist:TodoistTemplate, config):
     # Example: echo "test {when} @bb" | python todoist_template.py -t -D when=today -
     logging.info("quick add action")
     todoist.quick_add(config)
