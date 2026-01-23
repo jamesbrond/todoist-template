@@ -1,5 +1,4 @@
 """Test command line parsing"""
-import io
 import logging
 import argparse
 import unittest
@@ -52,8 +51,8 @@ class TestCommandLine(unittest.TestCase):
         """Test command line parsing with template passed as standard input"""
         cli = ["--debug", "-"]
         args = parse_cmd_line(cli)
-        self.assertIsInstance(args.get(TEMPLATE_FILE), io.TextIOWrapper)
-        self.assertEqual(args.get(TEMPLATE_FILE).name, '<stdin>')
+        self.assertIsInstance(args.get(TEMPLATE_FILE), str)
+        self.assertEqual(args.get(TEMPLATE_FILE), '-')
         self.assertEqual(args.get("log.loggers.root.level"), "DEBUG")
 
     def test_command_line_file_error(self):

@@ -1,5 +1,7 @@
 # This is a comment
 
+# make run args="tests/test.yml -D test_name='my test',test_date='tod',test_label='work'"
+
 Inbox:
   tasks:
     - content: "🗑 delete {test_name|me} 🗑"

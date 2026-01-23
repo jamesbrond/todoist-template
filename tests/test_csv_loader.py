@@ -40,6 +40,7 @@ class TestCSVLoader(unittest.TestCase):
         """Test load CSV session task"""
         tasks = self.content[1]['Test section']['tasks']
         self.assertEqual(tasks[0]['content'], 'Test task 1')
+        self.assertEqual(tasks[0]['labels'], ['label3', 'label4'])
 
 
 if __name__ == '__main__':

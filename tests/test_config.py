@@ -1,4 +1,5 @@
 """Test Config class"""
+import argparse
 import unittest
 from lib.config.config import TTConfig, DEFAULT_CONFIG_FILE
 
@@ -16,9 +17,8 @@ class TestConfig(unittest.TestCase):
     def test_config_load_not_existing_file(self):
         """Load not existing file fallbacks on default"""
         args = ["--config", "./asddr55rgas.toml"]
-        cfg = TTConfig(args)
-        self.assertFalse(cfg.is_empty())
-        self.assertEqual(DEFAULT_CONFIG_FILE, cfg.config.file)
+        with self.assertRaises(argparse.ArgumentError):
+            TTConfig(args)
 
     def test_config_load_no_file(self):
         """Load no file fallbacks on default"""
@@ -35,17 +35,23 @@ class TestConfig(unittest.TestCase):
     def test_check_python_version_fail(self):
         """Check wrong python version"""
         cfg = TTConfig()
-        self.assertFalse(cfg.check_python_version([2, 7], [3, 5]))
+        self.assertFalse(cfg.is_valid_python_version([2, 7], [3, 5]))
 
     def test_check_python_version_fail_none(self):
         """Check wrong python version passing None"""
         cfg = TTConfig()
-        self.assertFalse(cfg.check_python_version(None, None))
+        self.assertFalse(cfg.is_valid_python_version(None, None))
 
     def test_config_getattr(self):
         """Get attribute from config"""
         cfg = TTConfig()
         self.assertTrue(cfg.log.handlers.console_handler)
+
+    def test_config_setattr(self):
+        """Get attribute from config"""
+        cfg = TTConfig()
+        cfg.config.api_token = "123456789"
+        self.assertEqual(cfg.config.api_token, "123456789")
 
     def test_argparse(self):
         """Config parse command line"""
@@ -55,9 +61,21 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(cfg.log.loggers.root.level, "DEBUG")
         self.assertEqual(cfg.config.api_token, "123456789")
         self.assertTrue(cfg.template.dry_run)
-        with open(cfg.template.file, 'r') as file:
+        with open(cfg.template.file, 'r', encoding='utf-8') as file:
             pass
         self.assertTrue(file.closed)
+
+    def test_external_config(self):
+        """Load external config file"""
+        config_file = "tests/test_config.toml"
+        args = ["--config", config_file]
+
+        cfg = TTConfig(args)
+        self.assertFalse(cfg.is_empty())
+        self.assertEqual(cfg.config.file, config_file)
+        self.assertEqual(cfg.config.api_key_service, "TODOIST_TEMPLATE")
+        self.assertEqual(cfg.general.print_logo, True)
+        self.assertEqual(cfg.log.loggers.root.level, "DEBUG")
 
 
 if __name__ == '__main__':

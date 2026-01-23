@@ -2,95 +2,51 @@
 
 """Todoist-Template entry"""
 
-import os
 import sys
 import logging
-import datetime
-import lib.__version__ as version
 from lib.config.config import TTConfig, PYTHON_MAX, PYTHON_MIN
-from lib.todoist_template import TodoistTemplate
+from lib.todoist import TodoistTemplateAPI
+from lib.todoist_template import AbstractTodoistAction, QuickAddAction, TemplateAction, UndoAction
 from lib.config.apikey import APITokenStore
-from lib.i18n import _
 
 
-def run_cli(api_token, cfg):
-    """Run todoist-template as command line application"""
-    is_undo = cfg.template.undo.file is not None
-    is_quick_add = cfg.template.quick_add
-
-    todoist = TodoistTemplate(api_token, cfg)
-
-    if is_undo:
-        _undo(todoist, cfg.template.undo.file)
-    elif is_quick_add:
-        _quick_add(todoist, cfg.template)
-    else:
-        _template(todoist, cfg.template)
-
-
-def _undo(todoist:TodoistTemplate, undo_filename:str):
-    logging.info("Undo action")
-    with open(undo_filename, "rb") as undo:
-        if todoist.rollback(undo):
-            logging.debug(_("remove file %s"), undo_filename)
-            os.remove(undo_filename)
-
-
-def _quick_add(todoist:TodoistTemplate, config):
-    # Example: echo "test {when} @bb" | python todoist_template.py -t -D when=today -
-    logging.info("quick add action")
-    todoist.quick_add(config)
-
-
-def _template(todoist, config):
-    logging.debug("template action")
-
-    template_filename = "".join([x if x.isalnum() else "" for x in config.file])
-    logging.debug("template filename: %s", template_filename)
-    todoist.template(config, update_task=config.is_update)
-
-    if not config.dry_run:
-        now = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-        undofolder = os.path.join(
-            os.path.dirname(os.path.realpath(sys.argv[0])),
-            config.undo.folder)
-
-        if not os.path.exists(undofolder):
-            os.makedirs(undofolder)
-
-        undofile = os.path.join(
-            undofolder,
-            f"{os.path.basename(template_filename)}-{now}.undo")
-
-        todoist.store_rollback(undofile)
-
-
-def main():
+def main() -> int:
     """Main function"""
     try:
         cfg = TTConfig()
-        if not cfg.check_python_version(PYTHON_MIN, PYTHON_MAX):
+
+        logging.info("Starting todoist-template version %s", cfg.version)
+
+        if not cfg.is_valid_python_version(PYTHON_MIN, PYTHON_MAX):
             raise SystemError(f"This script requires Python >= {PYTHON_MIN} and < {PYTHON_MAX}")
 
         if cfg.general.print_logo:
-            print(version.LOGO)
+            print(cfg.general.logo)
 
-        api_token = cfg.config.api_token
-        if not api_token:
+        if not cfg.config.api_token:
             # get api_token from keyring or as user input
             api_token_store = APITokenStore(
                 cfg.config.api_key_service,
                 prompt=True)
-            api_token = api_token_store.get()
+            cfg.config.api_token = api_token_store.get()
+
         else:
             logging.debug('Use API token from cli')
 
-        run_cli(api_token, cfg)
+        api = TodoistTemplateAPI(cfg)
+        action: AbstractTodoistAction = None
 
-        return 0
+        if cfg.template.undo.file is not None:
+            action = UndoAction(cfg.template)
+        elif cfg.template.quick_add:
+            action = QuickAddAction(cfg.template)
+        else:
+            action = TemplateAction(cfg.template)
+
+        return action.run(api)
 
     except Exception as exc:
-        logging.error(exc, exc_info=logging.getLogger().isEnabledFor(logging.DEBUG))
+        logging.error(exc, exc_info=True)
         return 1
 
 
