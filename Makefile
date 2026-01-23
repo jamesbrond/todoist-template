@@ -95,4 +95,8 @@ i18n-add: $(LOCALES_DIR)/$(ln)/LC_MESSAGES/$(PACKAGE).po ## Create new empty loc
 
 i18n: $(LANG_OBJS)
 
+run:
+# Usage make run args="-D some_name=some_value"
+	$(PYENV)/python todoist_template.py $(args) --config todoist_template.toml
+
 # ~@:-]

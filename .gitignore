@@ -71,14 +71,9 @@ ui/Thumbs.db
 .coverage
 htmlcov/
 build
-build/make
-build/make/
 .githooks/
 ./release/source/
-build/htmlcov/
-build/venv/Scripts
-build
-build/make
-build/venv/Scripts
+
+todoist_template.toml
 corporate.cer
-build/docker_compose/
+tests/.apitoken
