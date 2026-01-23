@@ -1,4 +1,6 @@
 """Todoist-template configuration handler"""
+from collections.abc import Iterable
+from copy import copy
 import sys
 import os
 import logging
@@ -7,48 +9,58 @@ import argparse
 import csv
 import toml
 from lib.i18n import _
-import lib.__version__ as version
-from lib.template.template_factory import TEMPLATE_CSV, TEMPLATE_JSON, TEMPLATE_YAML
+from lib.template.loader.csvloader import CSV_DELIMITER, CSV_FIELDNAMES
+from lib.__version__ import __version__
 
 
 DEFAULT_CONFIG_FILE = 'lib/config/config.toml'
-PYTHON_MIN = (3, 9)
+PYTHON_MIN = (3, 14)
 PYTHON_MAX = (4, 0)
+
+
+class NoTraceExceptionFormatter(logging.StreamHandler):
+    """Logging formatter without traceback for exceptions"""
+    def format(self, record):
+        if hasattr(record, "exc_info"):
+            new_record = copy(record)
+            new_record.exc_info = None
+            return super().format(new_record)
+        return super().format(record)
 
 
 class TTOptions(dict):
     """
     Use a dot "." to access members of dictionary
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self: TTOptions, *args: Iterable, **kwargs: any) -> None:
         super().__init__(*args, **kwargs)
-        _ = [self.__compose(arg) for arg in args]
+        _ = [self.__compose__(arg) for arg in args]
 
         if kwargs:
-            self.__compose(kwargs)
+            self.__compose__(kwargs)
 
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str) -> any:
         return self.get(attr)
 
-    def __setattr__(self, key, value):
+    def __setattr__(self, key: str, value: any) -> None:
         self.__setitem__(key, value)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: any) -> None:
         super().__setitem__(key, value)
         self.__dict__.update({key: value})
 
-    def __delattr__(self, item):
+    def __delattr__(self, item: str) -> None:
         self.__delitem__(item)
 
-    def __delitem__(self, key):
+    def __delitem__(self, key: str) -> None:
         super().__delitem__(key)
         del self.__dict__[key]
 
-    def has_key(self, key):
+    def has_key(self, key: str) -> bool:
         """Retrunt true if config contains `key`"""
         return key in self.keys()
 
-    def __compose(self, arg, update=False):
+    def __compose__(self, arg: dict[str, any], update: bool = False) -> None:
         for key, value in arg.items():
             if isinstance(value, dict):
                 if self.has_key(key) and update:
@@ -58,11 +70,11 @@ class TTOptions(dict):
             elif value is not None:
                 self[key] = value
 
-    def set(self, path, value):
+    def set(self, path: str, value: any) -> None:
         """Set value"""
         self.set_array(path.split('.'), value)
 
-    def set_array(self, keys, value):
+    def set_array(self, keys: list[str], value: any) -> None:
         """Set array of keys"""
         key = keys.pop(0)
         if len(keys) == 0:
@@ -72,41 +84,42 @@ class TTOptions(dict):
                 self[key] = TTOptions()
             self[key].set_array(keys, value)
 
-    def update(self, arg):
+    def update(self, arg: dict[str, any]) -> None:
         """Update config opbject"""
         if arg:
-            self.__compose(arg, True)
+            self.__compose__(arg, True)
 
 
 class TTConfig:
     """Todoist-template configuration handler class"""
 
-    def __init__(self, cliargs=None):
+    def __init__(self, cliargs: list[str] | None = None) -> None:
         # Options in descending order of relevance
         # 1. hardcoded values
-        self._options = TTOptions({"config": {}})
+        # from default config file lib/config/config.toml
+        self._options = TTOptions({})
+        self._options.update(self._load_config(DEFAULT_CONFIG_FILE))
 
-        # 2. configuration file
+        # 2. configuration file if any
+        # command line argument --config
         args = parse_cmd_line(cliargs)
         if args.get("configfile"):
             self._options.update(self._load_config(args.get("configfile")))
-        else:
-            self._options.update(self._load_config(DEFAULT_CONFIG_FILE))
 
-        # 3. command line
+        # 3. command line arguments
         self._options.update(self._map_args(args))
 
         logging.config.dictConfig(self.log)  # self.log -> uses __getattr___(log)
 
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str) -> TTOptions | None:
         """Returns configuration value"""
         return self._options.get(attr)
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """Returns true if configuration is empty"""
         return len(self._options) == 0
 
-    def check_python_version(self, pymin, pymax):
+    def is_valid_python_version(self, pymin: tuple[int, int], pymax: tuple[int, int]) -> bool:
         """Check python requirements for application"""
         try:
             logging.debug("check python requirement %s - %s", str(pymin), str(pymax))
@@ -115,27 +128,29 @@ class TTConfig:
             logging.fatal(exc)
             return False
 
-    def _load_config(self, filename):
+    @property
+    def version(self) -> str:
+        """Returns application version"""
+        return __version__
+
+    def _load_config(self, filename: str) -> dict:
         # load TOML configuration from `filename`
         try:
             data = toml.load(filename)
-            self._options.config.file = filename
+            data.setdefault('config', {})['file'] = filename
             return data
         except (FileNotFoundError, PermissionError) as ex:
-            if filename != DEFAULT_CONFIG_FILE:
-                # fallback
-                return self._load_config(DEFAULT_CONFIG_FILE)
-            raise ValueError("Bad configuration file") from ex
+            raise ValueError("Cannot load configuration file") from ex
         except toml.decoder.TomlDecodeError as ex:
             raise ValueError("Bad configuration file") from ex
 
-    def _map_args(self, args):
+    def _map_args(self, args: dict) -> TTOptions:
         data = TTOptions()
         _ = [data.set(key, value) for key, value in args.items() if value is not None]
         return data
 
 
-def val_variable(values):
+def val_variable(values: str) -> list[dict]:
     """Argparse variables type"""
     variables = []
     if os.path.isfile(values):
@@ -151,11 +166,11 @@ def val_variable(values):
     return variables
 
 
-def readable_file(filepath: str):
+def readable_file(filepath: str) -> str:
     """Checks if a file exists and is readable"""
 
     if filepath == '-':
-        return sys.stdin
+        return "-"
 
     if not os.path.exists(filepath):
         # Raise ArgumentTypeError to make argparse show a clean error message
@@ -168,7 +183,7 @@ def readable_file(filepath: str):
     return filepath
 
 
-def parse_cmd_line(cli=None):
+def parse_cmd_line(cli: list[str] | None = None) -> argparse.Namespace:
     """Command line parser function"""
     parser = argparse.ArgumentParser(
         description=_('Easily add tasks to Todoist with customizable YAML templates'),
@@ -182,7 +197,7 @@ def parse_cmd_line(cli=None):
     file_parser.add_argument(
         "template.file",
         nargs="?",  # a single value, which can be optional
-        metavar="TEMPLATE FILE",
+        metavar="TEMPLATE_FILE",
         type=readable_file,
         default=sys.stdin,
         help=_("""the template file, if no file is supplied it uses standard input.
@@ -224,8 +239,8 @@ the template will be used as text for the new task""")
     parser.add_argument(
         "-c",
         "--config",
+        type=readable_file,
         dest="configfile",
-        default=DEFAULT_CONFIG_FILE,
         help=_("TOML configuration file")
     )
 
@@ -276,7 +291,7 @@ execution except for new object IDs."),
     parser.add_argument(
         "--version",
         action="version",
-        version="%(prog)s " + version.__version__,
+        version="%(prog)s " + __version__,
         help=_("show program's version number and exit"))
 
     tpl_type_group = parser.add_mutually_exclusive_group()
@@ -284,22 +299,31 @@ execution except for new object IDs."),
         "--yaml",
         dest="template.type",
         action="store_const",
-        const=TEMPLATE_YAML,
+        const="YAML",
         help=_("template input file has YAML format")
     )
     tpl_type_group.add_argument(
         "--json",
         dest="template.type",
         action="store_const",
-        const=TEMPLATE_JSON,
+        const="JSON",
         help=_("template input file has JSON format")
     )
     tpl_type_group.add_argument(
         "--csv",
         dest="template.type",
         action="store_const",
-        const=TEMPLATE_CSV,
-        help=_("template input file has CSV format")
+        const="CSV",
+        help=_(f"""template input file has CSV format.
+Possible fields are: {', '.join(CSV_FIELDNAMES)}.
+Default delimiter is '{CSV_DELIMITER}'.""")
+    )
+    tpl_type_group.add_argument(
+        "--text",
+        dest="template.type",
+        action="store_const",
+        const="PLAINTEXT",
+        help=_("template input file has Plain/Text format.")
     )
 
     args, unknown = parser.parse_known_args(cli)

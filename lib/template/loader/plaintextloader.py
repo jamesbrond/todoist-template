@@ -1,10 +1,15 @@
 """Plain/text Template Loader"""
 
-from lib.template.loader.abstractloader import AbstractTemplateLoader
+from lib.template.loader.abstractloader import AbstractTemplateLoader, register_loader
 
 
+@register_loader
 class PlainTextTemplateLoader(AbstractTemplateLoader):  # pylint: disable=too-few-public-methods
-    """Plain Template Class Loader"""
+    """Plain/text Template Loader"""
 
-    def load(self, content):
+    type = "PLAINTEXT"
+    mimetypes = ["text/plain"]
+    extensions = [".txt"]
+
+    def load(self, content: str) -> any:
         return content.rstrip()

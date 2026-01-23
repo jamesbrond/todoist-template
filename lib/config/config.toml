@@ -1,16 +1,25 @@
 [general]
-print_logo = true
+print_logo = false
+logo = """
+ ╔╗       ╔╗           ╔╗       ╔╗             ╔╗       ╔╗
+╔╝╚╗      ║║          ╔╝╚╗     ╔╝╚╗            ║║      ╔╝╚╗
+╚╗╔╝╔══╗╔═╝║╔══╗╔╗╔══╗╚╗╔╝     ╚╗╔╝╔══╗╔╗╔╗╔══╗║║ ╔══╗ ╚╗╔╝╔══╗
+ ║║ ║╔╗║║╔╗║║╔╗║╠╣║══╣ ║║ ╔═══╗ ║║ ║╔╗║║╚╝║║╔╗║║║ ╚ ╗║  ║║ ║╔╗║
+ ║╚╗║╚╝║║╚╝║║╚╝║║║╠══║ ║╚╗╚═══╝ ║╚╗║║═╣║║║║║╚╝║║╚╗║╚╝╚╗ ║╚╗║║═╣
+ ╚═╝╚══╝╚══╝╚══╝╚╝╚══╝ ╚═╝      ╚═╝╚══╝╚╩╩╝║╔═╝╚═╝╚═══╝ ╚═╝╚══╝
+                                           ║║
+                                           ╚╝"""
 
 [config]
 api_key_service = 'TODOIST_TEMPLATE'
 
-[security]
+# [security]
 # If you are working within a corporate environment that decrypts your traffic,
 # or possibly proxy servers as part of a VPN, then I have found that the certifi
 # library fails to include the certificate for the decryption server in the
 # certificate package. The solution is append the CA Root & Intermediates to
 # the cacert.pem file. Of course, this own certificates were in PEM format.
-ssl_certificate='corporate.cer'
+# ssl_ca_root_file=''
 
 [template.undo]
 folder = "undo"
@@ -24,7 +33,7 @@ cli.format = '%(message)s'
 file.format = '%(asctime)s %(levelname)-5s {%(module)s.%(filename)s:%(lineno)d} %(message)s'
 
 [log.handlers.console_handler]
-class = 'logging.StreamHandler'
+class = 'lib.config.config.NoTraceExceptionFormatter'
 level = 'INFO'
 formatter = 'cli'
 

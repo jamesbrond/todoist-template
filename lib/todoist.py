@@ -5,16 +5,19 @@ import json
 import certifi
 import requests
 from todoist_api_python.api import TodoistAPI
+from todoist_api_python.models import (
+    Task,
+)
 from todoist_api_python._core.endpoints import API_URL
 from lib.utils import find_needle_in_haystack, uid
 from lib.i18n import _
 
 
-class Todoist(TodoistAPI):
+class TodoistTemplateAPI(TodoistAPI):
     """Layer class to handle Todoist API"""
 
-    def __init__(self, api_token, cfg):
-        super().__init__(api_token, None)
+    def __init__(self, cfg):
+        super().__init__(cfg.config.api_token, None)
 
         is_undo = cfg.template.undo.file is not None
         is_quick_add = cfg.template.quick_add
@@ -22,10 +25,10 @@ class Todoist(TodoistAPI):
         self.undo_commands = []
 
         try:
-            if cfg.security and cfg.security.ssl_certificate is not None:
-                logging.debug('Adding custom certs to Certifi store "%s"', cfg.security.ssl_certificate)
+            if cfg.security and cfg.security.ssl_ca_root_file is not None:
+                logging.debug('Adding custom certs to Certifi store "%s"', cfg.security.ssl_ca_root_file)
                 cafile = certifi.where()
-                with open(cfg.security.ssl_certificate, 'rb') as certfile:
+                with open(cfg.security.ssl_ca_root_file, 'rb') as certfile:
                     customca = certfile.read()
                 with open(cafile, 'ab') as outfile:
                     outfile.write(customca)
@@ -34,6 +37,7 @@ class Todoist(TodoistAPI):
 
         if not (is_undo or is_quick_add):
             try:
+                logging.debug("Retrieve existing projects and sections from Todoist")
                 self.projects = next(self.get_projects())
                 logging.debug('retrieved %d project from Todoist', len(self.projects))
                 self.sections = next(self.get_sections())
@@ -173,7 +177,7 @@ class Todoist(TodoistAPI):
         cmds = undo_commands if undo_commands else self.undo_commands
         status = self._do_rollback(cmds)
         if self.dry_run:
-            logging.info(_("Rollback status: Dry Run"))
+            logging.info(_("dry run> Rollback status: Nothing done"))
         else:
             logging.info(_("Rollback status: %s"), (_("Success") if status else _("Failure")))
         return status
@@ -221,9 +225,9 @@ class Todoist(TodoistAPI):
             logging.info(self._log_message(_('Task'), text, None, True))
             return None
 
-        quick = self.add_task_quick(text)
-        logging.info(self._log_message(_('Task'), quick.task.content, quick.task.id, True))
-        return quick.task.id
+        quick: Task = self.add_task_quick(text)
+        logging.info(self._log_message(_('Task'), quick.content, quick.id, True))
+        return quick.id
 
     def get_collaborator_id(self, name):
         """Returns collabotor ID by name"""

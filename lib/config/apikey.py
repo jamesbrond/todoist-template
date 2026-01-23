@@ -15,20 +15,21 @@ from lib.i18n import _
 
 
 class EnvKeyring(keyring.backend.KeyringBackend):
-    """A fallback keyring which set and get password from
+    """
+    A fallback keyring which set and get password from
     operating system environment
     """
     priority = 1
 
-    def set_password(self, service, username, password):
+    def set_password(self, service: str, username: str, password: str) -> None:
         logging.debug("Storing API token in environment variable %s", service)
         os.environ[service] = password
 
-    def get_password(self, service, username):
+    def get_password(self, service: str, username: str) -> str | None:
         logging.debug("Retrieving API token from environment variable %s", service)
         return os.environ.get(service)
 
-    def delete_password(self, service, username):
+    def delete_password(self, service: str, username: str) -> None:
         logging.debug("Deleting API token from environment variable %s", service)
         if os.environ.get(service) is not None:
             os.environ.pop(service)
@@ -44,7 +45,7 @@ class APITokenStore:  # pylint: disable=too-few-public-methods
     keyring or as environment variable.
     """
 
-    def __init__(self, service, prompt=False) -> None:
+    def __init__(self, service: str, prompt: bool = False) -> None:
         """
         Initialize `APITokenStore`
 
@@ -54,10 +55,10 @@ class APITokenStore:  # pylint: disable=too-few-public-methods
         self.service = service
         self.prompt = prompt
         if isinstance(keyring.get_keyring(), keyring.backends.fail.Keyring):
-            logging.warning("keyring backends fail")
+            logging.warning("Keyring backends fail")
             keyring.set_keyring(EnvKeyring())
 
-    def _set(self, token):
+    def _set(self, token: str) -> None:
         """
         Store API token.
 
@@ -82,7 +83,7 @@ class APITokenStore:  # pylint: disable=too-few-public-methods
         """
         return input(_("Please enter your API token: "))
 
-    def get(self):
+    def get(self) -> str | None:
         """
         Get API Token from keyring or fallback from environment.
         If both methods return `None` and `prompt` is true, it prompts the user for a
