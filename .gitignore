@@ -77,3 +77,4 @@ build
 todoist_template.toml
 corporate.cer
 tests/.apitoken
+*.log

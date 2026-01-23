@@ -4,15 +4,15 @@ import os
 import logging
 import mimetypes
 from typing import TextIO
-from lib.template.template_tokenizer import TemplateToken
-from lib.template.loader.abstractloader import (AbstractTemplateLoader,
+from template.template_tokenizer import TemplateToken
+from template.loader.abstractloader import (AbstractTemplateLoader,
                                                 template_mimetypes,
                                                 template_loaders,
                                                 template_extensions)
-from lib.template.loader.csvloader import CsvTemplateLoader  # pylint: disable=unused-import
-from lib.template.loader.jsonloader import JsonTemplateLoader  # pylint: disable=unused-import
-from lib.template.loader.yamlloader import YamlTemplateLoader  # pylint: disable=unused-import
-from lib.template.loader.plaintextloader import PlainTextTemplateLoader  # pylint: disable=unused-import
+from template.loader.csvloader import CsvTemplateLoader  # pylint: disable=unused-import
+from template.loader.jsonloader import JsonTemplateLoader  # pylint: disable=unused-import
+from template.loader.yamlloader import YamlTemplateLoader  # pylint: disable=unused-import
+from template.loader.plaintextloader import PlainTextTemplateLoader  # pylint: disable=unused-import
 
 
 class TodoistTemplateError(Exception):

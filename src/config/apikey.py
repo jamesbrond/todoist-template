@@ -11,7 +11,7 @@ import os
 import logging
 import keyring
 import keyring.backend
-from lib.i18n import _
+from i18n import _
 
 
 class EnvKeyring(keyring.backend.KeyringBackend):

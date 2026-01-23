@@ -4,10 +4,10 @@
 
 import sys
 import logging
-from lib.config.config import TTConfig, PYTHON_MAX, PYTHON_MIN
-from lib.todoist import TodoistTemplateAPI
-from lib.todoist_template import AbstractTodoistAction, QuickAddAction, TemplateAction, UndoAction
-from lib.config.apikey import APITokenStore
+from config.config import TTConfig, PYTHON_MAX, PYTHON_MIN
+from todoist import TodoistTemplateAPI
+from todoist_actions import AbstractTodoistAction, QuickAddAction, TemplateAction, UndoAction
+from config.apikey import APITokenStore
 
 
 def main() -> int:

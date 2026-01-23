@@ -1,6 +1,6 @@
 """Test Unit for Template class"""
 import unittest
-from lib.template.template_factory import TemplateFactory
+from src.template.template_factory import TemplateFactory
 
 
 class TestTemplate(unittest.TestCase):

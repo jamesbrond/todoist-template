@@ -1,11 +1,11 @@
 """Test factory template loader"""
 import logging
 import unittest
-from lib.template.loader.plaintextloader import PlainTextTemplateLoader
-from lib.template.loader.jsonloader import JsonTemplateLoader
-from lib.template.loader.yamlloader import YamlTemplateLoader
-from lib.template.loader.csvloader import CsvTemplateLoader
-from lib.template.template_factory import TemplateFactory
+from template.loader.plaintextloader import PlainTextTemplateLoader
+from template.loader.jsonloader import JsonTemplateLoader
+from template.loader.yamlloader import YamlTemplateLoader
+from template.loader.csvloader import CsvTemplateLoader
+from template.template_factory import TemplateFactory
 
 
 class TestFactoryLoader(unittest.TestCase):

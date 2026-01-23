@@ -13,7 +13,7 @@ task,Test task 2,4,weekend,This is another test,label5;label6,
 
 import io
 import csv
-from lib.template.loader.abstractloader import AbstractTemplateLoader, register_loader
+from template.loader.abstractloader import AbstractTemplateLoader, register_loader
 
 
 DEFAULT_PROJECT = "Inbox"

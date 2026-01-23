@@ -1,8 +1,8 @@
 """Tests for todoist-template flows"""
 import unittest
-from lib.config.config import TTConfig
-from lib.todoist import TodoistTemplateAPI
-from lib.todoist_template import QuickAddAction, TemplateAction, UndoAction
+from src.config.config import TTConfig
+from src.todoist import TodoistTemplateAPI
+from src.todoist_actions import QuickAddAction, TemplateAction, UndoAction
 
 
 class TestFlow(unittest.TestCase):

@@ -6,10 +6,10 @@ import sys
 import logging
 import pickle
 from typing import TextIO
-from lib.config.config import TTOptions
-from lib.i18n import _
-from lib.todoist import TodoistTemplateAPI
-from lib.template.template_factory import TemplateFactory, TodoistTemplateError
+from config.config import TTOptions
+from i18n import _
+from todoist import TodoistTemplateAPI
+from template.template_factory import TemplateFactory, TodoistTemplateError
 
 
 PROJECT_KEYS_LIST = ['color', 'is_favorite', 'view_style']

@@ -8,12 +8,12 @@ import logging.config
 import argparse
 import csv
 import toml
-from lib.i18n import _
-from lib.template.loader.csvloader import CSV_DELIMITER, CSV_FIELDNAMES
-from lib.__version__ import __version__
+from i18n import _
+from template.loader.csvloader import CSV_DELIMITER, CSV_FIELDNAMES
+from __version__ import __version__
 
-
-DEFAULT_CONFIG_FILE = 'lib/config/config.toml'
+__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+DEFAULT_CONFIG_FILE = os.path.join(__location__, 'config.toml')
 PYTHON_MIN = (3, 14)
 PYTHON_MAX = (4, 0)
 
@@ -96,7 +96,7 @@ class TTConfig:
     def __init__(self, cliargs: list[str] | None = None) -> None:
         # Options in descending order of relevance
         # 1. hardcoded values
-        # from default config file lib/config/config.toml
+        # from default config file config/config.toml
         self._options = TTOptions({})
         self._options.update(self._load_config(DEFAULT_CONFIG_FILE))
 

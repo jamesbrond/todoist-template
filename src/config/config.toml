@@ -33,7 +33,7 @@ cli.format = '%(message)s'
 file.format = '%(asctime)s %(levelname)-5s {%(module)s.%(filename)s:%(lineno)d} %(message)s'
 
 [log.handlers.console_handler]
-class = 'lib.config.config.NoTraceExceptionFormatter'
+class = 'config.config.NoTraceExceptionFormatter'
 level = 'INFO'
 formatter = 'cli'
 
@@ -41,7 +41,7 @@ formatter = 'cli'
 class = 'logging.handlers.RotatingFileHandler'
 level = 'DEBUG'
 formatter = 'file'
-filename = 'logs/todoist_template.log'
+filename = 'todoist_template.log'
 mode = 'a'
 maxBytes = 52428800
 backupCount = 10

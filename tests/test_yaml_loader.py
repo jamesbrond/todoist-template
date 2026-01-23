@@ -1,7 +1,7 @@
 """Test YAML template loader"""
 import logging
 import unittest
-from lib.template.loader.yamlloader import YamlTemplateLoader
+from src.template.loader.yamlloader import YamlTemplateLoader
 
 
 class TestYamlLoader(unittest.TestCase):

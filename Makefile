@@ -19,6 +19,8 @@ SHELL:=/bin/bash
 -include $(MAKE_DIR)/py.mk
 -include $(CONFIGURE)
 
+export PYTHONPATH=src
+
 $(MAKE_DIR)/%.mk: | $(MAKE_DIR)
 	@URL=$$(echo "https://raw.githubusercontent.com/jamesbrond/jamesbrond/main/Makefile/.make/$(@F)"); \
 	echo "get $$URL"; \
@@ -97,6 +99,6 @@ i18n: $(LANG_OBJS)
 
 run:
 # Usage make run args="-D some_name=some_value"
-	$(PYENV)/python todoist_template.py $(args) --config todoist_template.toml
+	@$(PYENV)/python src/todoist_template.py $(args) --config todoist_template.toml
 
 # ~@:-]

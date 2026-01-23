@@ -3,7 +3,7 @@ import logging
 import argparse
 import unittest
 import collections.abc
-from lib.config.config import parse_cmd_line
+from src.config.config import parse_cmd_line
 
 
 TEMPLATE_FILE = "template.file"

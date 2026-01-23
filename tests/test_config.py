@@ -1,7 +1,7 @@
 """Test Config class"""
 import argparse
 import unittest
-from lib.config.config import TTConfig, DEFAULT_CONFIG_FILE
+from src.config.config import TTConfig, DEFAULT_CONFIG_FILE
 
 
 class TestConfig(unittest.TestCase):

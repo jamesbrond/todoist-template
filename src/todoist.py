@@ -9,8 +9,8 @@ from todoist_api_python.models import (
     Task,
 )
 from todoist_api_python._core.endpoints import API_URL
-from lib.utils import find_needle_in_haystack, uid
-from lib.i18n import _
+from utils import find_needle_in_haystack, uid
+from i18n import _
 
 
 class TodoistTemplateAPI(TodoistAPI):

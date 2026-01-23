@@ -1,7 +1,7 @@
 """JOSN Template Loader"""
 
 import json
-from lib.template.loader.abstractloader import AbstractTemplateLoader, register_loader
+from template.loader.abstractloader import AbstractTemplateLoader, register_loader
 
 
 @register_loader
