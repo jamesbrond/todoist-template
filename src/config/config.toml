@@ -33,7 +33,7 @@ cli.format = '%(message)s'
 file.format = '%(asctime)s %(levelname)-5s {%(module)s.%(filename)s:%(lineno)d} %(message)s'
 
 [log.handlers.console_handler]
-class = 'config.config.NoTraceExceptionFormatter'
+class = 'config.logfilter.NoTraceExceptionFormatter'
 level = 'INFO'
 formatter = 'cli'
 
