@@ -1,5 +1,6 @@
 """Plain/text Template Loader"""
 
+from typing import Any
 from template.loader.abstractloader import AbstractTemplateLoader, register_loader
 
 
@@ -11,5 +12,5 @@ class PlainTextTemplateLoader(AbstractTemplateLoader):  # pylint: disable=too-fe
     mimetypes = ["text/plain"]
     extensions = [".txt"]
 
-    def load(self, content: str) -> any:
+    def load(self, content: str) -> Any:
         return content.rstrip()

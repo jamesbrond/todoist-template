@@ -66,7 +66,7 @@ class APITokenStore:  # pylint: disable=too-few-public-methods
         """
         keyring.set_password(self.service, "API_TOKEN", token)
 
-    def _get(self):
+    def _get(self) -> str | None:
         """
         Return API token.
 
@@ -75,7 +75,7 @@ class APITokenStore:  # pylint: disable=too-few-public-methods
         logging.debug("API Token storage: %s", type(keyring.get_keyring()))
         return keyring.get_password(self.service, "API_TOKEN")
 
-    def _prompt(self):
+    def _prompt(self) -> str:
         """
         Prompt user for token.
 

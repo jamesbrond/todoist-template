@@ -1,13 +1,15 @@
 """Test command line parsing"""
+from io import TextIOWrapper
 import logging
 import argparse
+from pathlib import Path
 import unittest
 import collections.abc
 from src.config.config import parse_cmd_line
 
 
-TEMPLATE_FILE = "template.file"
-TEMPLATE_VARS = "template.variables"
+TEMPLATE_FILE = "template_file"
+TEMPLATE_VARS = "variables"
 
 
 class TestCommandLine(unittest.TestCase):
@@ -26,8 +28,8 @@ class TestCommandLine(unittest.TestCase):
                "--dry-run"
                ]
         args = parse_cmd_line(cli)
-        self.assertIsInstance(args.get(TEMPLATE_FILE), str)
-        self.assertEqual(args.get(TEMPLATE_FILE), 'tests/test.yml')
+        self.assertIsInstance(args.get(TEMPLATE_FILE), Path)
+        self.assertEqual(args.get(TEMPLATE_FILE), Path('tests/test.yml'))
         self.assertIsInstance(args.get(TEMPLATE_VARS),
                               collections.abc.Sequence,
                               'placeholder is not an array')
@@ -36,7 +38,7 @@ class TestCommandLine(unittest.TestCase):
         self.assertEqual(args.get("config.api_key_service"), 'TODOIST_TEMPLATE')
         self.assertEqual(args.get("config.api_token"), '1234567890abcdef')
         self.assertEqual(args.get("log.loggers.root.level"), "DEBUG")
-        self.assertTrue(args.get("template.dry_run"))
+        self.assertTrue(args.get("dry_run"))
 
     def test_command_line_placeholders_csv(self):
         """Test command line parsing with CSV as placeholders"""
@@ -49,10 +51,9 @@ class TestCommandLine(unittest.TestCase):
 
     def test_command_line_stdio(self):
         """Test command line parsing with template passed as standard input"""
-        cli = ["--debug", "-"]
+        cli = ["--debug"]
         args = parse_cmd_line(cli)
-        self.assertIsInstance(args.get(TEMPLATE_FILE), str)
-        self.assertEqual(args.get(TEMPLATE_FILE), '-')
+        self.assertIsInstance(args.get(TEMPLATE_FILE), TextIOWrapper)
         self.assertEqual(args.get("log.loggers.root.level"), "DEBUG")
 
     def test_command_line_file_error(self):

@@ -1,11 +1,9 @@
 """Tokenize template"""
-import io
-import os
+from pathlib import Path
 import re
 import logging
 from enum import Enum
 from abc import ABC, abstractmethod
-from typing import TextIO
 
 
 TokenType = Enum('TokenType', ['TEMPLATE', 'PLAINTEXT', 'PLACEHOLDER'])
@@ -22,33 +20,15 @@ RE_INLINE_COMMENTS = re.compile(r"\s*#+(?!!).*")
 # Empty lines pattern
 RE_EMPTY_LINE = re.compile(r"^\s*$\r?\n", re.MULTILINE)
 
-TEMPLATE_ENCODING: str = 'utf-8'
 
-
-def read_file(filename: str) -> str:
-    """Get file content"""
-    with open(filename, 'r', encoding=TEMPLATE_ENCODING) as file:
-        text = file.read()
-    return text
-
-
-def get_folder(file: str) -> str:
-    """Get file path"""
-    return os.path.dirname(os.path.realpath(file))
-
-
-def get_template(text: str = None, file: str | TextIO = None, base_dir: str = None):
+def get_template(text: str = None, file: Path | None = None) -> tuple[str, Path]:
     """Get template source and folder"""
 
     if text is not None:
-        return text, get_folder(__file__)
+        return text, Path(__file__).resolve().absolute().parent
 
-    if file is not None:
-        if isinstance(file, io.IOBase):
-            return file.read(), get_folder(file.name)
-
-        path = os.path.join(base_dir, file) if base_dir else file
-        return read_file(path), get_folder(path)
+    if file is not None and file.exists():
+        return file.read_text(encoding="utf-8"), file.resolve().absolute().parent
 
     raise ValueError("Text or filename must be provided")
 
@@ -87,7 +67,7 @@ class AbstractTemplateToken(ABC):
 
     def __init__(self, text: str, token_type: TokenType) -> None:
         self._source = text
-        self.type = token_type
+        self._token_type = token_type
 
     @abstractmethod
     def render(self, variables: dict) -> str:
@@ -98,7 +78,7 @@ class AbstractTemplateToken(ABC):
         return self._source
 
     def __repr__(self) -> str:
-        return f"Token[{self.type.name}]({self._source})"
+        return f"Token[{self._token_type.name}]({self._source})"
 
 
 class PlainTextToken(AbstractTemplateToken):
@@ -127,10 +107,10 @@ class PlaceholderToken(AbstractTemplateToken):
     def __init__(self, text):
         super().__init__(text, TokenType.PLACEHOLDER)
         match = RE_VARS.search(text)
-        self._var_name, self._def_value = match.group(1), match.group(2)
+        self._var_name, self._default_value = match.group(1), match.group(2)
 
     def render(self, variables: dict) -> str:
-        return variables.get(self._var_name) or self._def_value or self._source
+        return variables.get(self._var_name) if self._var_name in variables else self._default_value or self._source
 
 
 class TemplateToken(AbstractTemplateToken):
@@ -143,17 +123,16 @@ class TemplateToken(AbstractTemplateToken):
     """
     def __init__(self,  # pylint: disable=too-many-positional-arguments
                  text: str = None,
-                 file: str | TextIO = None,
-                 base_dir: str = None,
+                 file: Path = None,
                  line_prefix: str = "",
                  keep_comments: bool = False):
         super().__init__("", TokenType.TEMPLATE)
 
-        self._file = file
+        self._filepath = file
         self._line_prefix = line_prefix
         self._keep_comments = keep_comments
 
-        self._source, folder = get_template(text=text, file=file, base_dir=base_dir)
+        self._source, folder = get_template(text=text, file=file)
 
         text = self._source if self._keep_comments else purge_comments(self._source)
 
@@ -171,10 +150,10 @@ class TemplateToken(AbstractTemplateToken):
             out = f"{self._line_prefix}{lines[0]}\n"
             # add padding to all lines but the first one
             out += "\n".join([f"{' ' * padding}{x}" for x in lines[1:]])
-        logging.debug("%s\n%s", self._file.name if hasattr(self._file, "name") else self._file, out)
+        logging.debug("%s\n%s", self._filepath.name if hasattr(self._filepath, "name") else self._filepath, out)
         return out
 
-    def _compile(self, text: str, folder: str) -> list[AbstractTemplateToken]:
+    def _compile(self, text: str, folder: Path) -> list[AbstractTemplateToken]:
         # parse template source and generate an object ready to be rendered
         matches = [*preprocessing_includes(text), *preprocessing(text)]
         matches.sort(key=lambda x: x.span()[0])
@@ -186,8 +165,7 @@ class TemplateToken(AbstractTemplateToken):
             tokens.append(PlainTextToken(text[cursor:begin]))
             if RE_INCLUDES == match.re:
                 tokens.append(TemplateToken(
-                    file=match.group(2),
-                    base_dir=folder,
+                    file=(folder / match.group(2)).resolve().absolute(),
                     line_prefix=match.group(1),
                     keep_comments=self._keep_comments))
             elif RE_VARS == match.re:
@@ -197,6 +175,5 @@ class TemplateToken(AbstractTemplateToken):
             cursor = end
         tokens.append(PlainTextToken(text[cursor:]))
         return tokens
-
 
 # ~@:-]

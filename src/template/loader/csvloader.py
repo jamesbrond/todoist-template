@@ -13,6 +13,7 @@ task,Test task 2,4,weekend,This is another test,label5;label6,
 
 import io
 import csv
+from typing import Any
 from template.loader.abstractloader import AbstractTemplateLoader, register_loader
 
 
@@ -33,7 +34,7 @@ class CsvTemplateLoader(AbstractTemplateLoader):  # pylint: disable=too-few-publ
     mimetypes = ["text/csv"]
     extensions = [".csv"]
 
-    def load(self, content: str) -> any:
+    def load(self, content: str) -> Any:
         reader = csv.DictReader(io.StringIO(content), CSV_FIELDNAMES, delimiter=CSV_DELIMITER, dialect=CSV_FORMAT)
         return self._rows_to_template(reader)
 

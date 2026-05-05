@@ -1,17 +1,18 @@
 [general]
-print_logo = false
-logo = """
+print_logo = true
+logo = '''
  ╔╗       ╔╗           ╔╗       ╔╗             ╔╗       ╔╗
 ╔╝╚╗      ║║          ╔╝╚╗     ╔╝╚╗            ║║      ╔╝╚╗
 ╚╗╔╝╔══╗╔═╝║╔══╗╔╗╔══╗╚╗╔╝     ╚╗╔╝╔══╗╔╗╔╗╔══╗║║ ╔══╗ ╚╗╔╝╔══╗
  ║║ ║╔╗║║╔╗║║╔╗║╠╣║══╣ ║║ ╔═══╗ ║║ ║╔╗║║╚╝║║╔╗║║║ ╚ ╗║  ║║ ║╔╗║
  ║╚╗║╚╝║║╚╝║║╚╝║║║╠══║ ║╚╗╚═══╝ ║╚╗║║═╣║║║║║╚╝║║╚╗║╚╝╚╗ ║╚╗║║═╣
  ╚═╝╚══╝╚══╝╚══╝╚╝╚══╝ ╚═╝      ╚═╝╚══╝╚╩╩╝║╔═╝╚═╝╚═══╝ ╚═╝╚══╝
-                                           ║║
-                                           ╚╝"""
+                                           ║║ v{version}
+                                           ╚╝'''
 
 [config]
 api_key_service = 'TODOIST_TEMPLATE'
+undo_folder = 'undo'
 
 # [security]
 # If you are working within a corporate environment that decrypts your traffic,
@@ -20,9 +21,6 @@ api_key_service = 'TODOIST_TEMPLATE'
 # certificate package. The solution is append the CA Root & Intermediates to
 # the cacert.pem file. Of course, this own certificates were in PEM format.
 # ssl_ca_root_file=''
-
-[template.undo]
-folder = "undo"
 
 [log]
 version = 1
@@ -33,7 +31,7 @@ cli.format = '%(message)s'
 file.format = '%(asctime)s %(levelname)-5s {%(module)s.%(filename)s:%(lineno)d} %(message)s'
 
 [log.handlers.console_handler]
-class = 'config.logfilter.NoTraceExceptionFormatter'
+class = 'config.logfilter.ConsoleNoTraceExceptionHandler'
 level = 'INFO'
 formatter = 'cli'
 
@@ -52,3 +50,5 @@ delay = false
 handlers = ['console_handler', 'file_handler']
 level = 'DEBUG'
 propagate = true
+
+# ~@:-]

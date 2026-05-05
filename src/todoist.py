@@ -19,9 +19,9 @@ class TodoistTemplateAPI(TodoistAPI):
     def __init__(self, cfg):
         super().__init__(cfg.config.api_token, None)
 
-        is_undo = cfg.template.undo.file is not None
-        is_quick_add = cfg.template.quick_add
-        self.dry_run = cfg.template.dry_run
+        is_undo = cfg.is_undo
+        # is_quick_add = cfg.quick_add
+        self.dry_run = cfg.dry_run
         self.undo_commands = []
 
         try:
@@ -35,7 +35,7 @@ class TodoistTemplateAPI(TodoistAPI):
         except (AttributeError, FileNotFoundError) as exc:
             logging.warning(exc)
 
-        if not (is_undo or is_quick_add):
+        if not is_undo:
             try:
                 logging.debug("Retrieve existing projects and sections from Todoist")
                 self.projects = next(self.get_projects())
@@ -172,11 +172,11 @@ class TodoistTemplateAPI(TodoistAPI):
 
         return cmd
 
-    def rollback(self, undo_commands=None):
+    def rollback(self, undo_commands=None, is_dry_run=False) -> bool:
         """Rollback todoist-template actions"""
         cmds = undo_commands if undo_commands else self.undo_commands
         status = self._do_rollback(cmds)
-        if self.dry_run:
+        if is_dry_run:
             logging.info(_("dry run> Rollback status: Nothing done"))
         else:
             logging.info(_("Rollback status: %s"), (_("Success") if status else _("Failure")))
@@ -219,9 +219,17 @@ class TodoistTemplateAPI(TodoistAPI):
             logging.warning(str(response.content))
         return response.json() if response.status_code == 200 else response.content
 
-    def quick_add(self, text):
+    def quick_add(self, text, is_dry_run=False) -> str | None:
         """Add a new item using the Quick Add implementation available in the official clients"""
-        if self.dry_run:
+        # The text of the task that is parsed. It can include a due date in free form text,
+        # a project name starting with the # character (without spaces),
+        # a label starting with the @ character,
+        # an assignee starting with the + character,
+        # a priority (e.g., p1),
+        # a deadline between {} (e.g. {in 3 days}),
+        # or a description starting from // until the end of the text.
+
+        if is_dry_run:
             logging.info(self._log_message(_('Task'), text, None, True))
             return None
 

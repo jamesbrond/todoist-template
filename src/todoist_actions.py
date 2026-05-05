@@ -1,15 +1,14 @@
 """Process a template file and create objects on Todoist"""
-from abc import ABC, abstractmethod
-from datetime import datetime
-import os
-import sys
+from dataclasses import dataclass, field
+from pathlib import Path
 import logging
 import pickle
-from typing import TextIO
-from config.config import TTOptions
+from typing import Any
 from i18n import _
+from template.template_factory import TTemplate
+from template.template_factory import TemplateFactory
 from todoist import TodoistTemplateAPI
-from template.template_factory import TemplateFactory, TodoistTemplateError
+from utils import copy_dict
 
 
 PROJECT_KEYS_LIST = ['color', 'is_favorite', 'view_style']
@@ -19,208 +18,166 @@ TASK_KEYS_LIST = ['content', 'description', 'order', 'labels', 'priority',
                   'assignee']
 
 
-def copy_dict(source, filter_keys):
-    """Copy only keys in filter_keys from source dict to a new dict"""
-    return {key: value for key, value in source.items() if key in filter_keys}
+@dataclass
+class TemplateContext:
+    """Template context dataclass"""
+    api: TodoistTemplateAPI
+    template: TTemplate
+    variables: list[dict] = field(default_factory=list[dict])
+    is_update_tasks: bool = False
+    is_dry_run: bool = False
 
 
-class AbstractTodoistAction(ABC):
-    """Abstract class to process a template file and create objects on Todoist"""
+class TodoistTemplateError(Exception):
+    """Todoist-Template exception"""
 
-    def __init__(self, template: TTOptions):
-        self._file: TextIO = None
-        self._template_info: TTOptions = template
-        self._quick_add: bool = False
-        self._factory: TemplateFactory = None
-        self._jobs: list = []
-
-    @abstractmethod
-    def run(self, api: TodoistTemplateAPI) -> int:
-        """Process a template file and create objects on Todoist"""
-
-    def factory(self) -> AbstractTodoistAction:
-        """Create a TemplateFactory object"""
-
-        if self._template_info.file == '-':
-            self._factory = TemplateFactory(sys.stdin, self._template_info.type, skip_comments=not self._quick_add)
-        elif self._template_info.file is not None:
-            with open(self._template_info.file, "r", encoding="utf-8") as fd:
-                self._factory = TemplateFactory(fd, self._template_info.type, skip_comments=not self._quick_add)
-
-        return self
-
-    def jobs(self) -> AbstractTodoistAction:
-        """Generate jobs from template file"""
-
-        if not self._factory:
-            raise TodoistTemplateError("Factory is not initialized. Call factory() method first")
-
-        if bool(self._template_info.variables) and isinstance(self._template_info.variables, list):
-            self._jobs = [self._factory.render(var) for var in self._template_info.variables]
-        else:
-            self._jobs = [self._factory.render({})]
-
-        return self
+    def __init__(self, message):
+        self.message = message
 
 
-class QuickAddAction(AbstractTodoistAction):
-    """Add a new item using the Quick Add implementation available in the official clients"""
-
-    def __init__(self, template: TTOptions) -> None:
-        super().__init__(template)
-        self._quick_add = True
-        self.factory()
-        self.jobs()
-
-    def run(self, api: TodoistTemplateAPI) -> int:
-        """Add a new item using the Quick Add implementation available in the official clients"""
-        logging.info("Quick add action")
-
-        if not self._jobs:
-            raise TodoistTemplateError("No jobs to process. Cannot upload None")
-
-        for job in self._jobs:
-            api.quick_add(job)
-
-        return 0
+def jobs_factory(template: TTemplate, variables: list[dict] | None, quick_add: bool = False) -> None:
+    """Create a list of jobs from template and variables"""
+    factory = TemplateFactory(template, keep_comments=quick_add)
+    if variables:
+        return [factory.render(var) for var in variables]
+    return [factory.render({})]
 
 
-class UndoAction(AbstractTodoistAction):
+def quick_add_action(context: TemplateContext) -> int:
+    """Quick add tasks to Todoist"""
+    logging.info("Quick add action")
+    jobs = jobs_factory(context.template, context.variables, quick_add=True)
+
+    if not jobs:
+        raise TodoistTemplateError("No jobs to process. Cannot upload None")
+
+    logging.debug("jobs to process: %i", len(jobs))
+    for job in jobs:
+        logging.debug("processing job: %s", job)
+        context.api.quick_add(job, context.is_dry_run)
+    return len(jobs)
+
+
+def undo_action(context: TemplateContext) -> int:
     """Rollback todoist-template actions"""
+    logging.info("Undo action")
 
-    def run(self, api: TodoistTemplateAPI) -> int:
-        """Rollback todoist-template actions"""
-        logging.info("Undo action")
+    undo_filepath: Path = context.template.undo_file
+    if context.is_dry_run:
+        logging.info(_("dry run> Load rollback commands from %s"), undo_filepath)
+    else:
+        logging.info(_("Load rollback commands from %s"), undo_filepath)
+    with open(undo_filepath, "rb") as undo:
+        context.api.rollback(pickle.load(undo), is_dry_run=context.is_dry_run)
 
-        undo_filename = self._template_info.undo.file
-        if self._template_info.dry_run:
-            logging.info(_("dry run> Load rollback commands from %s"), undo_filename)
+    if not context.is_dry_run:
+        logging.debug(_("Delete undo file %s"), undo_filepath)
+        undo_filepath.unlink()
+
+    return 1
+
+
+def template_action(context: TemplateContext) -> int:
+    """Create tasks in Todoist"""
+    logging.info("Template action")
+
+    jobs = jobs_factory(context.template, context.variables, quick_add=False)
+    if not jobs:
+        raise TodoistTemplateError("No jobs to process. Cannot upload None")
+
+    logging.debug("jobs to process: %i", len(jobs))
+    for job in jobs:
+        logging.debug("processing job: %s", job)
+        _template(context.api, job, context.is_update_tasks)
+
+    if not context.is_dry_run:
+        _store_rollback(context.api, context.template.undo_file_from_template)
+
+    return len(jobs)
+
+
+def _template(api: TodoistTemplateAPI, tpl_obj: Any, is_update_tasks: bool) -> None:
+    for obj in tpl_obj:
+        if isinstance(obj, str):
+            # template with a single project root
+            _project(api, obj, tpl_obj[obj], is_update_tasks)
+        elif isinstance(obj, list):
+            for item in obj:
+                _template(api, item, is_update_tasks)
         else:
-            logging.info(_("Load rollback commands from %s"), undo_filename)
-        with open(undo_filename, "rb") as undo:
-            api.rollback(pickle.load(undo))
-
-        if not self._template_info.dry_run:
-            logging.debug(_("Delete undo file %s"), undo_filename)
-            os.remove(undo_filename)
-
-        return 0
+            # template with multiple projects
+            for prj in list(obj):
+                _project(api, prj, obj[prj], is_update_tasks)
 
 
-class TemplateAction(AbstractTodoistAction):
-    """Process a template file and create objects on Todoist"""
+def _project(api: TodoistTemplateAPI, name: str, content: dict, is_update_tasks: bool) -> None:
+    if name == 'tasks':
+        # no project in template just Inbox tasks
+        logging.debug("no project in template just Inbox tasks")
+        for task in content:
+            _task(api, None, None, None, task, is_update_tasks)
+    else:
+        project = copy_dict(content, PROJECT_KEYS_LIST)
+        project['name'] = name
 
-    def __init__(self, template: TTOptions) -> None:
-        super().__init__(template)
-        self.factory()
-        self.jobs()
+        # create or modify project in Todoist
+        project_id = api.project(project)
 
-    def run(self, api: TodoistTemplateAPI) -> int:
-        """Create tasks in Todoist"""
-        logging.info("Template action")
+        for key, value in content.items():
+            if key not in PROJECT_KEYS_LIST:
+                _section(api, project_id, key, value, is_update_tasks)
 
-        template_filename = "".join([x if x.isalnum() else "" for x in self._template_info.file])
 
-        if not self._jobs:
-            raise TodoistTemplateError("No jobs to process. Cannot upload None")
+def _section(api: TodoistTemplateAPI, project_id: str, name: str, content: dict, is_update_tasks: bool) -> None:
+    if name == 'tasks':
+        #  project with no section in template just tasks
+        logging.debug("project with no section in template just tasks")
+        for task in content:
+            _task(api, project_id, None, None, task, is_update_tasks)
+    else:
+        section = copy_dict(content, SECTION_KEYS_LIST)
+        section['name'] = name
+        section['project_id'] = project_id
 
-        for job in self._jobs:
-            logging.debug("processing job: %s", job)
-            self._template(api, job)
+        # create or modify section in Todoist
+        section_id = api.section(section)
 
-        if not self._template_info.dry_run:
-            now = datetime.now().strftime('%Y%m%d%H%M%S')
-            undofolder = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), self._template_info.undo.folder)
+        for task in content.get('tasks', []):
+            _task(api, None, section_id, None, task, is_update_tasks)
 
-            if not os.path.exists(undofolder):
-                os.makedirs(undofolder)
 
-            undofile = os.path.join(
-                undofolder,
-                f"{os.path.basename(template_filename)}-{now}.undo")
+def _task(api: TodoistTemplateAPI,  # pylint: disable=too-many-positional-arguments
+          project_id: str,
+          section_id: str,
+          parent_id: str,
+          content: dict,
+          is_update_tasks: bool) -> None:
+    task = copy_dict(content, TASK_KEYS_LIST)
 
-            self._store_rollback(api, undofile)
+    if parent_id is not None:
+        task['parent_id'] = parent_id
+    elif section_id is not None:
+        task['section_id'] = section_id
+    elif project_id is not None:
+        task['project_id'] = project_id
 
-        return 0
+    logging.debug("creating task: %s", task)
+    # create or modify task in Todoist
+    task_id = api.task(task, is_update_tasks)
 
-    def _template(self, api: TodoistTemplateAPI, tpl_obj: any) -> None:
-        for obj in tpl_obj:
-            if isinstance(obj, str):
-                # template with a single project root
-                self._project(api, obj, tpl_obj[obj])
-            elif isinstance(obj, list):
-                for item in obj:
-                    self._template(api, item)
-            else:
-                # template with multiple projects
-                for prj in list(obj):
-                    self._project(api, prj, obj[prj])
+    for subtask in content.get('tasks', []):
+        _task(api, None, None, task_id, subtask, is_update_tasks)
 
-    def _project(self, api: TodoistTemplateAPI, name: str, content: dict) -> None:
-        if name == 'tasks':
-            # no project in template just Inbox tasks
-            logging.debug("no project in template just Inbox tasks")
-            for task in content:
-                self._task(api, None, None, None, task)
-        else:
-            project = copy_dict(content, PROJECT_KEYS_LIST)
-            project['name'] = name
 
-            # create or modify project in Todoist
-            project_id = api.project(project)
-
-            for key, value in content.items():
-                if key not in PROJECT_KEYS_LIST:
-                    self._section(api, project_id, key, value)
-
-    def _section(self, api: TodoistTemplateAPI, project_id: str, name: str, content: dict) -> None:
-        if name == 'tasks':
-            #  project with no section in template just tasks
-            logging.debug("project with no section in template just tasks")
-            for task in content:
-                self._task(api, project_id, None, None, task)
-        else:
-            section = copy_dict(content, SECTION_KEYS_LIST)
-            section['name'] = name
-            section['project_id'] = project_id
-
-            # create or modify section in Todoist
-            section_id = api.section(section)
-
-            for task in content.get('tasks', []):
-                self._task(api, None, section_id, None, task)
-
-    def _task(self,  # pylint: disable=too-many-positional-arguments
-              api: TodoistTemplateAPI,
-              project_id: str,
-              section_id: str,
-              parent_id: str,
-              content: dict) -> None:
-        task = copy_dict(content, TASK_KEYS_LIST)
-
-        if parent_id is not None:
-            task['parent_id'] = parent_id
-        elif section_id is not None:
-            task['section_id'] = section_id
-        elif project_id is not None:
-            task['project_id'] = project_id
-
-        logging.debug("creating task: %s", task)
-        # create or modify task in Todoist
-        task_id = api.task(task, self._template_info.is_update_tasks)
-
-        for subtask in content.get('tasks', []):
-            self._task(api, None, None, task_id, subtask)
-
-    def _store_rollback(self, api: TodoistTemplateAPI, filepath: str) -> None:
-        """Save rollback instructions to filepath"""
-        if api.undo_commands:
-            logging.info(_("Save rollback commands to %s"), filepath)
-            with open(filepath, "ab") as file:
-                #  reverse a list array using slicing methods
-                # command must be executed in reverse orders
-                pickle.dump(api.undo_commands[::-1], file)
-        else:
-            logging.debug("no rollabck instructions to save")
+def _store_rollback(api: TodoistTemplateAPI, filepath: str) -> None:
+    """Save rollback instructions to filepath"""
+    if api.undo_commands:
+        logging.info(_("Save rollback commands to %s"), filepath)
+        with open(filepath, "ab") as file:
+            #  reverse a list array using slicing methods
+            # command must be executed in reverse orders
+            pickle.dump(api.undo_commands[::-1], file)
+    else:
+        logging.debug("no rollabck instructions to save")
 
 # ~@:-]

@@ -1,6 +1,7 @@
 """JOSN Template Loader"""
 
 import json
+from typing import Any
 from template.loader.abstractloader import AbstractTemplateLoader, register_loader
 
 
@@ -12,6 +13,6 @@ class JsonTemplateLoader(AbstractTemplateLoader):  # pylint: disable=too-few-pub
     mimetypes = ["application/json"]
     extensions = [".json"]
 
-    def load(self, content: str) -> any:
+    def load(self, content: str) -> Any:
         """Load JSON template from string content"""
         return json.loads(content)

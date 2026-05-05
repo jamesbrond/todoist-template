@@ -5,9 +5,9 @@
 import sys
 import logging
 from config.config import TTConfig, PYTHON_MAX, PYTHON_MIN
-from todoist import TodoistTemplateAPI
-from todoist_actions import AbstractTodoistAction, QuickAddAction, TemplateAction, UndoAction
 from config.apikey import APITokenStore
+from todoist import TodoistTemplateAPI
+from todoist_actions import TemplateContext, quick_add_action, undo_action, template_action
 
 
 def main() -> int:
@@ -15,13 +15,11 @@ def main() -> int:
     try:
         cfg = TTConfig()
 
-        logging.info("Starting todoist-template version %s", cfg.version)
-
-        if not cfg.is_valid_python_version(PYTHON_MIN, PYTHON_MAX):
+        if not cfg.is_valid_python_version:
             raise SystemError(f"This script requires Python >= {PYTHON_MIN} and < {PYTHON_MAX}")
 
         if cfg.general.print_logo:
-            print(cfg.general.logo)
+            print(cfg.logo)
 
         if not cfg.config.api_token:
             # get api_token from keyring or as user input
@@ -33,17 +31,23 @@ def main() -> int:
         else:
             logging.debug('Use API token from cli')
 
-        api = TodoistTemplateAPI(cfg)
-        action: AbstractTodoistAction = None
+        context: TemplateContext = TemplateContext(
+            api=TodoistTemplateAPI(cfg),
+            template=cfg.template,
+            variables=cfg.variables,
+            is_dry_run=cfg.dry_run,
+            is_update_tasks=cfg.is_update
+        )
 
-        if cfg.template.undo.file is not None:
-            action = UndoAction(cfg.template)
-        elif cfg.template.quick_add:
-            action = QuickAddAction(cfg.template)
+        result: int = 0
+        if cfg.is_undo:
+            result = undo_action(context)
+        elif cfg.quick_add:
+            result = quick_add_action(context)
         else:
-            action = TemplateAction(cfg.template)
+            result = template_action(context)
 
-        return action.run(api)
+        return 0 if result > 0 else 1
 
     except Exception as exc:
         logging.error(exc, exc_info=True)

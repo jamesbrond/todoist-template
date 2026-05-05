@@ -1,8 +1,8 @@
 """Tests for todoist-template flows"""
 import unittest
-from src.config.config import TTConfig
-from src.todoist import TodoistTemplateAPI
-from src.todoist_actions import QuickAddAction, TemplateAction, UndoAction
+from src.config.config import TTConfig, _ttconfig_instances
+from src.todoist_actions import TemplateContext, quick_add_action, undo_action, template_action
+from todoist_template import get_context_from_config
 
 
 class TestFlow(unittest.TestCase):
@@ -10,8 +10,15 @@ class TestFlow(unittest.TestCase):
 
     def setUp(self):
         super().setUp()
+        # Clear singleton instances for tests
+        _ttconfig_instances.clear()
         with open('tests/.apitoken', 'r', encoding='utf8') as file:
             self.apitoken = file.read().strip()
+
+    def get_context(self, args: list[str]) -> TemplateContext:
+        """Get TemplateContext from args"""
+        cfg = TTConfig(args)
+        return get_context_from_config(cfg)
 
     def test_flow_quick_add(self):
         """Test quick add flow"""
@@ -20,13 +27,12 @@ class TestFlow(unittest.TestCase):
                 "--id", "TODOIST_TEMPLATE",
                 "--token", self.apitoken,
                 "--dry-run",
+                "--debug",
                 "--plaintext"]
-        cfg = TTConfig(args)
-
-        api = TodoistTemplateAPI(cfg)
+        context = self.get_context(args)
 
         try:
-            QuickAddAction(cfg.template).run(api)
+            quick_add_action(context)
         except Exception as e:
             self.fail(f"QuickAddAction raised an exception: {e}")
 
@@ -36,12 +42,12 @@ class TestFlow(unittest.TestCase):
                 "-D", "test_name=me,test_date=today,test_label=test",
                 "--id", "TODOIST_TEMPLATE",
                 "--token", self.apitoken,
+                "--debug",
                 "--dry-run"]
-        cfg = TTConfig(args)
-        api = TodoistTemplateAPI(cfg)
+        context = self.get_context(args)
 
         try:
-            TemplateAction(cfg.template).run(api)
+            template_action(context)
         except Exception as e:
             self.fail(f"TemplateAction raised an exception: {e}")
 
@@ -51,12 +57,12 @@ class TestFlow(unittest.TestCase):
                 "tests/test.undo",
                 "--id", "TODOIST_TEMPLATE",
                 "--token", self.apitoken,
+                "--debug",
                 "--dry-run"]
-        cfg = TTConfig(args)
-        api = TodoistTemplateAPI(cfg)
+        context = self.get_context(args)
 
         try:
-            UndoAction(cfg.template).run(api)
+            undo_action(context)
         except Exception as e:
             self.fail(f"UndoAction raised an exception: {e}")
 

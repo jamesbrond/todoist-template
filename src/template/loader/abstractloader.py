@@ -1,14 +1,15 @@
 """Abstract class used as father of all template loader classes inheriting from it"""
 
 from abc import ABC, abstractmethod
+from typing import Any
 
-
+# e.g. 'YAML': YamlTemplateLoader
 template_loaders: dict[str, AbstractTemplateLoader] = {}
 
-
+# e.g. 'application/json': 'JSON'
 template_mimetypes: dict[str, str] = {}
 
-
+# e.g. '.json': 'JSON'
 template_extensions: dict[str, str] = {}
 
 
@@ -32,7 +33,7 @@ class AbstractTemplateLoader(ABC):  # pylint: disable=too-few-public-methods
     extensions: list[str] = []
 
     @abstractmethod
-    def load(self, content: str) -> any:
+    def load(self, content: str) -> Any:
         """Implements template parsing from string"""
 
 # ~@:-]
