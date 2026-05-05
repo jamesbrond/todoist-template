@@ -16,7 +16,7 @@ more-itertools==10.5.0
 pycparser==2.22
 pywin32-ctypes==0.2.2
 PyYAML==6.0.2
-requests==2.32.5
+requests==2.33.0
 SecretStorage==3.3.3
 todoist_api_python==3.1.0
 toml==0.10.2
