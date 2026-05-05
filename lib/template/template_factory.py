@@ -40,11 +40,11 @@ class TemplateFactory:  # pylint: disable=too-few-public-methods
     template loader according to file type
     """
 
-    def __init__(self, file, file_type=None, is_quick_add=False):
-        self._tokenizer = TemplateTokenizer(filename=file, skip_comments=not is_quick_add)
-
-        self._loader = self.get_loader(file, file_type)
-        logging.debug("use %s to load '%s' file", self._loader.__class__.__name__, file.name)
+    def __init__(self, filename, file_type=None, is_quick_add=False):
+        self._tokenizer = TemplateTokenizer(filename=filename, skip_comments=not is_quick_add)
+        with open(filename, 'r', encoding='utf-8') as file:
+            self._loader = self.get_loader(file, file_type)
+        logging.debug("use %s to load '%s' file", self._loader.__class__.__name__, filename)
 
     def render(self, variables):
         """Returns a template object parsed"""

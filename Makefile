@@ -1,7 +1,7 @@
 PACKAGE      := todoist_template
-BUILD_DIR    := build
+BUILD_DIR    := ./build
 MAKE_DIR     = $(BUILD_DIR)/make
-VENV_DIR     = $(BUILD_DIR)/venv
+VENV_DIR     = ./venv
 LOCALES_DIR  := locales
 
 VERSION_FILE := lib/__version__.py
@@ -68,10 +68,6 @@ lint:: ## Perform static linting
 
 test:: build ## Unit test
 	@$(call log-info,MAKE,$@ done)
-
-run: build
-	@$(call log-info,MAKE,Run UI interface)
-	@$(PYENV)/python todoist_template.py --gui
 
 $(LANG_BASE_FILE):
 	@$(GETTEXT) -d base -o $(LANG_BASE_FILE) $(PY_SRCS)

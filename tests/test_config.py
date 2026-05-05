@@ -51,12 +51,13 @@ class TestConfig(unittest.TestCase):
         """Config parse command line"""
         args = ["tests/test.yml", "-d", "--token", "123456789", "--dry-run"]
         cfg = TTConfig(args)
-        self.assertTrue(cfg.template.file.name, "tests/tests.yml")
+        self.assertTrue(cfg.template.file, "tests/tests.yml")
         self.assertEqual(cfg.log.loggers.root.level, "DEBUG")
         self.assertEqual(cfg.config.api_token, "123456789")
         self.assertTrue(cfg.template.dry_run)
-        cfg.template.file.close()
-        self.assertTrue(cfg.template.file.closed)
+        with open(cfg.template.file, 'r') as file:
+            pass
+        self.assertTrue(file.closed)
 
 
 if __name__ == '__main__':

@@ -1,6 +1,42 @@
-# todoist-template
+<a id="readme-top"></a>
 
-> Easily add tasks to Todoist with customizable templates.
+
+<!-- PROJECT LOGO -->
+<br />
+  <h3 align="center">Todoist-Template</h3>
+
+  <p align="center">
+    Easily add tasks to Todoist with customizable templates!
+    <br />
+  </p>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#authorization-token">Authorization token</a></li>
+        <li><a href="#run-todoist-template">Run todoist-template</a></li>
+        <li><a href="#undo">Undo</a></li>
+      </ul>
+    </li>
+    <li><a href="#template">Template</a></li>
+    <li><a href="#developing">Developing</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#security-policies-and-procedures">Security Policies and Procedures</a></li>
+    <li><a href="#links">Links</a></li>
+    <li><a href="#license">License</a></li>
+  </ol>
+</details>
+
+<!-- ABOUT THE PROJECT -->
+## About The Project
 
 The aim of this project is to facilitate the creation of tasks on the Todoist
 platform thanks to simple templates.
@@ -10,7 +46,7 @@ reflects the hierarchy Project - Session (optional) - Task.
 Projects, sessions and labels are automatically created if they don't already
 exist on your Todoist.
 
-Todois.com templates always create a new project, while the big difference here
+Todoist.com templates always create a new project, while the big difference here
 is that with todoist-template you can add tasks to existing projects or to the
 Inbox.
 Another difference is the ability to parameterize templates. For example, by
@@ -18,7 +54,7 @@ passing parameters from the command-line, you can create tasks with custom due
 date.
 Anyway todoist-template can also import Todoist.com CSV templates.
 
-## Installing / Getting started
+## Getting started
 
 Before you start check the [prerequisite and install instructions](install.md).
 
@@ -34,7 +70,7 @@ These keyring backends are supported:
 
 - macOS Keychain
 - Freedesktop Secret Service supports many IDE including GNOME (requires
-  secretstorage)
+  secret storage)
 - KDE4 & KDE5 KWallet (requires dbus)
 - Windows Credential Locker
 
@@ -50,24 +86,24 @@ python todoist_template.py [options]
 
 Where options are:
 
-| Option                    | Default          | Description                                                                                                                                                                       |
-| ------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| TEMPLATE                  | stdin            | Mandatory path to the YAML, JSON or CSV template file                                                                                                                             |
-| -h, --help                |                  | Show help message and exit                                                                                                                                                        |
-| -D KEY0=VAL0,KEY1=VAL1... |                  | The placeholder values replaced in template or the CSV file                                                                                                                       |
-| --id SERVICE_ID           | TODOIST-TEMPLATE | Keyring service name where store Todoist API Token                                                                                                                                |
-| --version                 |                  | Show program's version number and exit                                                                                                                                            |
-| -d, --debug               | False            | More verbose output. Default log level is INFO                                                                                                                                    |
-| -q, --quiet               | False            | Suppress output                                                                                                                                                                   |
-| --dry-run                 | False            | Allows the `todoist_template` command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object IDs. |
-| -u, --update              |                  | it updates task with the same name instead of adding a new one                                                                                                                    |
-| --undo UNDOFILE           |                  | Loads undo file and rollbacks all operations in it                                                                                                                                |
-| --token API_TOKEN         |                  | The Todoist authorization token. It will use this token instead of reading it from Keyring service                                                                                |
-| -t                        | False            | Adds a new item using the Todoist Quick Add implementation, the template will be used as text for the new task                                                                    |
-| --gui                     |                  | Start Todoist-Template service with web frontend                                                                                                                                  |
-| --yaml                    |                  | template input file has YAML format                                                                                                                                               |
-| --json                    |                  | template input file has JSON format                                                                                                                                               |
-| --csv                     |                  | template input file has CSV format                                                                                                                                                |
+| Option | Default | Description |
+| - | - | - |
+| TEMPLATE | stdin | Mandatory path to the YAML, JSON or CSV template |
+| -h, --help | | Show help message and exit |
+| -D KEY0=VAL0,KEY1=VAL1... | | The placeholder values replaced in template or the CSV file |
+| --id SERVICE_ID | TODOIST-TEMPLATE | Keyring service name where store Todoist API Token |
+| --version | | Show program's version number and exit |
+| -c, --config | CONFIGFILE| TOML configuration file (default: `lib/config/config.toml`) |
+| -d, --debug | False | More verbose output. Default log level is INFO |
+| -q, --quiet | False | Suppress output |
+| --dry-run | False | Allows the `todoist_template` command to run a trial without making any changes on Todoist.com, this process has the same output as the real execution except for new object IDs. |
+| -u, --update | | it updates task with the same name instead of adding a new one                                                                                                                    |
+| --undo UNDOFILE | | Loads undo file and rollbacks all operations in it |
+| --token API_TOKEN | | The Todoist authorization token. It will use this token instead of reading it from Keyring service |
+| -t | False | Adds a new item using the Todoist Quick Add implementation, the template will be used as text for the new task |
+| --yaml | | template input file has YAML format |
+| --json | | template input file has JSON format |
+| --csv | | template input file has CSV format |
 
 Example
 
@@ -75,17 +111,17 @@ Example
 python todoist_template.py -d templates/simple_template0.yml
 ```
 
-Run todoist-template from different users specify differnet keyring service name:
+Run todoist-template from different users specify different keyring service name:
 
 ```shell
-python todoist_template.py [options] --id JHON-TOKENS
+python todoist_template.py [options] --id JOHN-TOKENS
 ```
 
 ```shell
 python todoist_template.py [options] --id MARY-TOKENS
 ```
 
-You can use standar input to provide the template to todoist-template:
+You can use standard input to provide the template to todoist-template:
 
 ```shell
 python todoist_template.py -d < templates/simple_template0.yml
@@ -122,9 +158,9 @@ To learn how to write and use templates please read the template examples:
 
 [Complex template](./template/complex_template.md)
 
-> Templete with multiple projects and sections and sub-tasks
+> Template with multiple projects and sections and sub-tasks
 
-[Inlcude templates](./template/include_template.md)
+[Include templates](./template/include_template.md)
 
 > Include templates to create a more complex template
 
@@ -146,6 +182,20 @@ See [our security policies and procedures guidelines](./SECURITY.md).
 - Repository: <https://github.com/jamesbrond/todoist-template/>
 - Issue tracker: <https://github.com/jamesbrond/todoist-template/issues>
 
-## Licensing
+## License
 
 See [license](../LICENSE)
+
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[contributors-shield]: https://img.shields.io/github/contributors/jamesbrond/todoist-template.svg?style=for-the-badge
+[contributors-url]: https://github.com/jamesbrond/todoist-template/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/jamesbrond/todoist-template.svg?style=for-the-badge
+[forks-url]: https://github.com/jamesbrond/todoist-template/network/members
+[stars-shield]: https://img.shields.io/github/stars/jamesbrond/todoist-template.svg?style=for-the-badge
+[stars-url]: https://github.com/jamesbrond/todoist-template/stargazers
+[issues-shield]: https://img.shields.io/github/issues/jamesbrond/todoist-template.svg?style=for-the-badge
+[issues-url]: https://github.com/jamesbrond/todoist-template/issues
+[license-shield]: https://img.shields.io/github/license/jamesbrond/todoist-template.svg?style=for-the-badge
+[license-url]: https://github.com/jamesbrond/todoist-template/blob/master/LICENSE

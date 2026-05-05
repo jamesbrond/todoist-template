@@ -27,12 +27,12 @@ def run_cli(api_token, cfg):
         _template(todoist, cfg.template)
 
 
-def _undo(todoist, undo):
+def _undo(todoist, undo_filename):
     logging.info("undo action")
-    undo_filename = undo.file.name
-    if todoist.rollback(undo.file):
-        logging.debug(_("remove file %s"), undo_filename)
-        os.remove(undo_filename)
+    with open(undo_filename, "rb") as undo:
+        if todoist.rollback(undo):
+            logging.debug(_("remove file %s"), undo_filename)
+            os.remove(undo_filename)
 
 
 def _quick_add(todoist, config):
@@ -44,7 +44,8 @@ def _quick_add(todoist, config):
 def _template(todoist, config):
     logging.debug("template action")
 
-    template_filename = "".join([x if x.isalnum() else "" for x in config.file.name])
+    template_filename = "".join([x if x.isalnum() else "" for x in config.file])
+    logging.debug("template filename: %s", template_filename)
     todoist.template(config, update_task=config.is_update)
 
     if not config.dry_run:
