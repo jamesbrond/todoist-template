@@ -1,8 +1,8 @@
 """Tests for todoist-template flows"""
 import unittest
-from src.config.config import TTConfig, _ttconfig_instances
-from src.todoist_actions import TemplateContext, quick_add_action, undo_action, template_action
-from todoist_template import get_context_from_config
+from config.config import TTConfig, _ttconfig_instances
+from todoist import TodoistTemplateAPI
+from todoist_actions import TemplateContext, quick_add_action, undo_action, template_action
 
 
 class TestFlow(unittest.TestCase):
@@ -18,7 +18,14 @@ class TestFlow(unittest.TestCase):
     def get_context(self, args: list[str]) -> TemplateContext:
         """Get TemplateContext from args"""
         cfg = TTConfig(args)
-        return get_context_from_config(cfg)
+        context: TemplateContext = TemplateContext(
+            api=TodoistTemplateAPI(cfg),
+            template=cfg.template,
+            variables=cfg.variables,
+            is_dry_run=cfg.dry_run,
+            is_update_tasks=cfg.is_update
+        )
+        return context
 
     def test_flow_quick_add(self):
         """Test quick add flow"""

@@ -5,7 +5,7 @@ import argparse
 from pathlib import Path
 import unittest
 import collections.abc
-from src.config.config import parse_cmd_line
+from config.config import parse_cmd_line
 
 
 TEMPLATE_FILE = "template_file"

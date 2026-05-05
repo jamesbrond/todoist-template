@@ -4,8 +4,8 @@
 
 import sys
 import logging
-from config.config import TTConfig, PYTHON_MAX, PYTHON_MIN
-from config.apikey import APITokenStore
+from config.config import TTConfig, PYTHON_MAX, PYTHON_MIN  # pylint: disable=no-name-in-module
+from config.apikey import APITokenStore  # pylint: disable=no-name-in-module
 from todoist import TodoistTemplateAPI
 from todoist_actions import TemplateContext, quick_add_action, undo_action, template_action
 

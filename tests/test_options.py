@@ -1,6 +1,6 @@
 """Test Config class"""
 import unittest
-from src.config.config import TTOptions
+from config.config import TTOptions
 
 
 class TestTTOptions(unittest.TestCase):

@@ -7,9 +7,9 @@ import logging
 import logging.config
 from typing import Any
 import toml
+from config.cliargs import parse_cmd_line
 from __version__ import __version__
 from template.template_model import TTemplate
-from .cliargs import parse_cmd_line
 
 
 __location__ = Path(__file__).parent
@@ -40,6 +40,7 @@ def singleton(cls):
 
 
 def versiontuple(v):
+    """Convert version string to tuple for comparison"""
     return tuple(map(int, (v.split("."))))
 
 

@@ -51,6 +51,7 @@ clean:: ## Delete all files created by this makefile, however don’t delete the
 	@-$(RM) $(LANG_BASE_FILE) $(NULL_STDERR)
 	@$(call prompt-log,Removing compiled locale translations files)
 	@-$(RM) $(LANG_OBJS) $(NULL_STDERR)
+	@find . -name "*.log" -exec rm {} \;
 	@$(call log-info,MAKE,$@ done)
 
 distclean:: clean ## Delete all files in the current directory (or created by this makefile) that are created by configuring or building the program

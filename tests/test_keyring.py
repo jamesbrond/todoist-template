@@ -4,7 +4,7 @@ https://pypi.org/project/keyring/
 """
 import unittest
 import keyring
-from src.config.apikey import EnvKeyring
+from config.apikey import EnvKeyring
 
 
 class TestKeyRingAPI(unittest.TestCase):

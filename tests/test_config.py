@@ -3,7 +3,7 @@
 from io import TextIOWrapper
 from pathlib import Path
 import unittest
-from src.config.config import TTConfig, DEFAULT_CONFIG_FILE, _ttconfig_instances
+from config.config import TTConfig, DEFAULT_CONFIG_FILE, _ttconfig_instances
 
 
 class TestConfig(unittest.TestCase):
