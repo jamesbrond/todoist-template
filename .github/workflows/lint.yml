@@ -11,6 +11,8 @@ on:
 jobs:
   call-lint:
     uses: jamesbrond/jamesbrond/.github/workflows/lint.yml@main
+    with:
+      working-directory: ${{ github.workspace }}
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
 
