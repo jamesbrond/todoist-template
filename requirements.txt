@@ -2,9 +2,9 @@ annotated-types==0.7.0
 certifi==2026.1.4
 cffi==1.17.1
 charset-normalizer==3.3.2
-cryptography==44.0.2
+cryptography==46.0.7
 dataclass-wizard==0.39.1
-idna==3.7
+idna==3.11
 importlib_metadata==8.7.1
 jaraco.classes==3.4.0
 jaraco.context==6.0.1
@@ -16,9 +16,9 @@ more-itertools==10.5.0
 pycparser==2.22
 pywin32-ctypes==0.2.2
 PyYAML==6.0.2
-requests==2.32.5
+requests==2.33.0
 SecretStorage==3.3.3
 todoist_api_python==3.1.0
 toml==0.10.2
 urllib3==2.6.3
-zipp==3.20.2
+zipp==3.23.0
