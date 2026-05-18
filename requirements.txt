@@ -2,7 +2,7 @@ annotated-types==0.7.0
 certifi==2026.1.4
 cffi==2.0.0
 charset-normalizer==3.3.2
-cryptography==46.0.7
+cryptography==48.0.0
 dataclass-wizard==0.39.1
 idna==3.11
 importlib_metadata==8.7.1
