@@ -1,0 +1,32 @@
+Project1:
+  tasks:
+    - content: "🗑 delete {test_name|me} 🗑"
+      priority: 3  # priority 1 to 4 where 1 is the highest
+      due_string: "{test_date}"
+      # I ❤ comments
+      labels: ["{test_label}", "{another_test_label|❤}"]
+      tasks:
+        - content: "sub task of delete {test_name|me}"
+          priority: 4
+
+Other Project:
+  color: "blue"
+  is_favorite: true
+  view_style: 'board'
+  Other Section:
+    order: 1
+    tasks:
+      - content: "Other task 1"
+        description: "This is another test"
+        order: 1
+        labels: ["other_label1", "{test_label|me}"]
+        priority: 2
+        due_string: "tomorrow"
+        due_lang: "en"
+      - content: "Other task 2"
+        due_date: "{test_date}"
+      - content: "Other task 3"
+        due_datetime: "{test_date}T15:30:00.000000Z"
+      # comment line
+      - content: "Test task 4"
+        due_date: "{test_date}"

@@ -19,6 +19,8 @@ SHELL:=/bin/bash
 -include $(MAKE_DIR)/py.mk
 -include $(CONFIGURE)
 
+export PYTHONPATH=src
+
 $(MAKE_DIR)/%.mk: | $(MAKE_DIR)
 	@URL=$$(echo "https://raw.githubusercontent.com/jamesbrond/jamesbrond/main/Makefile/.make/$(@F)"); \
 	echo "get $$URL"; \
@@ -49,6 +51,7 @@ clean:: ## Delete all files created by this makefile, however don’t delete the
 	@-$(RM) $(LANG_BASE_FILE) $(NULL_STDERR)
 	@$(call prompt-log,Removing compiled locale translations files)
 	@-$(RM) $(LANG_OBJS) $(NULL_STDERR)
+	@find . -name "*.log" -exec rm {} \;
 	@$(call log-info,MAKE,$@ done)
 
 distclean:: clean ## Delete all files in the current directory (or created by this makefile) that are created by configuring or building the program
@@ -94,5 +97,9 @@ i18n-add: $(LOCALES_DIR)/$(ln)/LC_MESSAGES/$(PACKAGE).po ## Create new empty loc
 ## Create new empty locale. Example usage make i18n-add ln=it
 
 i18n: $(LANG_OBJS)
+
+run:
+# Usage make run args="-D some_name=some_value"
+	@$(PYENV)/python src/todoist_template.py $(args) --config todoist_template.toml
 
 # ~@:-]
