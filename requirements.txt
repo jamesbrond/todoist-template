@@ -20,5 +20,5 @@ requests==2.33.0
 SecretStorage==3.3.3
 todoist_api_python==3.1.0
 toml==0.10.2
-urllib3==2.6.3
+urllib3==2.7.0
 zipp==3.23.0
