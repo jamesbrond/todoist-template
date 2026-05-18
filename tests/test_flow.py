@@ -1,8 +1,8 @@
 """Tests for todoist-template flows"""
 import unittest
 from config.config import TTConfig, _ttconfig_instances
-from todoist import TodoistTemplateAPI
-from todoist_actions import TemplateContext, quick_add_action, undo_action, template_action
+from todoist_actions import quick_add_action, undo_action, template_action
+from todoist_template import get_context
 
 
 class TestFlow(unittest.TestCase):
@@ -15,18 +15,6 @@ class TestFlow(unittest.TestCase):
         with open('tests/.apitoken', 'r', encoding='utf8') as file:
             self.apitoken = file.read().strip()
 
-    def get_context(self, args: list[str]) -> TemplateContext:
-        """Get TemplateContext from args"""
-        cfg = TTConfig(args)
-        context: TemplateContext = TemplateContext(
-            api=TodoistTemplateAPI(cfg),
-            template=cfg.template,
-            variables=cfg.variables,
-            is_dry_run=cfg.dry_run,
-            is_update_tasks=cfg.is_update
-        )
-        return context
-
     def test_flow_quick_add(self):
         """Test quick add flow"""
         args = ["tests/quick.txt",
@@ -36,7 +24,7 @@ class TestFlow(unittest.TestCase):
                 "--dry-run",
                 "--debug",
                 "--plaintext"]
-        context = self.get_context(args)
+        context = get_context(TTConfig(args))
 
         try:
             quick_add_action(context)
@@ -51,7 +39,7 @@ class TestFlow(unittest.TestCase):
                 "--token", self.apitoken,
                 "--debug",
                 "--dry-run"]
-        context = self.get_context(args)
+        context = get_context(TTConfig(args))
 
         try:
             template_action(context)
@@ -66,7 +54,7 @@ class TestFlow(unittest.TestCase):
                 "--token", self.apitoken,
                 "--debug",
                 "--dry-run"]
-        context = self.get_context(args)
+        context = get_context(TTConfig(args))
 
         try:
             undo_action(context)

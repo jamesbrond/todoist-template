@@ -10,6 +10,17 @@ from todoist import TodoistTemplateAPI
 from todoist_actions import TemplateContext, quick_add_action, undo_action, template_action
 
 
+def get_context(cfg: TTConfig) -> TemplateContext:
+    """Get TemplateContext from TTConfig"""
+    return TemplateContext(
+        api=TodoistTemplateAPI(cfg),
+        template=cfg.template,
+        variables=cfg.variables,
+        is_dry_run=cfg.dry_run,
+        is_update_tasks=cfg.is_update
+    )
+
+
 def main() -> int:
     """Main function"""
     try:
@@ -31,13 +42,7 @@ def main() -> int:
         else:
             logging.debug('Use API token from cli')
 
-        context: TemplateContext = TemplateContext(
-            api=TodoistTemplateAPI(cfg),
-            template=cfg.template,
-            variables=cfg.variables,
-            is_dry_run=cfg.dry_run,
-            is_update_tasks=cfg.is_update
-        )
+        context = get_context(cfg)
 
         result: int = 0
         if cfg.is_undo:

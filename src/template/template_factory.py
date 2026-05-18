@@ -27,7 +27,10 @@ class TemplateFactory:  # pylint: disable=too-few-public-methods
         self._loader = template_loaders[self._template.type]()
 
         # 2. Parse template with tokenizer
-        self._tokenizer = TemplateToken(text=template.read(), keep_comments=keep_comments)
+        if template.stdin:
+            self._tokenizer = TemplateToken(text=template.read(), keep_comments=keep_comments)
+        else:
+            self._tokenizer = TemplateToken(file=template.file, keep_comments=keep_comments)
 
     @property
     def template_loader(self) -> AbstractTemplateLoader:
