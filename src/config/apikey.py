@@ -11,6 +11,7 @@ import os
 import logging
 import keyring
 import keyring.backend
+import getpass
 from i18n import _
 
 
@@ -81,7 +82,7 @@ class APITokenStore:  # pylint: disable=too-few-public-methods
 
         :returns the user input value
         """
-        return input(_("Please enter your API token: "))
+        return getpass.getpass(_("Please enter your API token: "))
 
     def get(self) -> str | None:
         """
