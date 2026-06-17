@@ -43,7 +43,7 @@ class TemplateFactory:  # pylint: disable=too-few-public-methods
         return self._template.type
 
     @property
-    def teamplate_source(self) -> str:
+    def template_source(self) -> str:
         """Returns the template source"""
         return self._tokenizer._source
 
