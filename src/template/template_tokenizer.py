@@ -164,6 +164,9 @@ class TemplateToken(AbstractTemplateToken):
             begin, end = match.span()
             tokens.append(PlainTextToken(text[cursor:begin]))
             if RE_INCLUDES == match.re:
+                resolved = (folder / match.group(2)).resolve()
+                if not resolved.is_relative_to(folder):
+                    raise ValueError(f"Include path escapes template directory: {match.group(2)}")
                 tokens.append(TemplateToken(
                     file=(folder / match.group(2)).resolve().absolute(),
                     line_prefix=match.group(1),
