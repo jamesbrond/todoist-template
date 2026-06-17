@@ -1,4 +1,4 @@
-"""JOSN Template Loader"""
+"""JSON Template Loader"""
 
 import json
 from typing import Any
