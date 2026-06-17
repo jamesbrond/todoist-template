@@ -173,7 +173,7 @@ def _store_rollback(api: TodoistTemplateAPI, filepath: str) -> None:
     """Save rollback instructions to filepath"""
     if api.undo_commands:
         logging.info(_("Save rollback commands to %s"), filepath)
-        with open(filepath, "ab") as file:
+        with open(filepath, "wb") as file:
             #  reverse a list array using slicing methods
             # command must be executed in reverse orders
             pickle.dump(api.undo_commands[::-1], file)
