@@ -65,10 +65,15 @@ class CsvTemplateLoader(AbstractTemplateLoader):  # pylint: disable=too-few-publ
                     "tasks": []
                 }
             elif row['type'] == "task":
+                try:
+                    priority = int(row["priority"])
+                except ValueError:
+                    priority = 4
+
                 task = {
                     "content": row["content"],
                     "description": row["description"],
-                    "priority": int(row["priority"]),
+                    "priority": priority,
                     "due_string": row["due_string"],
                     "labels": [label.strip() for label in row["labels"].split(';') if label.strip()],
                     "assignee": row["assignee"],
