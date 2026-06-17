@@ -27,11 +27,8 @@ class TodoistTemplateAPI(TodoistAPI):
         try:
             if cfg.security and cfg.security.ssl_ca_root_file is not None:
                 logging.debug('Adding custom certs to Certifi store "%s"', cfg.security.ssl_ca_root_file)
-                cafile = certifi.where()
-                with open(cfg.security.ssl_ca_root_file, 'rb') as certfile:
-                    customca = certfile.read()
-                with open(cafile, 'ab') as outfile:
-                    outfile.write(customca)
+                session = requests.Session()
+                session.verify = cfg.security.ssl_ca_root_file
         except (AttributeError, FileNotFoundError) as exc:
             logging.warning(exc)
 
@@ -43,7 +40,7 @@ class TodoistTemplateAPI(TodoistAPI):
                 self.sections = next(self.get_sections())
                 logging.debug('retrieved %d sections from Todoist', len(self.sections))
                 self.collaborators = []
-            except:
+            except Exception:
                 self._session.close()
                 raise
 
