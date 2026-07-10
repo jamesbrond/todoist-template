@@ -1,5 +1,6 @@
 """Process a template file and create objects on Todoist"""
 from dataclasses import dataclass, field
+import json
 from pathlib import Path
 import logging
 import pickle
@@ -67,8 +68,8 @@ def undo_action(context: TemplateContext) -> int:
         logging.info(_("dry run> Load rollback commands from %s"), undo_filepath)
     else:
         logging.info(_("Load rollback commands from %s"), undo_filepath)
-    with open(undo_filepath, "rb") as undo:
-        context.api.rollback(pickle.load(undo), is_dry_run=context.is_dry_run)
+    with open(undo_filepath, "r") as undo:
+        context.api.rollback(json.load(undo), is_dry_run=context.is_dry_run)
 
     if not context.is_dry_run:
         logging.debug(_("Delete undo file %s"), undo_filepath)
@@ -173,11 +174,10 @@ def _store_rollback(api: TodoistTemplateAPI, filepath: str) -> None:
     """Save rollback instructions to filepath"""
     if api.undo_commands:
         logging.info(_("Save rollback commands to %s"), filepath)
-        with open(filepath, "wb") as file:
-            #  reverse a list array using slicing methods
-            # command must be executed in reverse orders
-            pickle.dump(api.undo_commands[::-1], file)
+        json_undo_command = json.dumps(api.undo_commands[::-1], indent=0, ensure_ascii=False)
+        with open(filepath, "w") as file:
+            file.write(json_undo_command)
     else:
-        logging.debug("no rollabck instructions to save")
+        logging.debug("no rollback instructions to save")
 
 # ~@:-]

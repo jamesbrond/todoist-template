@@ -2,7 +2,7 @@
 """version module"""
 
 PACKAGE = "todoist_template"
-__version__ = "1.2.1"
+__version__ = "1.2.2"
 version_info = tuple((int(x)) for x in __version__.split('.'))
 
 
