@@ -1,0 +1,68 @@
+[build-system]
+requires = ["hatchling >= 1.31.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "todoist-template"
+dynamic = ["version"]
+description = "A simple project configuration management library. It allows you to define and manage configuration settings for your project in a structured and organized manner."
+authors = [{name = "Diego Brondo", email = "diego.brondo@philips.com"}]
+maintainers = [{name = "Diego Brondo", email = "diego.brondo@philips.com"}]
+requires-python = ">=3.14"
+license = {text = "MIT"}
+dependencies = [
+    "TPLline==0.1.0",
+    "keyring==25.7.0",
+    "PyYAML==6.0.2",
+    "todoist_api_python==4.0.0",
+    "toml==0.10.2",
+]
+
+[tool.hatch.version]
+path = "src/todoist_template/__version__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/todoist_template"]
+
+[project.scripts]
+todoist-template = "todoist_template.__main__:main"
+
+# [project.urls]
+# Homepage = "https://example.com"
+
+[project.optional-dependencies]
+# Install with: pip install -e .[dev]
+dev = [
+    "Babel>=2.18.0",
+    "build>=1.5.0"
+]
+# Install with: pip install -e .[test]
+test = [
+    "todoist-template>=1.2.2",
+    "pytest>=9.1.1",
+    "coverage>=7.15.0"
+]
+# Install with: pip install -e .[lint]
+lint = [
+    "flake8>=7.3.0",
+    "pylint>=4.0.6"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "src"]
+
+[tool.pylint]
+format.max-line-length = 120
+
+[tool.coverage.run]
+source_pkgs = ["todoist_template", "tests"]
+branch = true
+parallel = true
+omit = [
+  "src/todoist_template/__version__.py",
+]
+
+[tool.coverage.paths]
+source = ["src/todoist_template", "*/todoist_template/src/todoist_template"]
+todoist_template = ["src/todoist_template", "*/todoist_template/src/todoist_template"]
+tests = ["tests", "*/todoist_template/tests"]
